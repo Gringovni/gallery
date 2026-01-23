@@ -1,354 +1,200 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Latent Illumination — Gallery</title>
-  <style>
-    :root{
-      --bg:#0b0d10;
-      --panel:#0f1318;
-      --text:#e9eef5;
-      --muted:#9aa6b2;
-      --border:rgba(255,255,255,.08);
-      --shadow: 0 10px 30px rgba(0,0,0,.45);
-      --radius: 18px;
-    }
+<style>
+  :root{
+    --bg: #ffffff;
+    --text: #0b0d10;
+    --muted: #6b7280;
+    --border: rgba(0,0,0,.10);
+    --max: 1180px;
+  }
 
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      background: radial-gradient(1200px 600px at 50% -10%, rgba(255,255,255,.06), transparent 55%), var(--bg);
-      color:var(--text);
-    }
+  *{ box-sizing:border-box; }
+  html, body { height:100%; }
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    background: var(--bg);
+    color: var(--text);
+  }
 
-    header{
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      backdrop-filter: blur(12px);
-      background: rgba(11,13,16,.72);
-      border-bottom: 1px solid var(--border);
-    }
+  /* Top bar: very minimal, Pixieset-like */
+  header{
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(255,255,255,.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0,0,0,.06);
+  }
 
-    .nav{
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 14px 18px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 16px;
-    }
+  .nav{
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 18px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 18px;
+  }
 
-    .brand{
-      display:flex;
-      flex-direction:column;
-      line-height:1.1;
-    }
-    .brand .title{
-      font-weight: 650;
-      letter-spacing: .2px;
-      font-size: 15px;
-    }
-    .brand .subtitle{
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
+  .brand{
+    display:flex;
+    flex-direction:column;
+    line-height:1.05;
+  }
+  .brand .title{
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+  .brand .subtitle{
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+    letter-spacing: .02em;
+  }
 
-    .links{
-      display:flex;
-      gap: 14px;
-      align-items:center;
-      font-size: 13px;
-    }
-    .links a{
-      color: var(--muted);
-      text-decoration:none;
-      padding: 8px 10px;
-      border-radius: 10px;
-      border: 1px solid transparent;
-    }
-    .links a:hover{
-      color: var(--text);
-      border-color: var(--border);
-      background: rgba(255,255,255,.03);
-    }
+  .links{
+    display:flex;
+    gap: 18px;
+    align-items:center;
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .links a{
+    color: var(--muted);
+    text-decoration:none;
+    padding: 8px 6px;
+    border-bottom: 1px solid transparent;
+  }
+  .links a:hover{
+    color: var(--text);
+    border-bottom-color: rgba(0,0,0,.25);
+  }
 
-    main{
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 28px 18px 60px;
-    }
+  main{
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 34px 20px 70px;
+  }
 
-    .intro{
-      margin: 18px 0 22px;
-    }
-    .intro h1{
-      margin: 0 0 8px;
-      font-size: 26px;
-      letter-spacing: .2px;
-    }
-    .intro p{
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-      max-width: 70ch;
-    }
+  /* Hide the "Gallery" headline block to match Pixieset demo vibe */
+  .intro{ display:none; }
 
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 18px;
-    }
+  /* Clean grid with lots of breathing room */
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 22px;
+  }
 
-    figure{
-      margin:0;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.02);
-      border-radius: var(--radius);
-      overflow:hidden;
-      box-shadow: var(--shadow);
-      transition: transform .18s ease, border-color .18s ease;
-    }
-    figure:hover{
-      transform: translateY(-2px);
-      border-color: rgba(255,255,255,.14);
-    }
+  figure{
+    margin:0;
+  }
 
-    .thumb{
-      width: 100%;
-      aspect-ratio: 4 / 3;
-      object-fit: cover;
-      display:block;
-      cursor: zoom-in;
-      background: #111;
-    }
+  .thumb{
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display:block;
+    cursor: zoom-in;
+    background: #f3f4f6;
+    border-radius: 2px; /* Pixieset is very subtle */
+    transition: transform .18s ease, filter .18s ease;
+  }
 
-    figcaption{
-      padding: 12px 14px 14px;
-    }
+  figure:hover .thumb{
+    transform: translateY(-1px);
+    filter: brightness(.98);
+  }
 
-    .prompt{
-      font-size: 12px;
-      line-height: 1.35;
-      color: var(--muted);
-      white-space: pre-wrap;
-    }
+  /* Prompt shown under image: clean + subtle */
+  figcaption{
+    padding: 10px 0 0;
+  }
 
-    .meta{
-      display:flex;
-      justify-content:space-between;
-      gap: 10px;
-      align-items:center;
-      margin-top: 10px;
-      font-size: 11px;
-      color: rgba(255,255,255,.45);
-    }
+  .prompt{
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--muted);
+    white-space: pre-wrap;
+  }
 
-    footer{
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 18px;
-      color: rgba(255,255,255,.35);
-      font-size: 12px;
-      border-top: 1px solid var(--border);
-    }
+  .meta{
+    display:none; /* remove "Image 01 / click to zoom" chrome */
+  }
 
-    /* Lightbox */
-    .lightbox{
-      position: fixed;
-      inset: 0;
-      display:none;
-      place-items:center;
-      background: rgba(0,0,0,.75);
-      z-index: 999;
-      padding: 20px;
-    }
-    .lightbox.open{ display:grid; }
+  footer{
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 18px 20px;
+    color: rgba(0,0,0,.35);
+    font-size: 12px;
+    border-top: 1px solid rgba(0,0,0,.06);
+  }
 
-    .lightbox-card{
-      width: min(1100px, 100%);
-      background: rgba(15,19,24,.92);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      overflow:hidden;
-      box-shadow: 0 30px 80px rgba(0,0,0,.6);
-    }
+  /* Lightbox: very minimal */
+  .lightbox{
+    position: fixed;
+    inset: 0;
+    display:none;
+    place-items:center;
+    background: rgba(255,255,255,.92);
+    z-index: 999;
+    padding: 18px;
+  }
+  .lightbox.open{ display:grid; }
 
-    .lightbox-img{
-      width:100%;
-      height:auto;
-      display:block;
-      max-height: 78vh;
-      object-fit: contain;
-      background: #000;
-    }
+  .lightbox-card{
+    width: min(1200px, 100%);
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+    box-shadow: none;
+  }
 
-    .lightbox-bottom{
-      padding: 14px 16px;
-      border-top: 1px solid var(--border);
-      display:flex;
-      justify-content:space-between;
-      gap: 12px;
-      align-items:flex-start;
-    }
+  .lightbox-img{
+    width:100%;
+    height:auto;
+    display:block;
+    max-height: 82vh;
+    object-fit: contain;
+    background: transparent;
+    border-radius: 2px;
+  }
 
-    .lightbox-prompt{
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.35;
-      white-space: pre-wrap;
-      flex: 1;
-    }
+  .lightbox-bottom{
+    margin-top: 14px;
+    padding: 0;
+    border: none;
+    display:flex;
+    justify-content:space-between;
+    gap: 12px;
+    align-items:flex-start;
+  }
 
-    .btn{
-      background: rgba(255,255,255,.06);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 12px;
-      cursor:pointer;
-      user-select:none;
-    }
-    .btn:hover{
-      background: rgba(255,255,255,.10);
-    }
-  </style>
-</head>
+  .lightbox-prompt{
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    flex: 1;
+  }
 
-<body>
-  <header>
-    <div class="nav">
-      <div class="brand">
-        <div class="title">Latent Illumination</div>
-        <div class="subtitle">Prompt Gallery</div>
-      </div>
-      <nav class="links">
-        <a href="#">Work</a>
-        <a href="mailto:hello@latentillumination.com">Contact</a>
-      </nav>
-    </div>
-  </header>
-
-  <main>
-    <section class="intro">
-      <h1>Gallery</h1>
-      <p>Minimal showcase of generated work. Each image includes the exact prompt used.</p>
-    </section>
-
-    <section class="grid" id="grid">
-      <!-- Replace these with your own images later -->
-      <figure>
-        <img class="thumb" src="https://picsum.photos/1200/900?random=1" alt="Artwork 1"
-             data-full="https://picsum.photos/2400/1800?random=1"
-             data-prompt="PROMPT:\nA premium studio product shot, softbox key light, subtle rim light, clean background, crisp focus, natural materials, cinematic polish.\n\nMODEL: FLUX.2 Klein\nASPECT: 4:3" />
-        <figcaption>
-          <div class="prompt">PROMPT:
-A premium studio product shot, softbox key light, subtle rim light, clean background, crisp focus, natural materials, cinematic polish.
-
-MODEL: FLUX.2 Klein
-ASPECT: 4:3</div>
-          <div class="meta"><span>Image 01</span><span>Click to zoom</span></div>
-        </figcaption>
-      </figure>
-
-      <figure>
-        <img class="thumb" src="https://picsum.photos/1200/900?random=2" alt="Artwork 2"
-             data-full="https://picsum.photos/2400/1800?random=2"
-             data-prompt="PROMPT:\nCinematic portrait, soft bounce key, controlled contrast, shallow depth of field, natural skin tones, filmic grain.\n\nMODEL: FLUX.2 Max\nASPECT: 4:3" />
-        <figcaption>
-          <div class="prompt">PROMPT:
-Cinematic portrait, soft bounce key, controlled contrast, shallow depth of field, natural skin tones, filmic grain.
-
-MODEL: FLUX.2 Max
-ASPECT: 4:3</div>
-          <div class="meta"><span>Image 02</span><span>Click to zoom</span></div>
-        </figcaption>
-      </figure>
-
-      <figure>
-        <img class="thumb" src="https://picsum.photos/1200/900?random=3" alt="Artwork 3"
-             data-full="https://picsum.photos/2400/1800?random=3"
-             data-prompt="PROMPT:\nSurreal dreamlike scene, fog layers, volumetric light beams, moody palette, subtle texture detail, cinematic framing.\n\nMODEL: FLUX.2 Klein\nASPECT: 4:3" />
-        <figcaption>
-          <div class="prompt">PROMPT:
-Surreal dreamlike scene, fog layers, volumetric light beams, moody palette, subtle texture detail, cinematic framing.
-
-MODEL: FLUX.2 Klein
-ASPECT: 4:3</div>
-          <div class="meta"><span>Image 03</span><span>Click to zoom</span></div>
-        </figcaption>
-      </figure>
-    </section>
-  </main>
-
-  <footer>
-    © <span id="year"></span> Latent Illumination — minimal prompt gallery.
-  </footer>
-
-  <!-- Lightbox -->
-  <div class="lightbox" id="lightbox">
-    <div class="lightbox-card">
-      <img class="lightbox-img" id="lightboxImg" alt="Full view" />
-      <div class="lightbox-bottom">
-        <div class="lightbox-prompt" id="lightboxPrompt"></div>
-        <button class="btn" id="copyBtn">Copy prompt</button>
-        <button class="btn" id="closeBtn">Close</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-
-    const lightbox = document.getElementById("lightbox");
-    const lightboxImg = document.getElementById("lightboxImg");
-    const lightboxPrompt = document.getElementById("lightboxPrompt");
-    const closeBtn = document.getElementById("closeBtn");
-    const copyBtn = document.getElementById("copyBtn");
-
-    function openLightbox(imgEl){
-      const full = imgEl.dataset.full || imgEl.src;
-      const prompt = imgEl.dataset.prompt || "";
-      lightboxImg.src = full;
-      lightboxPrompt.textContent = prompt;
-      lightbox.classList.add("open");
-    }
-
-    function closeLightbox(){
-      lightbox.classList.remove("open");
-      lightboxImg.src = "";
-      lightboxPrompt.textContent = "";
-    }
-
-    document.querySelectorAll(".thumb").forEach(img => {
-      img.addEventListener("click", () => openLightbox(img));
-    });
-
-    closeBtn.addEventListener("click", closeLightbox);
-
-    lightbox.addEventListener("click", (e) => {
-      if(e.target === lightbox) closeLightbox();
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if(e.key === "Escape") closeLightbox();
-    });
-
-    copyBtn.addEventListener("click", async () => {
-      try{
-        await navigator.clipboard.writeText(lightboxPrompt.textContent.trim());
-        copyBtn.textContent = "Copied!";
-        setTimeout(() => copyBtn.textContent = "Copy prompt", 1200);
-      }catch(err){
-        copyBtn.textContent = "Copy failed";
-        setTimeout(() => copyBtn.textContent = "Copy prompt", 1200);
-      }
-    });
-  </script>
-</body>
-</html>
+  .btn{
+    background: transparent;
+    border: 1px solid rgba(0,0,0,.16);
+    color: rgba(0,0,0,.75);
+    border-radius: 999px;
+    padding: 9px 12px;
+    font-size: 12px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .btn:hover{
+    border-color: rgba(0,0,0,.28);
+    color: rgba(0,0,0,.92);
+  }
+</style>
