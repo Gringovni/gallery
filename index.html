@@ -68,7 +68,7 @@
     }
 
     async function loadGallery(){
-      const res = await fetch("gallery.json", { cache: "no-store" });
+      const res = await fetch("gallery.json?v=" + Date.now(), { cache: "no-store" });
       const items = await res.json();
 
       grid.innerHTML = "";
