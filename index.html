@@ -1,17 +1,112 @@
-[
-  {
-    "src": "https://picsum.photos/id/1011/1200/1600",
-    "title": "01",
-    "prompt": "PROMPT:\nEditorial portrait, soft key, subtle rim, controlled contrast.\nMODEL: FLUX.2 Klein"
-  },
-  {
-    "src": "https://picsum.photos/id/1005/1200/1600",
-    "title": "02",
-    "prompt": "PROMPT:\nFashion studio, clean backdrop, crisp focus.\nMODEL: FLUX.2 Max"
-  },
-  {
-    "src": "https://picsum.photos/id/1027/1200/1600",
-    "title": "03",
-    "prompt": "PROMPT:\nMoody portrait, low-key lighting, filmic tones.\nMODEL: FLUX Kontext"
-  }
-]
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Latent Illumination — Gallery</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand">Latent Illumination</div>
+      <nav class="links">
+        <a href="#">Work</a>
+        <a href="mailto:hello@latentillumination.com">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="grid" id="grid"></section>
+  </main>
+
+  <footer>
+    <div>© <span id="year"></span> Latent Illumination</div>
+    <div class="social">
+      <a href="#" aria-label="Instagram">IG</a>
+      <a href="#" aria-label="X">X</a>
+      <a href="#" aria-label="YouTube">YT</a>
+    </div>
+  </footer>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <div class="lightbox-inner">
+      <img class="lightbox-img" id="lbImg" alt="Full view" />
+      <div class="lightbox-bar">
+        <div class="lightbox-prompt" id="lbPrompt"></div>
+        <div class="actions">
+          <button class="btn" id="copyBtn">Copy prompt</button>
+          <button class="btn" id="closeBtn">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const grid = document.getElementById("grid");
+    const lightbox = document.getElementById("lightbox");
+    const lbImg = document.getElementById("lbImg");
+    const lbPrompt = document.getElementById("lbPrompt");
+    const closeBtn = document.getElementById("closeBtn");
+    const copyBtn = document.getElementById("copyBtn");
+
+    function openLB(src, prompt){
+      lbImg.src = src;
+      lbPrompt.textContent = prompt || "";
+      lightbox.classList.add("open");
+      lightbox.setAttribute("aria-hidden", "false");
+    }
+    function closeLB(){
+      lightbox.classList.remove("open");
+      lightbox.setAttribute("aria-hidden", "true");
+      lbImg.src = "";
+      lbPrompt.textContent = "";
+    }
+
+    async function loadGallery(){
+      const res = await fetch("gallery.json", { cache: "no-store" });
+      const items = await res.json();
+
+      grid.innerHTML = "";
+      for (const item of items){
+        const fig = document.createElement("figure");
+        fig.className = "tile";
+
+        const img = document.createElement("img");
+        img.src = item.src;
+        img.alt = item.title || "Artwork";
+        img.addEventListener("click", () => openLB(item.src, item.prompt));
+
+        const cap = document.createElement("div");
+        cap.className = "caption";
+        cap.textContent = item.prompt || "";
+
+        fig.appendChild(img);
+        fig.appendChild(cap);
+        grid.appendChild(fig);
+      }
+    }
+
+    closeBtn.addEventListener("click", closeLB);
+    lightbox.addEventListener("click", (e) => { if(e.target === lightbox) closeLB(); });
+    document.addEventListener("keydown", (e) => { if(e.key === "Escape") closeLB(); });
+
+    copyBtn.addEventListener("click", async () => {
+      try{
+        await navigator.clipboard.writeText(lbPrompt.textContent.trim());
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => copyBtn.textContent = "Copy prompt", 1200);
+      }catch{
+        copyBtn.textContent = "Copy failed";
+        setTimeout(() => copyBtn.textContent = "Copy prompt", 1200);
+      }
+    });
+
+    loadGallery();
+  </script>
+</body>
+</html>
