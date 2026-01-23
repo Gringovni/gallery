@@ -179,3 +179,39 @@ footer{
 .btn:hover{
   border-color: rgba(233,237,242,.55);
 }
+.lb-arrow{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  border: 1px solid rgba(233,237,242,.35);
+  background: rgba(63,71,79,.35);
+  color: rgba(233,237,242,.95);
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+  user-select: none;
+}
+
+.lb-arrow:hover{
+  border-color: rgba(233,237,242,.55);
+  background: rgba(63,71,79,.55);
+}
+
+.lb-prev{ left: 22px; }
+.lb-next{ right: 22px; }
+
+@media (max-width: 700px){
+  .lb-arrow{
+    width: 46px;
+    height: 46px;
+    font-size: 24px;
+  }
+  .lb-prev{ left: 12px; }
+  .lb-next{ right: 12px; }
+}
