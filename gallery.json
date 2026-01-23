@@ -1,0 +1,17 @@
+[
+  {
+    "src": "https://picsum.photos/id/1011/1200/1600",
+    "title": "01",
+    "prompt": "PROMPT:\nEditorial portrait, soft key, subtle rim, controlled contrast.\nMODEL: FLUX.2 Klein"
+  },
+  {
+    "src": "https://picsum.photos/id/1005/1200/1600",
+    "title": "02",
+    "prompt": "PROMPT:\nFashion studio, clean backdrop, crisp focus.\nMODEL: FLUX.2 Max"
+  },
+  {
+    "src": "https://picsum.photos/id/1027/1200/1600",
+    "title": "03",
+    "prompt": "PROMPT:\nMoody portrait, low-key lighting, filmic tones.\nMODEL: FLUX Kontext"
+  }
+]
