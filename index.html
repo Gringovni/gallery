@@ -32,17 +32,21 @@
 
   <!-- Lightbox -->
   <div class="lightbox" id="lightbox" aria-hidden="true">
-    <div class="lightbox-inner">
-      <img class="lightbox-img" id="lbImg" alt="Full view" />
-      <div class="lightbox-bar">
-        <div class="lightbox-prompt" id="lbPrompt"></div>
-        <div class="actions">
-          <button class="btn" id="copyBtn">Copy prompt</button>
-          <button class="btn" id="closeBtn">Close</button>
-        </div>
+  <button class="lb-arrow lb-prev" id="prevBtn" aria-label="Previous">‹</button>
+
+  <div class="lightbox-inner">
+    <img class="lightbox-img" id="lbImg" alt="Full view" />
+    <div class="lightbox-bar">
+      <div class="lightbox-prompt" id="lbPrompt"></div>
+      <div class="actions">
+        <button class="btn" id="copyBtn">Copy prompt</button>
+        <button class="btn" id="closeBtn">Close</button>
       </div>
     </div>
   </div>
+
+  <button class="lb-arrow lb-next" id="nextBtn" aria-label="Next">›</button>
+</div>
 
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
