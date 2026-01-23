@@ -4,7 +4,7 @@
   --text:#e9edf2;
   --muted: rgba(233,237,242,.75);
   --muted2: rgba(233,237,242,.55);
-  --max: 1180px;
+  --max: 1400px;
 
   --gap: 18px;
   --tileRadius: 2px;
@@ -63,7 +63,7 @@ main{
 /* Gallery grid */
 .grid{
   display:grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--gap);
 }
 @media (max-width: 1100px){ .grid{ grid-template-columns: repeat(3, 1fr);} }
