@@ -296,7 +296,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 .lb-next{ right: 14px; }
 .lb-nav:disabled{ cursor: default; }
 
-/* === HERO (NEW) — contained parallax hero === */
+/* === HERO — contained parallax hero (stronger) === */
 .hero{
   position: relative;
   height: 92vh;
@@ -304,11 +304,43 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   background: #fff;
 }
 
+/* Overscan: make the image taller than the hero so it can move */
 .hero-media{
   position: absolute;
-  inset: 0;
+  left: 0;
+  right: 0;
+  top: -10%;
+  bottom: -10%;
   background-size: cover;
   background-position: center;
-  transform: translate3d(0, 0, 0) scale(1.06);
+  transform: translate3d(0, 0, 0) scale(1.14);
   will-change: transform;
+}
+
+/* === WHITE BANNER BELOW HERO (NEW) === */
+.hero-banner{
+  background: #fff;
+}
+
+.hero-banner-inner{
+  height: 72px;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--pad);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-banner-title{
+  font-size: 12px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #111;
+  opacity: .65;
+}
+
+.hero-banner-divider{
+  height: 1px;
+  background: var(--line);
 }
