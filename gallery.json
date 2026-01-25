@@ -1,22 +1,154 @@
 [
   {
-    "src": "https://picsum.photos/id/1011/1200/1600",
+    "src": "https://picsum.photos/id/1033/1200/1600",
     "title": "01",
-    "prompt": "PROMPT:\nEditorial portrait, soft key, subtle rim, controlled contrast.\nMODEL: FLUX.2 Klein"
+    "prompt": "PROMPT:\nPainterly portrait, soft tonal transitions, artistic framing.\nMODEL: FLUX.2 Klein"
+  },
+  {
+    "src": "https://picsum.photos/id/1019/1200/1600",
+    "title": "02",
+    "prompt": "PROMPT:\nCinematic portrait, natural light falloff, filmic mood.\nMODEL: FLUX.2 Max"
+  },
+  {
+    "src": "https://picsum.photos/id/1025/1200/1600",
+    "title": "03",
+    "prompt": "PROMPT:\nExpressive character study, organic texture, visual storytelling.\nMODEL: FLUX Kontext"
+  },
+  {
+    "src": "https://picsum.photos/id/1028/1600/1200",
+    "title": "04",
+    "prompt": "PROMPT:\nConceptual scene, symbolic composition, restrained palette.\nMODEL: FLUX.2 Max"
+  },
+  {
+    "src": "https://picsum.photos/id/1041/1600/900",
+    "title": "05",
+    "prompt": "PROMPT:\nMinimalist visual study, balance of space and form.\nMODEL: FLUX Kontext"
+  },
+  {
+    "src": "https://picsum.photos/id/1076/1200/1200",
+    "title": "06",
+    "prompt": "PROMPT:\nSquare art photograph, abstract textures, gallery-ready.\nMODEL: FLUX.2 Klein"
+  },
+  {
+    "src": "https://picsum.photos/id/1008/1000/1600",
+    "title": "07",
+    "prompt": "PROMPT:\nVertical fine-art portrait, soft contrast, poetic tone.\nMODEL: FLUX.2 Klein"
+  },
+  {
+    "src": "https://picsum.photos/id/1036/1800/1000",
+    "title": "08",
+    "prompt": "PROMPT:\nWide cinematic frame, atmospheric depth, visual tension.\nMODEL: FLUX.2 Max"
+  },
+  {
+    "src": "https://picsum.photos/id/1047/1400/900",
+    "title": "09",
+    "prompt": "PROMPT:\nSurreal landscape, dreamlike light, painterly horizon.\nMODEL: FLUX Kontext"
+  },
+  {
+    "src": "https://picsum.photos/id/1081/900/1400",
+    "title": "10",
+    "prompt": "PROMPT:\nIllustrative portrait framing, graphic silhouette, mood-first.\nMODEL: FLUX.2 Max"
+  },
+
+  {
+    "src": "https://picsum.photos/id/1018/2000/900",
+    "title": "11",
+    "prompt": "PROMPT:\nPanoramic cinematic still, narrative scale, calm pacing.\nMODEL: FLUX Kontext"
+  },
+  {
+    "src": "https://picsum.photos/id/1021/900/2000",
+    "title": "12",
+    "prompt": "PROMPT:\nTall editorial composition, negative space as design.\nMODEL: FLUX.2 Klein"
+  },
+  {
+    "src": "https://picsum.photos/id/1039/1500/1500",
+    "title": "13",
+    "prompt": "PROMPT:\nSquare conceptual image, centered subject, art-forward.\nMODEL: FLUX.2 Max"
+  },
+  {
+    "src": "https://picsum.photos/id/1052/1200/1600",
+    "title": "14",
+    "prompt": "PROMPT:\nTextural portrait, tactile surfaces, fine-art sensibility.\nMODEL: FLUX Kontext"
+  },
+  {
+    "src": "https://picsum.photos/id/1069/1600/1200",
+    "title": "15",
+    "prompt": "PROMPT:\nEnvironmental art photograph, scale and geometry.\nMODEL: FLUX.2 Max"
+  },
+  {
+    "src": "https://picsum.photos/id/1020/1200/1200",
+    "title": "16",
+    "prompt": "PROMPT:\nAbstract visual composition, shape-driven narrative.\nMODEL: FLUX.2 Klein"
+  },
+  {
+    "src": "https://picsum.photos/id/1003/1000/1600",
+    "title": "17",
+    "prompt": "PROMPT:\nSurreal portrait, uncanny calm, illustrative mood.\nMODEL: FLUX Kontext"
+  },
+  {
+    "src": "https://picsum.photos/id/1032/1800/1000",
+    "title": "18",
+    "prompt": "PROMPT:\nWide conceptual frame, symbolic spacing, minimal action.\nMODEL: FLUX.2 Max"
+  },
+  {
+    "src": "https://picsum.photos/id/1040/1400/900",
+    "title": "19",
+    "prompt": "PROMPT:\nCinematic environment study, layered depth cues.\nMODEL: FLUX Kontext"
+  },
+  {
+    "src": "https://picsum.photos/id/1082/900/1400",
+    "title": "20",
+    "prompt": "PROMPT:\nVertical art portrait, elegant restraint, gallery tone.\nMODEL: FLUX.2 Klein"
+  },
+
+  {
+    "src": "https://picsum.photos/id/1057/2000/900",
+    "title": "21",
+    "prompt": "PROMPT:\nUltra-wide cinematic still, slow narrative energy.\nMODEL: FLUX Kontext"
+  },
+  {
+    "src": "https://picsum.photos/id/1024/1200/1600",
+    "title": "22",
+    "prompt": "PROMPT:\nEditorial art portrait, controlled chaos, expressive pose.\nMODEL: FLUX.2 Max"
+  },
+  {
+    "src": "https://picsum.photos/id/1012/1200/1200",
+    "title": "23",
+    "prompt": "PROMPT:\nConceptual square image, symbolic abstraction.\nMODEL: FLUX.2 Klein"
+  },
+  {
+    "src": "https://picsum.photos/id/1060/1600/900",
+    "title": "24",
+    "prompt": "PROMPT:\nSurreal visual landscape, dream logic composition.\nMODEL: FLUX Kontext"
+  },
+  {
+    "src": "https://picsum.photos/id/1074/1800/1000",
+    "title": "25",
+    "prompt": "PROMPT:\nCinematic wide shot, strong graphic separation.\nMODEL: FLUX.2 Max"
   },
   {
     "src": "https://picsum.photos/id/1005/1200/1600",
-    "title": "02",
-    "prompt": "PROMPT:\nFashion studio, clean backdrop, crisp focus.\nMODEL: FLUX.2 Max"
+    "title": "26",
+    "prompt": "PROMPT:\nClean editorial portrait, fashion-meets-art.\nMODEL: FLUX.2 Klein"
   },
   {
-    "src": "https://picsum.photos/id/1027/1200/1600",
-    "title": "03",
-    "prompt": "PROMPT:\nMoody portrait, low-key lighting, filmic tones.\nMODEL: FLUX Kontext"
+    "src": "https://picsum.photos/id/1031/1400/900",
+    "title": "27",
+    "prompt": "PROMPT:\nNarrative still frame, cinematic realism.\nMODEL: FLUX Kontext"
   },
   {
-  "src": "https://picsum.photos/id/1035/1200/1600",
-  "title": "04",
-  "prompt": "PROMPT:\nClean editorial portrait, soft contrast.\nMODEL: FLUX.2 Klein"
-}
+    "src": "https://picsum.photos/id/1043/1600/1200",
+    "title": "28",
+    "prompt": "PROMPT:\nArt landscape, tonal harmony, visual calm.\nMODEL: FLUX.2 Max"
+  },
+  {
+    "src": "https://picsum.photos/id/1084/1400/900",
+    "title": "29",
+    "prompt": "PROMPT:\nMuted editorial composition, understated elegance.\nMODEL: FLUX Kontext"
+  },
+  {
+    "src": "https://picsum.photos/id/1011/1200/1600",
+    "title": "30",
+    "prompt": "PROMPT:\nOrganic portrait, natural textures, fine-art mood.\nMODEL: FLUX.2 Klein"
+  }
 ]
