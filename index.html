@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -24,6 +25,11 @@
     <!-- thin gray line only -->
     <div class="top-divider"></div>
   </header>
+
+  <!-- HERO (NEW) -->
+  <section class="hero" id="hero" aria-label="Hero">
+    <div class="hero-media" id="heroMedia" style="background-image:url('https://picsum.photos/1920/1200');"></div>
+  </section>
 
   <main class="wrap">
     <section id="masonry" class="masonry" aria-label="Gallery"></section>
@@ -182,6 +188,48 @@
     });
 
     load();
+
+    // HERO PARALLAX (NEW) — contained to the hero section only
+    (function(){
+      const hero = document.getElementById("hero");
+      const media = document.getElementById("heroMedia");
+      if(!hero || !media) return;
+
+      const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if(reduceMotion) return;
+
+      let ticking = false;
+
+      function update(){
+        const rect = hero.getBoundingClientRect();
+
+        // Only compute while hero is visible; prevents any “takes over the page” feel.
+        if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
+
+        // Progress from 0 → 1 while scrolling through the hero
+        const progress = Math.min(Math.max(-rect.top / rect.height, 0), 1);
+
+        // Tune these to match the reference feel
+        const translate = progress * 80;       // px
+        const scale = 1.06 - progress * 0.04;  // subtle zoom-out
+
+        media.style.transform = `translate3d(0, ${translate}px, 0) scale(${scale})`;
+      }
+
+      function onScroll(){
+        if(!ticking){
+          requestAnimationFrame(() => {
+            update();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll);
+      update();
+    })();
   </script>
 </body>
 </html>
