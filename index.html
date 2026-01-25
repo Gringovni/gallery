@@ -2,149 +2,186 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Latent Illumination</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" type="image/png" href="fast-forward.png">
+  <link rel="icon" type="image/png" href="assets/01-fast-forward.png">
 </head>
+
 <body>
-  <header>
-    <div class="nav">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <!-- LEFT (empty on purpose) -->
+      <div class="tabs" aria-hidden="true"></div>
+
+      <!-- CENTER -->
       <div class="brand">Latent Illumination</div>
-      <nav class="links">
-        <a href="#">Work</a>
-        <a href="mailto:hello@latentillumination.com">Contact</a>
-      </nav>
+
+      <!-- RIGHT (empty on purpose) -->
+      <div class="top-actions" aria-hidden="true"></div>
     </div>
+
+    <!-- thin gray line only -->
+    <div class="top-divider"></div>
   </header>
 
-  <main>
-    <section class="grid" id="grid"></section>
+  <main class="wrap">
+    <section id="masonry" class="masonry" aria-label="Gallery"></section>
   </main>
 
-  <footer>
-    <div>© <span id="year"></span> Latent Illumination</div>
-    <div class="social">
-      <a href="#" aria-label="Instagram">IG</a>
-      <a href="#" aria-label="X">X</a>
-      <a href="#" aria-label="YouTube">YT</a>
+  <footer class="site-footer">
+    <div class="footer-line footer-main">
+      © 2026 Latent Illumination |
+      <a
+        class="footer-email"
+        href="mailto:contact@latentillumination.com"
+        title="Email Latent Illumination"
+      >
+        contact@latentillumination.com
+      </a>
+    </div>
+
+    <div class="footer-line footer-powered">
+      Powered by
+      <a
+        class="footer-github"
+        href="https://github.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        GitHub
+      </a>
     </div>
   </footer>
 
-  <!-- Lightbox -->
-  <div class="lightbox" id="lightbox" aria-hidden="true">
-  <button class="lb-arrow lb-prev" id="prevBtn" aria-label="Previous">‹</button>
+  <!-- Lightbox (UPDATED only) -->
+  <div class="lb" id="lb" aria-hidden="true" role="dialog" aria-label="Image viewer">
+    <button class="lb-close" id="lbClose" aria-label="Close">×</button>
 
-  <div class="lightbox-inner">
-    <img class="lightbox-img" id="lbImg" alt="Full view" />
-    <div class="lightbox-bar">
-      <div class="lightbox-prompt" id="lbPrompt"></div>
-      <div class="actions">
-        <button class="btn" id="copyBtn">Copy prompt</button>
-        <button class="btn" id="closeBtn">Close</button>
+    <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">‹</button>
+
+    <div class="lb-content" role="document">
+      <div class="lb-media">
+        <img id="lbImg" class="lb-img" alt="" />
       </div>
+
+      <aside class="lb-side" aria-label="Prompt">
+        <pre class="lb-prompt" id="lbPrompt"></pre>
+      </aside>
     </div>
+
+    <button class="lb-nav lb-next" id="lbNext" aria-label="Next">›</button>
   </div>
 
-  <button class="lb-arrow lb-next" id="nextBtn" aria-label="Next">›</button>
-</div>
+  <script>
+    const masonry = document.getElementById("masonry");
 
-<script>
-  document.getElementById("year").textContent = new Date().getFullYear();
+    const lb = document.getElementById("lb");
+    const lbImg = document.getElementById("lbImg");
+    const lbPrompt = document.getElementById("lbPrompt");
+    const lbClose = document.getElementById("lbClose");
+    const lbPrev = document.getElementById("lbPrev");
+    const lbNext = document.getElementById("lbNext");
 
-  const grid = document.getElementById("grid");
-  const lightbox = document.getElementById("lightbox");
-  const lbImg = document.getElementById("lbImg");
-  const lbPrompt = document.getElementById("lbPrompt");
-  const closeBtn = document.getElementById("closeBtn");
-  const copyBtn = document.getElementById("copyBtn");
+    let items = [];
+    let currentIndex = -1;
 
-  const prevBtn = document.getElementById("prevBtn");
-  const nextBtn = document.getElementById("nextBtn");
+    function formatPrompt(raw){
+      const text = (raw || "").toString();
 
-  let items = [];
-  let currentIndex = 0;
+      // Remove any MODEL line(s)
+      const noModel = text
+        .split(/\r?\n/)
+        .filter(line => !/^\s*MODEL\s*:/i.test(line.trim()))
+        .join("\n")
+        .trim();
 
-  function openLB(index){
-    currentIndex = index;
-    const item = items[currentIndex];
-    lbImg.src = item.src;
-    lbPrompt.textContent = item.prompt || "";
-    lightbox.classList.add("open");
-    lightbox.setAttribute("aria-hidden", "false");
-  }
+      // If the remaining text already starts with PROMPT:, keep it.
+      if (/^\s*PROMPT\s*:/i.test(noModel)) return noModel.trim();
 
-  function closeLB(){
-    lightbox.classList.remove("open");
-    lightbox.setAttribute("aria-hidden", "true");
-    lbImg.src = "";
-    lbPrompt.textContent = "";
-  }
-
-  function showPrev(){
-    if(!items.length) return;
-    currentIndex = (currentIndex - 1 + items.length) % items.length;
-    openLB(currentIndex);
-  }
-
-  function showNext(){
-    if(!items.length) return;
-    currentIndex = (currentIndex + 1) % items.length;
-    openLB(currentIndex);
-  }
-
-  async function loadGallery(){
-    const res = await fetch("gallery.json?v=" + Date.now(), { cache: "no-store" });
-    items = await res.json();
-
-    grid.innerHTML = "";
-    items.forEach((item, index) => {
-      const fig = document.createElement("figure");
-      fig.className = "tile";
-
-      const img = document.createElement("img");
-      img.src = item.src;
-      img.alt = item.title || "Artwork";
-      img.addEventListener("click", () => openLB(index));
-
-      const cap = document.createElement("div");
-      cap.className = "caption";
-      cap.textContent = item.prompt || "";
-
-      fig.appendChild(img);
-      fig.appendChild(cap);
-      grid.appendChild(fig);
-    });
-  }
-
-  // Close
-  closeBtn.addEventListener("click", closeLB);
-  lightbox.addEventListener("click", (e) => { if(e.target === lightbox) closeLB(); });
-
-  // Prev/Next arrows
-  prevBtn.addEventListener("click", (e) => { e.stopPropagation(); showPrev(); });
-  nextBtn.addEventListener("click", (e) => { e.stopPropagation(); showNext(); });
-
-  // Keyboard
-  document.addEventListener("keydown", (e) => {
-    if(!lightbox.classList.contains("open")) return;
-
-    if(e.key === "Escape") closeLB();
-    if(e.key === "ArrowLeft") showPrev();
-    if(e.key === "ArrowRight") showNext();
-  });
-
-  // Copy prompt
-  copyBtn.addEventListener("click", async () => {
-    try{
-      await navigator.clipboard.writeText(lbPrompt.textContent.trim());
-      copyBtn.textContent = "Copied!";
-      setTimeout(() => copyBtn.textContent = "Copy prompt", 1200);
-    }catch{
-      copyBtn.textContent = "Copy failed";
-      setTimeout(() => copyBtn.textContent = "Copy prompt", 1200);
+      // Otherwise, wrap it as PROMPT:
+      if (!noModel) return "";
+      return `PROMPT:\n${noModel}`;
     }
-  });
 
-  loadGallery();
-</script>
+    function openLB(index){
+      currentIndex = index;
+      const item = items[currentIndex];
+
+      lbImg.src = item.src;
+      lbImg.alt = item.title || "";
+
+      // Prefer item.prompt, fallback to item.caption; always formatted as PROMPT only.
+      const raw = item.prompt ?? item.caption ?? "";
+      lbPrompt.textContent = formatPrompt(raw);
+
+      lb.classList.add("open");
+      lb.setAttribute("aria-hidden", "false");
+      updateNavState();
+    }
+
+    function closeLB(){
+      lb.classList.remove("open");
+      lb.setAttribute("aria-hidden", "true");
+      lbImg.src = "";
+      lbPrompt.textContent = "";
+      currentIndex = -1;
+    }
+
+    function updateNavState(){
+      const hasPrev = currentIndex > 0;
+      const hasNext = currentIndex < items.length - 1;
+      lbPrev.disabled = !hasPrev;
+      lbNext.disabled = !hasNext;
+      lbPrev.style.opacity = hasPrev ? "1" : "0.25";
+      lbNext.style.opacity = hasNext ? "1" : "0.25";
+    }
+
+    function prev(){
+      if(currentIndex > 0) openLB(currentIndex - 1);
+    }
+    function next(){
+      if(currentIndex < items.length - 1) openLB(currentIndex + 1);
+    }
+
+    async function load(){
+      const res = await fetch("gallery.json?v=" + Date.now(), { cache: "no-store" });
+      items = await res.json();
+
+      masonry.innerHTML = "";
+
+      items.forEach((item, i) => {
+        const card = document.createElement("article");
+        card.className = "card";
+
+        const img = document.createElement("img");
+        img.loading = "lazy";
+        img.src = item.thumb || item.src;
+        img.alt = item.title || "";
+        img.className = "card-img";
+        img.addEventListener("click", () => openLB(i));
+
+        card.appendChild(img);
+        masonry.appendChild(card);
+      });
+    }
+
+    lbClose.addEventListener("click", closeLB);
+    lbPrev.addEventListener("click", prev);
+    lbNext.addEventListener("click", next);
+
+    lb.addEventListener("click", (e) => {
+      if(e.target === lb) closeLB();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if(!lb.classList.contains("open")) return;
+      if(e.key === "Escape") closeLB();
+      if(e.key === "ArrowLeft") prev();
+      if(e.key === "ArrowRight") next();
+    });
+
+    load();
+  </script>
+</body>
+</html>
