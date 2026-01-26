@@ -209,8 +209,14 @@
         // Stronger parallax:
         // - more travel (translate)
         // - more zoom-out
-        const translate = progress * 170;      // px (stronger)
-        const scale = 1.14 - progress * 0.10;  // start zoomed, ease out
+        const isDesktop = window.innerWidth >= 900;
+
+// Mobile = current feel (unchanged)
+const maxTranslate = isDesktop ? 240 : 170;
+const maxScaleOut  = isDesktop ? 0.14 : 0.10;
+
+const translate = progress * maxTranslate;
+const scale = 1.14 - progress * maxScaleOut;
 
         media.style.transform = `translate3d(0, ${translate}px, 0) scale(${scale})`;
       }
