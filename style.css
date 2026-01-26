@@ -54,7 +54,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 
 /* thin gray line ONLY */
 .top-divider{
-  height: 1.75px;
+  height: 1.5px;
   background: var(--line);
 }
 
@@ -152,9 +152,8 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 
 /* === FOOTER DIVIDER (matches header line) === */
 .footer-divider{
-  max-width: var(--container);
-  margin: 56px auto 0;   /* spacing between gallery and footer */
-  padding: 0 var(--pad);
+  width: 100%;
+  margin: 56px 0 0;   /* spacing between gallery and footer */
 }
 
 .footer-divider::before{
@@ -359,7 +358,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 }
 
 .hero-banner-divider{
-  height: 1.75px;
+  height: 1.5px;
   background: var(--line);
 }
 
