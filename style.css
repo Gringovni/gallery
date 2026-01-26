@@ -54,7 +54,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 
 /* thin gray line ONLY */
 .top-divider{
-  height: 1.5px;
+  height: 1.75px;
   background: var(--line);
 }
 
@@ -345,7 +345,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 }
 
 .hero-banner-divider{
-  height: 1.5px;
+  height: 1.75px;
   background: var(--line);
 }
 
