@@ -317,9 +317,13 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   will-change: transform;
 }
 
-/* === WHITE BANNER BELOW HERO (NEW) === */
+/* === WHITE BANNER BELOW HERO (NOW STICKY HEADER) === */
 .hero-banner{
-  background: #fff;
+  position: sticky;
+  top: 0;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(8px);
+  z-index: 10;
 }
 
 .hero-banner-inner{
