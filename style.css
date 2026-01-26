@@ -337,8 +337,8 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
     bottom: 17px;          /* extra clearance from arrow */
     max-width: none;
 
-    font-size: 15px;
-    line-height: 1.2;
+    font-size: 20px;
+    line-height: 1.18;
   }
 }
 
