@@ -4,7 +4,7 @@
   --bg: #ffffff;
   --text: #111;
   --muted: #777;
-  --line: #b9b2a6;
+  --line: #e9e9e9;
 
   /* Tuning knobs */
   --container: 1585px;  /* wider = less side margin */
@@ -54,7 +54,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 
 /* thin gray line ONLY */
 .top-divider{
-  height: 2px;
+  height: 1.5px;
   background: var(--line);
 }
 
@@ -345,7 +345,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 }
 
 .hero-banner-divider{
-  height: 2px;
+  height: 1.5px;
   background: var(--line);
 }
 
