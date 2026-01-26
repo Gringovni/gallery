@@ -160,8 +160,8 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 .footer-divider::before{
   content: "";
   display: block;
-  height: 1.75px;        /* same thickness as top-divider */
-  background: #b9b2a6;   /* exact line color */
+  height: 1px;        /* same thickness as top-divider */
+  background: #e9e9e9;   /* exact line color */
 }
 
 /* Lightbox (UPDATED — only section changed) */
