@@ -11,7 +11,7 @@
 
 <body>
   <!-- HERO -->
-  <section class="hero" id="hero" aria-label="Hero">
+  <section class="hero" id="hero" aria-label="Hero" data-scroll-target="#masonry">
     <div class="hero-media" id="heroMedia" style="background-image:url('https://fastly.picsum.photos/id/1079/1200/1920.jpg?hmac=QVB59wT30THVrgW91lcAyjnXsf6NBQx17rQe_u9-Cck');"></div>
   </section>
 
@@ -224,6 +224,22 @@
       window.addEventListener("resize", onScroll);
       update();
     })();
+    
+    // HERO CLICK → SCROLL TO GALLERY
+(function(){
+  const hero = document.getElementById("hero");
+  const target = document.getElementById("masonry");
+  if(!hero || !target) return;
+
+  hero.style.cursor = "pointer";
+
+  hero.addEventListener("click", () => {
+    target.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  });
+})();
   </script>
 </body>
 </html>
