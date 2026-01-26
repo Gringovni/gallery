@@ -320,7 +320,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-weight: 600;
 
-  font-size: clamp(30px, 3.6vw, 90px);
+  font-size: clamp(30px, 4.0vw, 72px);
   line-height: 1.12;
   letter-spacing: 0; /* important for Playfair */
 
