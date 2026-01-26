@@ -365,7 +365,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   opacity: .9;
 
   /* Faster + bouncier */
-  animation: heroScrollBounce 1.15s cubic-bezier(.22, 1.25, .36, 1) infinite;
+  animation: heroScrollBounce 1.6s cubic-bezier(.22, .61, .36, 1) infinite;
 }
 
 /* Draw the chevron using borders */
@@ -398,11 +398,21 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 
 /* Bouncier motion with a little “double-tap” feel */
 @keyframes heroScrollBounce{
-  0%   { transform: translateX(-50%) translateY(0);   opacity: .75; }
-  45%  { transform: translateX(-50%) translateY(10px); opacity: 1; }
-  60%  { transform: translateX(-50%) translateY(6px); }
-  75%  { transform: translateX(-50%) translateY(12px); }
-  100% { transform: translateX(-50%) translateY(0);   opacity: .75; }
+  /* Rest */
+  0%   { transform: translateX(-50%) translateY(0); }
+  55%  { transform: translateX(-50%) translateY(0); }
+
+  /* Main fall */
+  72%  { transform: translateX(-50%) translateY(14px); }
+
+  /* Overshoot back up */
+  84%  { transform: translateX(-50%) translateY(9px); }
+
+  /* Micro settle */
+  92%  { transform: translateX(-50%) translateY(11px); }
+
+  /* Reset */
+  100% { transform: translateX(-50%) translateY(0); }
 }
 
 @media (prefers-reduced-motion: reduce){
