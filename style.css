@@ -363,10 +363,12 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   cursor: pointer;
   z-index: 2;
   opacity: .9;
-  animation: none; /* IMPORTANT: stop animating the whole button */
+
+  /* Smooth continuous scroll cue */
+  animation: heroScrollDrop 1.55s cubic-bezier(.22,.61,.36,1) infinite;
 }
 
-/* Animate only the chevron */
+/* Draw the chevron using borders */
 .hero-scroll::before{
   content:"";
   position: absolute;
@@ -376,27 +378,36 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   height: 18px;
   border-right: 2px solid rgba(255,255,255,0.85);
   border-bottom: 2px solid rgba(255,255,255,0.85);
-
-  /* base position */
   transform: translate(-50%, -55%) rotate(45deg);
-  opacity: .95;
-
-  /* drop + fade loop */
-  animation: heroChevronDrop 1.55s cubic-bezier(.22,.61,.36,1) infinite;
 }
 
-@keyframes heroChevronDrop{
-  0%   { transform: translate(-50%, -55%) rotate(45deg) translateY(0);   opacity: .95; }
-  55%  { transform: translate(-50%, -55%) rotate(45deg) translateY(14px); opacity: .95; }
-  80%  { transform: translate(-50%, -55%) rotate(45deg) translateY(22px); opacity: 0; }
+/* Smooth, continuous vertical motion */
+.hero-scroll::after{
+  content:"";
+  position: absolute;
+  inset: -8px;     /* slightly bigger halo */
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(0,0,0,0.22), rgba(0,0,0,0) 60%);
+}
 
-  /* reset while invisible */
-  81%  { transform: translate(-50%, -55%) rotate(45deg) translateY(0);   opacity: 0; }
+.hero-scroll:hover{ opacity: 1; }
+.hero-scroll:focus-visible{
+  outline: 2px solid rgba(255,255,255,0.85);
+  outline-offset: 3px;
+}
 
-  100% { transform: translate(-50%, -55%) rotate(45deg) translateY(0);   opacity: .95; }
+/* Smooth, continuous vertical motion */
+@keyframes heroScrollDrop{
+  0%   { transform: translateX(-50%) translateY(0);  opacity: .95; }
+  55%  { transform: translateX(-50%) translateY(16px); opacity: .95; }
+  80%  { transform: translateX(-50%) translateY(26px); opacity: 0; }
+
+  /* instant reset (hidden) */
+  81%  { transform: translateX(-50%) translateY(0);  opacity: 0; }
+
+  100% { transform: translateX(-50%) translateY(0);  opacity: .95; }
 }
 
 @media (prefers-reduced-motion: reduce){
   .hero-scroll{ animation: none; }
-  .hero-scroll::before{ animation: none; }
 }
