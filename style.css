@@ -353,7 +353,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 .hero-scroll{
   position: absolute;
   left: 50%;
-  bottom: 18px;
+  bottom: 36px;
   transform: translateX(-50%);
   width: 58px;     /* bigger */
   height: 58px;    /* bigger */
