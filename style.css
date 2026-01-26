@@ -348,3 +348,62 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   height: 1px;
   background: var(--line);
 }
+
+/* === HERO SCROLL CUE (arrow) — smooth, continuous float === */
+.hero-scroll{
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  width: 58px;     /* bigger */
+  height: 58px;    /* bigger */
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  z-index: 2;
+  opacity: .9;
+
+  /* Smooth continuous scroll cue */
+  animation: heroScrollFloat 1.35s ease-in-out infinite;
+}
+
+/* Draw the chevron using borders */
+.hero-scroll::before{
+  content:"";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;      /* bigger chevron */
+  height: 16px;     /* bigger chevron */
+  border-right: 3px solid rgba(255,255,255,0.9); /* thicker */
+  border-bottom: 3px solid rgba(255,255,255,0.9); /* thicker */
+  transform: translate(-50%, -45%) rotate(45deg);
+}
+
+/* Smooth, continuous vertical motion */
+.hero-scroll::after{
+  content:"";
+  position: absolute;
+  inset: -8px;      /* slightly bigger halo */
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(0,0,0,0.22), rgba(0,0,0,0) 60%);
+}
+
+.hero-scroll:hover{ opacity: 1; }
+
+.hero-scroll:focus-visible{
+  outline: 2px solid rgba(255,255,255,0.85);
+  outline-offset: 3px;
+}
+
+/* Bouncier motion with a little “double-tap” feel */
+@keyframes heroScrollFloat{
+  0%   { transform: translateX(-50%) translateY(0); }
+  50%  { transform: translateX(-50%) translateY(10px); }
+  100% { transform: translateX(-50%) translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .hero-scroll{ animation: none; }
+}
