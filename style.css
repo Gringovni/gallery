@@ -342,6 +342,18 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   }
 }
 
+/* Hide mobile-only line breaks by default (desktop & tablet) */
+.m-br {
+  display: none;
+}
+
+/* Enable line breaks on mobile only */
+@media (max-width: 640px) {
+  .m-br {
+    display: inline;
+  }
+}
+
 /* === HERO — contained parallax hero (stronger) === */
 .hero{
   position: relative;
