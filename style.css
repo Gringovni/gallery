@@ -330,12 +330,12 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 /* Mobile refinement */
 @media (max-width: 640px){
   .hero-caption{
-    left: 20px;
+    left: 15px;
     right: 20px;
-    bottom: 80px;          /* extra clearance from arrow */
+    bottom: 120px;          /* extra clearance from arrow */
     max-width: none;
 
-    font-size: 22px;
+    font-size: 32px;
     line-height: 1.18;
   }
 }
