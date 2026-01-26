@@ -150,6 +150,20 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   color: #111;
 }
 
+/* === FOOTER DIVIDER (matches header line) === */
+.footer-divider{
+  max-width: var(--container);
+  margin: 56px auto 0;   /* spacing between gallery and footer */
+  padding: 0 var(--pad);
+}
+
+.footer-divider::before{
+  content: "";
+  display: block;
+  height: 1.75px;        /* same thickness as top-divider */
+  background: #b9b2a6;   /* exact line color */
+}
+
 /* Lightbox (UPDATED — only section changed) */
 .lb{
   position: fixed;
