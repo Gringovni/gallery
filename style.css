@@ -134,6 +134,8 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 
 /* Footer */
 .site-footer{
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 400; /* or 300 if you want lighter */
   max-width: var(--container);
   margin: 0 auto;
   padding: 44px var(--pad) 56px;
