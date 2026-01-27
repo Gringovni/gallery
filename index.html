@@ -20,7 +20,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@1,300&display=swap" rel="stylesheet">
 
   <!-- Your site styles -->
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="assets/01-fast-forward.png">
 </head>
 
@@ -41,7 +41,7 @@
 </section>
 
   <!-- WHITE BANNER — lives directly below the hero image (NOW the only header; becomes sticky when it reaches top) -->
-  <section class="hero-banner" id="banner" aria-label="Banner">
+  <section class="hero-banner" aria-label="Banner">
     <div class="hero-banner-inner">
       <div class="hero-banner-title">LATENT ILLUMINATION</div>
     </div>
@@ -55,276 +55,242 @@
   <div class="footer-divider"></div>
 
   <footer class="site-footer">
-  <!-- Footer scroll-to-top arrow (same exact arrow as hero, rotated via CSS) -->
-  <button class="hero-scroll footer-scroll" type="button" aria-label="Scroll to top"></button>
-
-  <div class="footer-line footer-main">
-    © 2026 Latent Illumination |
-    <a
-      class="footer-email"
-      href="mailto:contact@latentillumination.com"
-      title="Email Latent Illumination"
-    >
-      contact@latentillumination.com
-    </a>
-  </div>
-
-  <div class="footer-line footer-powered">
-    Powered by
-    <a
-      class="footer-github"
-      href="https://github.com/"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      GitHub
-    </a>
-  </div>
-</footer>
-
-<!-- Lightbox (UPDATED only) -->
-<div class="lb" id="lb" aria-hidden="true" role="dialog" aria-label="Image viewer">
-  <button class="lb-close" id="lbClose" aria-label="Close">×</button>
-
-  <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">‹</button>
-
-  <div class="lb-content" role="document">
-    <div class="lb-media">
-      <img id="lbImg" class="lb-img" alt="" />
+    <div class="footer-line footer-main">
+      © 2026 Latent Illumination |
+      <a
+        class="footer-email"
+        href="mailto:contact@latentillumination.com"
+        title="Email Latent Illumination"
+      >
+        contact@latentillumination.com
+      </a>
     </div>
 
-    <aside class="lb-side" aria-label="Prompt">
-      <pre class="lb-prompt" id="lbPrompt"></pre>
-    </aside>
+    <div class="footer-line footer-powered">
+      Powered by
+      <a
+        class="footer-github"
+        href="https://github.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        GitHub
+      </a>
+    </div>
+  </footer>
+
+  <!-- Lightbox (UPDATED only) -->
+  <div class="lb" id="lb" aria-hidden="true" role="dialog" aria-label="Image viewer">
+    <button class="lb-close" id="lbClose" aria-label="Close">×</button>
+
+    <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">‹</button>
+
+    <div class="lb-content" role="document">
+      <div class="lb-media">
+        <img id="lbImg" class="lb-img" alt="" />
+      </div>
+
+      <aside class="lb-side" aria-label="Prompt">
+        <pre class="lb-prompt" id="lbPrompt"></pre>
+      </aside>
+    </div>
+
+    <button class="lb-nav lb-next" id="lbNext" aria-label="Next">›</button>
   </div>
 
-  <button class="lb-nav lb-next" id="lbNext" aria-label="Next">›</button>
-</div>
+  <script>
+    const masonry = document.getElementById("masonry");
 
-<script>
-  const masonry = document.getElementById("masonry");
+    const lb = document.getElementById("lb");
+    const lbImg = document.getElementById("lbImg");
+    const lbPrompt = document.getElementById("lbPrompt");
+    const lbClose = document.getElementById("lbClose");
+    const lbPrev = document.getElementById("lbPrev");
+    const lbNext = document.getElementById("lbNext");
 
-  const lb = document.getElementById("lb");
-  const lbImg = document.getElementById("lbImg");
-  const lbPrompt = document.getElementById("lbPrompt");
-  const lbClose = document.getElementById("lbClose");
-  const lbPrev = document.getElementById("lbPrev");
-  const lbNext = document.getElementById("lbNext");
+    let items = [];
+    let currentIndex = -1;
 
-  let items = [];
-  let currentIndex = -1;
+    function formatPrompt(raw){
+      const text = (raw || "").toString();
 
-  function formatPrompt(raw){
-    const text = (raw || "").toString();
+      // Remove any MODEL line(s)
+      const noModel = text
+        .split(/\r?\n/)
+        .filter(line => !/^\s*MODEL\s*:/i.test(line.trim()))
+        .join("\n")
+        .trim();
 
-    // Remove any MODEL line(s)
-    const noModel = text
-      .split(/\r?\n/)
-      .filter(line => !/^\s*MODEL\s*:/i.test(line.trim()))
-      .join("\n")
-      .trim();
+      // If the remaining text already starts with PROMPT:, keep it.
+      if (/^\s*PROMPT\s*:/i.test(noModel)) return noModel.trim();
 
-    // If the remaining text already starts with PROMPT:, keep it.
-    if (/^\s*PROMPT\s*:/i.test(noModel)) return noModel.trim();
+      // Otherwise, wrap it as PROMPT:
+      if (!noModel) return "";
+      return `PROMPT:\n${noModel}`;
+    }
 
-    // Otherwise, wrap it as PROMPT:
-    if (!noModel) return "";
-    return `PROMPT:\n${noModel}`;
-  }
+    function openLB(index){
+      currentIndex = index;
+      const item = items[currentIndex];
 
-  function openLB(index){
-    currentIndex = index;
-    const item = items[currentIndex];
+      lbImg.src = item.src;
+      lbImg.alt = item.title || "";
 
-    lbImg.src = item.src;
-    lbImg.alt = item.title || "";
+      // Prefer item.prompt, fallback to item.caption; always formatted as PROMPT only.
+      const raw = item.prompt ?? item.caption ?? "";
+      lbPrompt.textContent = formatPrompt(raw);
 
-    // Prefer item.prompt, fallback to item.caption; always formatted as PROMPT only.
-    const raw = item.prompt ?? item.caption ?? "";
-    lbPrompt.textContent = formatPrompt(raw);
+      lb.classList.add("open");
+      lb.setAttribute("aria-hidden", "false");
+      updateNavState();
+    }
 
-    lb.classList.add("open");
-    lb.setAttribute("aria-hidden", "false");
-    updateNavState();
-  }
+    function closeLB(){
+      lb.classList.remove("open");
+      lb.setAttribute("aria-hidden", "true");
+      lbImg.src = "";
+      lbPrompt.textContent = "";
+      currentIndex = -1;
+    }
 
-  function closeLB(){
-    lb.classList.remove("open");
-    lb.setAttribute("aria-hidden", "true");
-    lbImg.src = "";
-    lbPrompt.textContent = "";
-    currentIndex = -1;
-  }
+    function updateNavState(){
+      const hasPrev = currentIndex > 0;
+      const hasNext = currentIndex < items.length - 1;
+      lbPrev.disabled = !hasPrev;
+      lbNext.disabled = !hasNext;
+      lbPrev.style.opacity = hasPrev ? "1" : "0.25";
+      lbNext.style.opacity = hasNext ? "1" : "0.25";
+    }
 
-  function updateNavState(){
-    const hasPrev = currentIndex > 0;
-    const hasNext = currentIndex < items.length - 1;
-    lbPrev.disabled = !hasPrev;
-    lbNext.disabled = !hasNext;
-    lbPrev.style.opacity = hasPrev ? "1" : "0.25";
-    lbNext.style.opacity = hasNext ? "1" : "0.25";
-  }
+    function prev(){
+      if(currentIndex > 0) openLB(currentIndex - 1);
+    }
+    function next(){
+      if(currentIndex < items.length - 1) openLB(currentIndex + 1);
+    }
 
-  function prev(){
-    if(currentIndex > 0) openLB(currentIndex - 1);
-  }
-  function next(){
-    if(currentIndex < items.length - 1) openLB(currentIndex + 1);
-  }
+    async function load(){
+      const res = await fetch("gallery.json?v=" + Date.now(), { cache: "no-store" });
+      items = await res.json();
 
-  async function load(){
-    const res = await fetch("gallery.json?v=" + Date.now(), { cache: "no-store" });
-    items = await res.json();
+      masonry.innerHTML = "";
 
-    masonry.innerHTML = "";
+      items.forEach((item, i) => {
+        const card = document.createElement("article");
+        card.className = "card";
 
-    items.forEach((item, i) => {
-      const card = document.createElement("article");
-      card.className = "card";
+        const img = document.createElement("img");
+        img.loading = "lazy";
+        img.src = item.thumb || item.src;
+        img.alt = item.title || "";
+        img.className = "card-img";
+        img.addEventListener("click", () => openLB(i));
 
-      const img = document.createElement("img");
-      img.loading = "lazy";
-      img.src = item.thumb || item.src;
-      img.alt = item.title || "";
-      img.className = "card-img";
-      img.addEventListener("click", () => openLB(i));
+        card.appendChild(img);
+        masonry.appendChild(card);
+      });
+    }
 
-      card.appendChild(img);
-      masonry.appendChild(card);
+    lbClose.addEventListener("click", closeLB);
+    lbPrev.addEventListener("click", prev);
+    lbNext.addEventListener("click", next);
+
+    lb.addEventListener("click", (e) => {
+      if(e.target === lb) closeLB();
     });
-  }
 
-  lbClose.addEventListener("click", closeLB);
-  lbPrev.addEventListener("click", prev);
-  lbNext.addEventListener("click", next);
-
-  lb.addEventListener("click", (e) => {
-    if(e.target === lb) closeLB();
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if(!lb.classList.contains("open")) return;
-    if(e.key === "Escape") closeLB();
-    if(e.key === "ArrowLeft") prev();
-    if(e.key === "ArrowRight") next();
-  });
-
-  load();
-
-  // HERO PARALLAX — stronger + overscan-safe
-  (function(){
-    const hero = document.getElementById("hero");
-    const media = document.getElementById("heroMedia");
-    if(!hero || !media) return;
-
-    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if(reduceMotion) return;
-
-    let ticking = false;
-
-    function update(){
-      const rect = hero.getBoundingClientRect();
-
-      // Only compute while hero is visible
-      if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
-
-      // Progress from 0 → 1 while scrolling through the hero
-      const progress = Math.min(Math.max(-rect.top / rect.height, 0), 1);
-
-      const isDesktop = window.innerWidth >= 900;
-
-      // Mobile = current feel (unchanged)
-      const maxTranslate = isDesktop ? 260 : 170;
-      const maxScaleOut  = isDesktop ? 0.14 : 0.10;
-
-      const translate = progress * maxTranslate;
-      const scale = 1.14 - progress * maxScaleOut;
-
-      media.style.transform = `translate3d(0, ${translate}px, 0) scale(${scale})`;
-    }
-
-    function onScroll(){
-      if(!ticking){
-        requestAnimationFrame(() => {
-          update();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    }
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    update();
-  })();
-
-  // HERO CLICK → SCROLL TO GALLERY (SLOWER / SMOOTHER)
-  (function(){
-    const hero = document.getElementById("hero");
-    const target = document.getElementById("masonry");
-    if(!hero || !target) return;
-
-    hero.style.cursor = "pointer";
-
-    hero.addEventListener("click", () => {
-      const startY = window.scrollY;
-      const targetY = target.getBoundingClientRect().top + window.scrollY;
-      const distance = targetY - startY;
-
-      const duration = 1400; // ms (increase = slower)
-      const startTime = performance.now();
-
-      function easeInOutCubic(t){
-        return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
-      }
-
-      function step(now){
-        const elapsed = now - startTime;
-        const t = Math.min(elapsed / duration, 1);
-        const eased = easeInOutCubic(t);
-
-        window.scrollTo(0, startY + distance * eased);
-
-        if(t < 1) requestAnimationFrame(step);
-      }
-
-      requestAnimationFrame(step);
+    document.addEventListener("keydown", (e) => {
+      if(!lb.classList.contains("open")) return;
+      if(e.key === "Escape") closeLB();
+      if(e.key === "ArrowLeft") prev();
+      if(e.key === "ArrowRight") next();
     });
-  })();
 
-// FOOTER ARROW CLICK → SCROLL TO BANNER (delegated + match hero speed/easing)
-(function(){
-  function easeInOutCubic(t){
-    return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
-  }
+    load();
 
-  document.addEventListener("click", (e) => {
-    const btn = e.target.closest(".footer-scroll");
-    if(!btn) return;
-    console.log("footer arrow click detected");
+    // HERO PARALLAX — stronger + overscan-safe
+    (function(){
+      const hero = document.getElementById("hero");
+      const media = document.getElementById("heroMedia");
+      if(!hero || !media) return;
 
-    const target = document.getElementById("banner");
-    if(!target) return;
+      const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if(reduceMotion) return;
 
-    e.preventDefault();
-    e.stopPropagation();
+      let ticking = false;
 
-    const startY = window.scrollY;
-    const targetY = target.getBoundingClientRect().top + window.scrollY;
-    const distance = targetY - startY;
+      function update(){
+        const rect = hero.getBoundingClientRect();
 
-    const duration = 1400; // match hero
-    const startTime = performance.now();
+        // Only compute while hero is visible
+        if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
 
-    function step(now){
-      const elapsed = now - startTime;
-      const t = Math.min(elapsed / duration, 1);
-      const eased = easeInOutCubic(t);
-      window.scrollTo(0, startY + distance * eased);
-      if(t < 1) requestAnimationFrame(step);
-    }
+        // Progress from 0 → 1 while scrolling through the hero
+        const progress = Math.min(Math.max(-rect.top / rect.height, 0), 1);
 
-    requestAnimationFrame(step);
-  });
-})();
-</script>
+        // Stronger parallax:
+        // - more travel (translate)
+        // - more zoom-out
+        const isDesktop = window.innerWidth >= 900;
+
+// Mobile = current feel (unchanged)
+const maxTranslate = isDesktop ? 260 : 170;
+const maxScaleOut  = isDesktop ? 0.14 : 0.10;
+
+const translate = progress * maxTranslate;
+const scale = 1.14 - progress * maxScaleOut;
+
+        media.style.transform = `translate3d(0, ${translate}px, 0) scale(${scale})`;
+      }
+
+      function onScroll(){
+        if(!ticking){
+          requestAnimationFrame(() => {
+            update();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll);
+      update();
+    })();
+
+    // HERO CLICK → SCROLL TO GALLERY (SLOWER / SMOOTHER)
+    (function(){
+      const hero = document.getElementById("hero");
+      const target = document.getElementById("masonry");
+      if(!hero || !target) return;
+
+      hero.style.cursor = "pointer";
+
+      hero.addEventListener("click", () => {
+        const startY = window.scrollY;
+        const targetY = target.getBoundingClientRect().top + window.scrollY;
+        const distance = targetY - startY;
+
+        const duration = 1400; // ms (increase = slower)
+        const startTime = performance.now();
+
+        function easeInOutCubic(t){
+          return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+        }
+
+        function step(now){
+          const elapsed = now - startTime;
+          const t = Math.min(elapsed / duration, 1);
+          const eased = easeInOutCubic(t);
+
+          window.scrollTo(0, startY + distance * eased);
+
+          if(t < 1) requestAnimationFrame(step);
+        }
+
+        requestAnimationFrame(step);
+      });
+    })();
+  </script>
+</body>
+</html>
