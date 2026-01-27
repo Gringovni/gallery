@@ -55,256 +55,248 @@
   <div class="footer-divider"></div>
 
   <footer class="site-footer">
-    <!-- Footer scroll-to-top arrow (same exact arrow as hero, rotated via CSS) -->
-    <button class="hero-scroll footer-scroll" type="button" aria-label="Scroll to top"></button>
-    <div class="footer-line footer-main">
-      © 2026 Latent Illumination |
-      <a
-        class="footer-email"
-        href="mailto:contact@latentillumination.com"
-        title="Email Latent Illumination"
-      >
-        contact@latentillumination.com
-      </a>
-    </div>
+  <!-- Footer scroll-to-top arrow (same exact arrow as hero, rotated via CSS) -->
+  <button class="hero-scroll footer-scroll" type="button" aria-label="Scroll to top"></button>
 
-    <div class="footer-line footer-powered">
-      Powered by
-      <a
-        class="footer-github"
-        href="https://github.com/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        GitHub
-      </a>
-    </div>
-    
-  </footer>
-
-  <!-- Lightbox (UPDATED only) -->
-  <div class="lb" id="lb" aria-hidden="true" role="dialog" aria-label="Image viewer">
-    <button class="lb-close" id="lbClose" aria-label="Close">×</button>
-
-    <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">‹</button>
-
-    <div class="lb-content" role="document">
-      <div class="lb-media">
-        <img id="lbImg" class="lb-img" alt="" />
-      </div>
-
-      <aside class="lb-side" aria-label="Prompt">
-        <pre class="lb-prompt" id="lbPrompt"></pre>
-      </aside>
-    </div>
-
-    <button class="lb-nav lb-next" id="lbNext" aria-label="Next">›</button>
+  <div class="footer-line footer-main">
+    © 2026 Latent Illumination |
+    <a
+      class="footer-email"
+      href="mailto:contact@latentillumination.com"
+      title="Email Latent Illumination"
+    >
+      contact@latentillumination.com
+    </a>
   </div>
 
-  <script>
-    const masonry = document.getElementById("masonry");
+  <div class="footer-line footer-powered">
+    Powered by
+    <a
+      class="footer-github"
+      href="https://github.com/"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      GitHub
+    </a>
+  </div>
+</footer>
 
-    const lb = document.getElementById("lb");
-    const lbImg = document.getElementById("lbImg");
-    const lbPrompt = document.getElementById("lbPrompt");
-    const lbClose = document.getElementById("lbClose");
-    const lbPrev = document.getElementById("lbPrev");
-    const lbNext = document.getElementById("lbNext");
+<!-- Lightbox (UPDATED only) -->
+<div class="lb" id="lb" aria-hidden="true" role="dialog" aria-label="Image viewer">
+  <button class="lb-close" id="lbClose" aria-label="Close">×</button>
 
-    let items = [];
-    let currentIndex = -1;
+  <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">‹</button>
 
-    function formatPrompt(raw){
-      const text = (raw || "").toString();
+  <div class="lb-content" role="document">
+    <div class="lb-media">
+      <img id="lbImg" class="lb-img" alt="" />
+    </div>
 
-      // Remove any MODEL line(s)
-      const noModel = text
-        .split(/\r?\n/)
-        .filter(line => !/^\s*MODEL\s*:/i.test(line.trim()))
-        .join("\n")
-        .trim();
+    <aside class="lb-side" aria-label="Prompt">
+      <pre class="lb-prompt" id="lbPrompt"></pre>
+    </aside>
+  </div>
 
-      // If the remaining text already starts with PROMPT:, keep it.
-      if (/^\s*PROMPT\s*:/i.test(noModel)) return noModel.trim();
+  <button class="lb-nav lb-next" id="lbNext" aria-label="Next">›</button>
+</div>
 
-      // Otherwise, wrap it as PROMPT:
-      if (!noModel) return "";
-      return `PROMPT:\n${noModel}`;
-    }
+<script>
+  const masonry = document.getElementById("masonry");
 
-    function openLB(index){
-      currentIndex = index;
-      const item = items[currentIndex];
+  const lb = document.getElementById("lb");
+  const lbImg = document.getElementById("lbImg");
+  const lbPrompt = document.getElementById("lbPrompt");
+  const lbClose = document.getElementById("lbClose");
+  const lbPrev = document.getElementById("lbPrev");
+  const lbNext = document.getElementById("lbNext");
 
-      lbImg.src = item.src;
-      lbImg.alt = item.title || "";
+  let items = [];
+  let currentIndex = -1;
 
-      // Prefer item.prompt, fallback to item.caption; always formatted as PROMPT only.
-      const raw = item.prompt ?? item.caption ?? "";
-      lbPrompt.textContent = formatPrompt(raw);
+  function formatPrompt(raw){
+    const text = (raw || "").toString();
 
-      lb.classList.add("open");
-      lb.setAttribute("aria-hidden", "false");
-      updateNavState();
-    }
+    // Remove any MODEL line(s)
+    const noModel = text
+      .split(/\r?\n/)
+      .filter(line => !/^\s*MODEL\s*:/i.test(line.trim()))
+      .join("\n")
+      .trim();
 
-    function closeLB(){
-      lb.classList.remove("open");
-      lb.setAttribute("aria-hidden", "true");
-      lbImg.src = "";
-      lbPrompt.textContent = "";
-      currentIndex = -1;
-    }
+    // If the remaining text already starts with PROMPT:, keep it.
+    if (/^\s*PROMPT\s*:/i.test(noModel)) return noModel.trim();
 
-    function updateNavState(){
-      const hasPrev = currentIndex > 0;
-      const hasNext = currentIndex < items.length - 1;
-      lbPrev.disabled = !hasPrev;
-      lbNext.disabled = !hasNext;
-      lbPrev.style.opacity = hasPrev ? "1" : "0.25";
-      lbNext.style.opacity = hasNext ? "1" : "0.25";
-    }
+    // Otherwise, wrap it as PROMPT:
+    if (!noModel) return "";
+    return `PROMPT:\n${noModel}`;
+  }
 
-    function prev(){
-      if(currentIndex > 0) openLB(currentIndex - 1);
-    }
-    function next(){
-      if(currentIndex < items.length - 1) openLB(currentIndex + 1);
-    }
+  function openLB(index){
+    currentIndex = index;
+    const item = items[currentIndex];
 
-    async function load(){
-      const res = await fetch("gallery.json?v=" + Date.now(), { cache: "no-store" });
-      items = await res.json();
+    lbImg.src = item.src;
+    lbImg.alt = item.title || "";
 
-      masonry.innerHTML = "";
+    // Prefer item.prompt, fallback to item.caption; always formatted as PROMPT only.
+    const raw = item.prompt ?? item.caption ?? "";
+    lbPrompt.textContent = formatPrompt(raw);
 
-      items.forEach((item, i) => {
-        const card = document.createElement("article");
-        card.className = "card";
+    lb.classList.add("open");
+    lb.setAttribute("aria-hidden", "false");
+    updateNavState();
+  }
 
-        const img = document.createElement("img");
-        img.loading = "lazy";
-        img.src = item.thumb || item.src;
-        img.alt = item.title || "";
-        img.className = "card-img";
-        img.addEventListener("click", () => openLB(i));
+  function closeLB(){
+    lb.classList.remove("open");
+    lb.setAttribute("aria-hidden", "true");
+    lbImg.src = "";
+    lbPrompt.textContent = "";
+    currentIndex = -1;
+  }
 
-        card.appendChild(img);
-        masonry.appendChild(card);
-      });
-    }
+  function updateNavState(){
+    const hasPrev = currentIndex > 0;
+    const hasNext = currentIndex < items.length - 1;
+    lbPrev.disabled = !hasPrev;
+    lbNext.disabled = !hasNext;
+    lbPrev.style.opacity = hasPrev ? "1" : "0.25";
+    lbNext.style.opacity = hasNext ? "1" : "0.25";
+  }
 
-    lbClose.addEventListener("click", closeLB);
-    lbPrev.addEventListener("click", prev);
-    lbNext.addEventListener("click", next);
+  function prev(){
+    if(currentIndex > 0) openLB(currentIndex - 1);
+  }
+  function next(){
+    if(currentIndex < items.length - 1) openLB(currentIndex + 1);
+  }
 
-    lb.addEventListener("click", (e) => {
-      if(e.target === lb) closeLB();
+  async function load(){
+    const res = await fetch("gallery.json?v=" + Date.now(), { cache: "no-store" });
+    items = await res.json();
+
+    masonry.innerHTML = "";
+
+    items.forEach((item, i) => {
+      const card = document.createElement("article");
+      card.className = "card";
+
+      const img = document.createElement("img");
+      img.loading = "lazy";
+      img.src = item.thumb || item.src;
+      img.alt = item.title || "";
+      img.className = "card-img";
+      img.addEventListener("click", () => openLB(i));
+
+      card.appendChild(img);
+      masonry.appendChild(card);
     });
+  }
 
-    document.addEventListener("keydown", (e) => {
-      if(!lb.classList.contains("open")) return;
-      if(e.key === "Escape") closeLB();
-      if(e.key === "ArrowLeft") prev();
-      if(e.key === "ArrowRight") next();
-    });
+  lbClose.addEventListener("click", closeLB);
+  lbPrev.addEventListener("click", prev);
+  lbNext.addEventListener("click", next);
 
-    load();
+  lb.addEventListener("click", (e) => {
+    if(e.target === lb) closeLB();
+  });
 
-    // HERO PARALLAX — stronger + overscan-safe
-    (function(){
-      const hero = document.getElementById("hero");
-      const media = document.getElementById("heroMedia");
-      if(!hero || !media) return;
+  document.addEventListener("keydown", (e) => {
+    if(!lb.classList.contains("open")) return;
+    if(e.key === "Escape") closeLB();
+    if(e.key === "ArrowLeft") prev();
+    if(e.key === "ArrowRight") next();
+  });
 
-      const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if(reduceMotion) return;
+  load();
 
-      let ticking = false;
+  // HERO PARALLAX — stronger + overscan-safe
+  (function(){
+    const hero = document.getElementById("hero");
+    const media = document.getElementById("heroMedia");
+    if(!hero || !media) return;
 
-      function update(){
-        const rect = hero.getBoundingClientRect();
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if(reduceMotion) return;
 
-        // Only compute while hero is visible
-        if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
+    let ticking = false;
 
-        // Progress from 0 → 1 while scrolling through the hero
-        const progress = Math.min(Math.max(-rect.top / rect.height, 0), 1);
+    function update(){
+      const rect = hero.getBoundingClientRect();
 
-        // Stronger parallax:
-        // - more travel (translate)
-        // - more zoom-out
-        const isDesktop = window.innerWidth >= 900;
+      // Only compute while hero is visible
+      if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
 
-        // Mobile = current feel (unchanged)
-        const maxTranslate = isDesktop ? 260 : 170;
-        const maxScaleOut  = isDesktop ? 0.14 : 0.10;
+      // Progress from 0 → 1 while scrolling through the hero
+      const progress = Math.min(Math.max(-rect.top / rect.height, 0), 1);
 
-        const translate = progress * maxTranslate;
-        const scale = 1.14 - progress * maxScaleOut;
+      const isDesktop = window.innerWidth >= 900;
 
-        media.style.transform = `translate3d(0, ${translate}px, 0) scale(${scale})`;
+      // Mobile = current feel (unchanged)
+      const maxTranslate = isDesktop ? 260 : 170;
+      const maxScaleOut  = isDesktop ? 0.14 : 0.10;
+
+      const translate = progress * maxTranslate;
+      const scale = 1.14 - progress * maxScaleOut;
+
+      media.style.transform = `translate3d(0, ${translate}px, 0) scale(${scale})`;
+    }
+
+    function onScroll(){
+      if(!ticking){
+        requestAnimationFrame(() => {
+          update();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    update();
+  })();
+
+  // HERO CLICK → SCROLL TO GALLERY (SLOWER / SMOOTHER)
+  (function(){
+    const hero = document.getElementById("hero");
+    const target = document.getElementById("masonry");
+    if(!hero || !target) return;
+
+    hero.style.cursor = "pointer";
+
+    hero.addEventListener("click", () => {
+      const startY = window.scrollY;
+      const targetY = target.getBoundingClientRect().top + window.scrollY;
+      const distance = targetY - startY;
+
+      const duration = 1400; // ms (increase = slower)
+      const startTime = performance.now();
+
+      function easeInOutCubic(t){
+        return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
       }
 
-      function onScroll(){
-        if(!ticking){
-          requestAnimationFrame(() => {
-            update();
-            ticking = false;
-          });
-          ticking = true;
-        }
+      function step(now){
+        const elapsed = now - startTime;
+        const t = Math.min(elapsed / duration, 1);
+        const eased = easeInOutCubic(t);
+
+        window.scrollTo(0, startY + distance * eased);
+
+        if(t < 1) requestAnimationFrame(step);
       }
 
-      window.addEventListener("scroll", onScroll, { passive: true });
-      window.addEventListener("resize", onScroll);
-      update();
-    })();
+      requestAnimationFrame(step);
+    });
+  })();
 
-    // HERO CLICK → SCROLL TO GALLERY (SLOWER / SMOOTHER)
-    (function(){
-      const hero = document.getElementById("hero");
-      const target = document.getElementById("masonry");
-      if(!hero || !target) return;
-
-      hero.style.cursor = "pointer";
-
-      hero.addEventListener("click", () => {
-        const startY = window.scrollY;
-        const targetY = target.getBoundingClientRect().top + window.scrollY;
-        const distance = targetY - startY;
-
-        const duration = 1400; // ms (increase = slower)
-        const startTime = performance.now();
-
-        function easeInOutCubic(t){
-          return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
-        }
-
-        function step(now){
-          const elapsed = now - startTime;
-          const t = Math.min(elapsed / duration, 1);
-          const eased = easeInOutCubic(t);
-
-          window.scrollTo(0, startY + distance * eased);
-
-          if(t < 1) requestAnimationFrame(step);
-        }
-
-        requestAnimationFrame(step);
-      });
-    })();
-
-// FOOTER ARROW CLICK → SCROLL TO BANNER (robust attach)
-(function(){
-  function attachFooterScroll(){
+  // FOOTER ARROW CLICK → SCROLL TO BANNER (match hero speed/easing)
+  (function(){
     const btn = document.querySelector(".footer-scroll");
     const target = document.getElementById("banner");
     if(!btn || !target) return;
-
-    // prevent double-binding if script runs twice
-    if(btn.dataset.bound === "1") return;
-    btn.dataset.bound = "1";
 
     btn.addEventListener("click", (e) => {
       e.preventDefault();
@@ -331,13 +323,7 @@
 
       requestAnimationFrame(step);
     });
-  }
-
-  // Attach now + after DOM is ready (covers timing / errors elsewhere)
-  attachFooterScroll();
-  document.addEventListener("DOMContentLoaded", attachFooterScroll);
-  window.addEventListener("load", attachFooterScroll);
-})();
-  </script>
+  })();
+</script>
 </body>
 </html>
