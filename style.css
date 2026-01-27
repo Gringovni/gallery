@@ -247,7 +247,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   font-style: italic;
   font-weight: 300;
   font-size: 18px;     /* down from 20px */
-  line-height: 1.35;  /* tighter but readable */
+  line-height: 1.38;  /* tighter but readable */
   color: #444;
   padding-top: 6px;
 }
