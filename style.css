@@ -564,8 +564,8 @@ html, body{
 
 /* FOOTER arrow: visible on white, no halo/shadow */
 .site-footer .footer-scroll::before{
-  border-right: 3px solid rgba(17,17,17,0.55); /* dark arrow */
-  border-bottom: 3px solid rgba(17,17,17,0.55);
+  border-right: 3px solid rgba(17,17,17,0.5); /* dark arrow */
+  border-bottom: 3px solid rgba(17,17,17,0.5);
 }
 
 /* Remove the halo entirely in footer */
