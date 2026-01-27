@@ -16,17 +16,7 @@
 html,body{ margin:0; padding:0; background:var(--bg); color:var(--text); }
 body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
 
-/* Prevent horizontal scroll (without breaking sticky) */
-body{
-  overflow-x: clip; /* modern + doesn't usually break sticky */
-}
-
-/* ================================
-   LEGACY TOPBAR — DISABLED
-   (No longer used in HTML)
-   ================================ */
-
-/*
+/* Top bar */
 .topbar{
   position: sticky;
   top: 0;
@@ -44,7 +34,6 @@ body{
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
 }
-*/
 
 /* === BRAND / BANNER TITLE === */
 .hero-banner-title{
@@ -411,7 +400,6 @@ body{
   background: rgba(255,255,255,0.92);
   backdrop-filter: blur(8px);
   z-index: 10;
-  width: 100%;
 }
 
 .hero-banner-inner{
@@ -534,51 +522,4 @@ body{
     width: 18px;
     height: 18px;
   }
-}
-
-/* === FOOTER SCROLL (EXACT SAME ARROW, ROTATED UP) === */
-.footer-scroll{
-  position: static;              /* override hero absolute positioning */
-  left: auto;
-  bottom: auto;
-  transform: none;               /* remove translateX(-50%) from hero */
-  margin: 18px auto 0;           /* center it inside footer */
-  display: inline-block;
-  animation: none;               /* keep footer arrow still */
-}
-
-/* Make the chevron point UP (rotate 180° relative to hero) */
-.footer-scroll::before{
-  transform: translate(-50%, -50%) rotate(-135deg);
-}
-
-/* Keep the halo but without interfering with layout */
-.footer-scroll::after{
-  inset: -8px;
-}
-
-/* FORCE footer arrow to live in the footer, not the hero */
-.site-footer .footer-scroll{
-  position: relative !important;
-  left: auto !important;
-  bottom: auto !important;
-  transform: none !important;
-  margin: 18px auto 0;
-  display: inline-block;
-  z-index: 1;
-  pointer-events: auto;
-
-  /* Footer arrow is intentionally static (no bounce) */
-  animation: none !important;
-}
-
-/* Footer arrow: lighter tone, no shadow */
-.site-footer .footer-scroll::before{
-  border-right: 3px solid rgba(17,17,17,0.5);
-  border-bottom: 3px solid rgba(17,17,17,0.5);
-}
-
-/* Remove halo entirely in footer */
-.site-footer .footer-scroll::after{
-  display: none;
 }
