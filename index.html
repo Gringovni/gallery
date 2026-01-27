@@ -41,7 +41,7 @@
 </section>
 
   <!-- WHITE BANNER — lives directly below the hero image (NOW the only header; becomes sticky when it reaches top) -->
-  <section class="hero-banner" aria-label="Banner">
+  <section id="banner" class="hero-banner" aria-label="Banner">
     <div class="hero-banner-inner">
       <div class="hero-banner-title">LATENT ILLUMINATION</div>
     </div>
@@ -55,6 +55,7 @@
   <div class="footer-divider"></div>
 
   <footer class="site-footer">
+    <button class="footer-top" type="button" aria-label="Back to top"></button>
     <div class="footer-line footer-main">
       © 2026 Latent Illumination |
       <a
@@ -291,6 +292,17 @@ const scale = 1.14 - progress * maxScaleOut;
         requestAnimationFrame(step);
       });
     })();
+
+    // FOOTER UP ARROW → SCROLL TO BANNER (LATENT ILLUMINATION STRIP)
+(function(){
+  const btn = document.querySelector(".footer-top");
+  const banner = document.getElementById("banner");
+  if(!btn || !banner) return;
+
+  btn.addEventListener("click", () => {
+    banner.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+})();
   </script>
 </body>
 </html>
