@@ -41,7 +41,7 @@
 </section>
 
   <!-- WHITE BANNER — lives directly below the hero image (NOW the only header; becomes sticky when it reaches top) -->
-  <section class="hero-banner" aria-label="Banner">
+  <section class="hero-banner" id="banner" aria-label="Banner">
     <div class="hero-banner-inner">
       <div class="hero-banner-title">LATENT ILLUMINATION</div>
     </div>
@@ -77,6 +77,8 @@
         GitHub
       </a>
     </div>
+
+    <button class="hero-scroll footer-scroll" type="button" aria-label="Scroll to top"></button>
   </footer>
 
   <!-- Lightbox (UPDATED only) -->
@@ -272,6 +274,40 @@ const scale = 1.14 - progress * maxScaleOut;
         const distance = targetY - startY;
 
         const duration = 1400; // ms (increase = slower)
+        const startTime = performance.now();
+
+        function easeInOutCubic(t){
+          return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+        }
+
+        function step(now){
+          const elapsed = now - startTime;
+          const t = Math.min(elapsed / duration, 1);
+          const eased = easeInOutCubic(t);
+
+          window.scrollTo(0, startY + distance * eased);
+
+          if(t < 1) requestAnimationFrame(step);
+        }
+
+        requestAnimationFrame(step);
+      });
+    })();
+
+    // FOOTER ARROW CLICK → SCROLL TO BANNER (MATCH HERO SPEED/EASING)
+    (function(){
+      const btn = document.querySelector(".footer-scroll");
+      const target = document.getElementById("banner");
+      if(!btn || !target) return;
+
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation(); // extra safe; prevents any unexpected bubbling
+
+        const startY = window.scrollY;
+        const targetY = target.getBoundingClientRect().top + window.scrollY;
+        const distance = targetY - startY;
+
+        const duration = 1400; // EXACT match to hero scroll
         const startTime = performance.now();
 
         function easeInOutCubic(t){
