@@ -73,10 +73,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   background: var(--line);
 }
 
-/* Layout
-   IMPORTANT:
-   padding-top: 0; so the line touches the first row of images
-*/
+/* Layout */
 .wrap{
   max-width: var(--container);
   margin: 0 auto;
@@ -103,7 +100,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
     gap: 10px;
     height: auto;
     padding: 14px 12px;
-    justify-items: center; /* ensures children center in the 1-col grid */
+    justify-items: center;
   }
 
   .brand{
@@ -135,7 +132,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 /* Footer */
 .site-footer{
   font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-weight: 400; /* or 300 if you want lighter */
+  font-weight: 400;
   max-width: var(--container);
   margin: 0 auto;
   padding: 28px var(--pad) 32px;
@@ -155,10 +152,6 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   margin-bottom: 4px;
 }
 
-.footer-powered{
-  /* keep spacing only, no font changes */
-}
-
 .site-footer a{
   color: inherit;
   text-decoration: none;
@@ -168,211 +161,49 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   color: #111;
 }
 
-/* === FOOTER DIVIDER (matches header line) === */
+/* === FOOTER DIVIDER === */
 .footer-divider{
   max-width: var(--container);
-  margin: 20px auto 0;   /* spacing between gallery and footer */
+  margin: 20px auto 0;
   padding: 0 var(--pad);
 }
 
 .footer-divider::before{
   content: "";
   display: block;
-  height: 1px;        /* same thickness as top-divider */
-  background: #e9e9e9;   /* exact line color */
+  height: 1px;
+  background: #e9e9e9;
 }
 
-/* Lightbox (UPDATED — only section changed) */
-.lb{
-  position: fixed;
-  inset: 0;
-  background: rgba(255,255,255,0.96);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 50;
-}
-
-.lb.open{ display:flex; }
-
-/* New “balanced” lightbox layout:
-   - desktop: image left, prompt right
-   - mobile: prompt below
-   Supports both:
-   - your older structure (.lb-figure, .lb-caption)
-   - the newer structure (.lb-content, .lb-media, .lb-side, .lb-prompt)
-*/
-.lb-content,
-.lb-figure{
-  margin: 0;
-  width: min(1200px, 92vw);
-  height: min(86vh, 860px);
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 28px;
-  align-items: center;
-}
-
-/* Image area */
-.lb-media{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 0;
-  min-height: 0;
-}
-
-/* Image sizing (prevents oversizing / keeps centered) */
-.lb-img{
-  max-width: 100%;
-  max-height: 86vh;
-  object-fit: contain;
-  display: block;
-  box-shadow: 0 8px 24px rgba(0,0,0,.08);
-}
-
-/* Prompt panel (right on desktop) */
-.lb-side{
-  align-self: center;
-  justify-self: stretch;
-  min-width: 0;
-  color: var(--muted);
-  letter-spacing: .02em;
-  line-height: 1.5;
-  padding-right: 6px;
-}
-
-/* Prompt text (label + content styling) */
-.lb-prompt{
-  margin: 0;
-  white-space: pre-wrap;
-  font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
-  font-style: italic;
-  font-weight: 300;
-  font-size: 18px;     /* down from 20px */
-  line-height: 1.38;  /* tighter but readable */
-  color: #444;
-  padding-top: 6px;
-}
-
-/* PROMPT: label (first line) */
-.lb-prompt::first-line{
-  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-style: italic;
-  font-weight: 300;
-  font-size: 12px;
-  color: #222;
-  letter-spacing: 0.08em;
-  line-height: 1.25;
-  /* remove padding-top */
-}
-
-/* Mobile: stack prompt below image, keep centered */
-@media (max-width: 900px){
-  .lb-content,
-  .lb-figure{
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
-    height: auto;
-    max-height: 92vh;
-    overflow: auto;
-    padding: 18px 0;
-  }
-  
-  @media (max-width: 640px){
-  .lb-prompt{
-    font-size: 16px;
-    line-height: 1.5;
-  }
-}
-  .lb-img{
-    max-height: 70vh;
-  }
-
-  .lb-side{
-    padding: 14px 16px 0;
-    text-align: left;
-  }
-}
-
-.lb-close{
-  position: absolute;
-  top: 16px;
-  right: 18px;
-  border: none;
-  background: transparent;
-  font-size: 36px;
-  line-height: 1;
-  cursor: pointer;
-  color: #111;
-  opacity: .65;
-}
-.lb-close:hover{ opacity: 1; }
-
-.lb-nav{
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
-  background: transparent;
-  font-size: 44px;
-  cursor: pointer;
-  color: #111;
-  padding: 14px 18px;
-  opacity: .55;
-  user-select: none;
-}
-.lb-nav:hover{ opacity: 1; }
-
-.lb-prev{ left: 14px; }
-.lb-next{ right: 14px; }
-.lb-nav:disabled{ cursor: default; }
-
-/* === HERO CAPTION (bottom-left editorial text) === */
+/* === HERO CAPTION === */
 .hero-caption{
   position: absolute;
   left: 40px;
   bottom: 50px;
   max-width: 720px;
-
   font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-weight: 600;
-
   font-size: clamp(30px, 4.0vw, 72px);
   line-height: 1.12;
-  letter-spacing: 0; /* important for Playfair */
-
   color: rgba(255,255,255,0.92);
   z-index: 2;
   pointer-events: none;
 }
 
-/* Mobile refinement */
 @media (max-width: 640px){
   .hero-caption{
     left: 10px;
     right: 20px;
-    bottom: 24px;          /* extra clearance from arrow */
-    max-width: none;
-
+    bottom: 24px;
     font-size: 24px;
     line-height: 1.24;
   }
 }
 
-/* Hide mobile-only line breaks by default (desktop & tablet) */
-.m-br {
-  display: none;
-}
+.m-br{ display: none; }
+@media (max-width: 640px){ .m-br{ display: inline; } }
 
-/* Enable line breaks on mobile only */
-@media (max-width: 640px) {
-  .m-br {
-    display: inline;
-  }
-}
-
-/* === HERO — contained parallax hero (stronger) === */
+/* === HERO === */
 .hero{
   position: relative;
   height: 92vh;
@@ -380,7 +211,6 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   background: #fff;
 }
 
-/* Overscan: make the image taller than the hero so it can move */
 .hero-media{
   position: absolute;
   left: 0;
@@ -389,11 +219,11 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   bottom: -10%;
   background-size: cover;
   background-position: center;
-  transform: translate3d(0, 0, 0) scale(1.14);
+  transform: translate3d(0,0,0) scale(1.14);
   will-change: transform;
 }
 
-/* === WHITE BANNER BELOW HERO (NOW STICKY HEADER) === */
+/* === WHITE BANNER === */
 .hero-banner{
   position: sticky;
   top: 0;
@@ -415,7 +245,6 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 .hero-banner-title{
   font-size: 16px;
   letter-spacing: .10em;
-  text-transform: uppercase;
   color: #111;
   opacity: .9;
 }
@@ -425,55 +254,45 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   background: var(--line);
 }
 
-/* === HERO SCROLL CUE (arrow) — smooth, continuous float === */
+/* === HERO SCROLL ARROW === */
 .hero-scroll{
   position: absolute;
   left: 50%;
   bottom: 36px;
   transform: translateX(-50%);
-  width: 58px;     /* bigger */
-  height: 58px;    /* bigger */
+  width: 58px;
+  height: 58px;
   border: 0;
   padding: 0;
   background: transparent;
   cursor: pointer;
   z-index: 2;
   opacity: .9;
-
-  /* Smooth continuous scroll cue */
   animation: heroScrollFloat 1.35s ease-in-out infinite;
 }
 
-/* Draw the chevron using borders */
 .hero-scroll::before{
   content:"";
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 22px;          /* MATCH lightbox arrow scale */
-  height: 22px;         /* MATCH lightbox arrow scale */
+  width: 22px;
+  height: 22px;
   border-right: 3px solid rgba(255,255,255,0.9);
   border-bottom: 3px solid rgba(255,255,255,0.9);
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
-/* Smooth, continuous vertical motion */
 .hero-scroll::after{
   content:"";
   position: absolute;
-  inset: -8px;      /* slightly bigger halo */
+  inset: -8px;
   border-radius: 999px;
   background: radial-gradient(circle, rgba(0,0,0,0.22), rgba(0,0,0,0) 60%);
 }
 
 .hero-scroll:hover{ opacity: 1; }
 
-.hero-scroll:focus-visible{
-  outline: 2px solid rgba(255,255,255,0.85);
-  outline-offset: 3px;
-}
-
-/* Smooth, continuous vertical motion */
 @keyframes heroScrollFloat{
   0%   { transform: translateX(-50%) translateY(0); }
   50%  { transform: translateX(-50%) translateY(10px); }
@@ -484,42 +303,21 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   .hero-scroll{ animation: none; }
 }
 
-/* === LIGHTBOX NAV ARROWS — chevron shape (match HERO cue style) === */
-
-/* Hide the ‹ › characters but keep them accessible */
-.lb-nav{
-  color: transparent;          /* hides the glyph */
-  text-shadow: none;
-  position: absolute;          /* already is, but keep explicit */
+/* === FOOTER SCROLL (EXACT SAME ARROW, ROTATED UP) === */
+.footer-scroll{
+  position: static;
+  left: auto;
+  bottom: auto;
+  transform: none;
+  margin: 18px auto 0;
+  display: inline-block;
+  animation: none;
 }
 
-/* Draw chevrons with borders (same visual language as .hero-scroll) */
-.lb-nav::before{
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 16px;                 /* tweak size */
-  height: 16px;                /* tweak size */
-  border-right: 3px solid rgba(17,17,17,0.9);
-  border-bottom: 3px solid rgba(17,17,17,0.9);
-  transform: translate(-50%, -50%) rotate(135deg); /* default: LEFT */
+.footer-scroll::before{
+  transform: translate(-50%, -50%) rotate(-135deg);
 }
 
-/* Right chevron */
-.lb-next::before{
-  transform: translate(-50%, -50%) rotate(-45deg);
-}
-
-/* Optional: make disabled state feel consistent */
-.lb-nav:disabled::before{
-  opacity: 0.25;
-}
-
-/* Optional: slightly bigger on large screens (feel free to remove) */
-@media (min-width: 900px){
-  .lb-nav::before{
-    width: 18px;
-    height: 18px;
-  }
+.footer-scroll::after{
+  inset: -8px;
 }
