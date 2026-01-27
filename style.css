@@ -197,4 +197,350 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 
 /* New “balanced” lightbox layout:
    - desktop: image left, prompt right
-   - mobile:
+   - mobile: prompt below
+   Supports both:
+   - your older structure (.lb-figure, .lb-caption)
+   - the newer structure (.lb-content, .lb-media, .lb-side, .lb-prompt)
+*/
+.lb-content,
+.lb-figure{
+  margin: 0;
+  width: min(1200px, 92vw);
+  height: min(86vh, 860px);
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 28px;
+  align-items: center;
+}
+
+/* Image area */
+.lb-media{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Image sizing (prevents oversizing / keeps centered) */
+.lb-img{
+  max-width: 100%;
+  max-height: 86vh;
+  object-fit: contain;
+  display: block;
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+}
+
+/* Prompt panel (right on desktop) */
+.lb-side{
+  align-self: center;
+  justify-self: stretch;
+  min-width: 0;
+  color: var(--muted);
+  letter-spacing: .02em;
+  line-height: 1.5;
+  padding-right: 6px;
+}
+
+/* Prompt text (label + content styling) */
+.lb-prompt{
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 18px;     /* down from 20px */
+  line-height: 1.38;  /* tighter but readable */
+  color: #444;
+  padding-top: 6px;
+}
+
+/* PROMPT: label (first line) */
+.lb-prompt::first-line{
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 12px;
+  color: #222;
+  letter-spacing: 0.08em;
+  line-height: 1.25;
+  /* remove padding-top */
+}
+
+/* Mobile: stack prompt below image, keep centered */
+@media (max-width: 900px){
+  .lb-content,
+  .lb-figure{
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    height: auto;
+    max-height: 92vh;
+    overflow: auto;
+    padding: 18px 0;
+  }
+  
+  @media (max-width: 640px){
+  .lb-prompt{
+    font-size: 16px;
+    line-height: 1.5;
+  }
+}
+  .lb-img{
+    max-height: 70vh;
+  }
+
+  .lb-side{
+    padding: 14px 16px 0;
+    text-align: left;
+  }
+}
+
+.lb-close{
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  border: none;
+  background: transparent;
+  font-size: 36px;
+  line-height: 1;
+  cursor: pointer;
+  color: #111;
+  opacity: .65;
+}
+.lb-close:hover{ opacity: 1; }
+
+.lb-nav{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  font-size: 44px;
+  cursor: pointer;
+  color: #111;
+  padding: 14px 18px;
+  opacity: .55;
+  user-select: none;
+}
+.lb-nav:hover{ opacity: 1; }
+
+.lb-prev{ left: 14px; }
+.lb-next{ right: 14px; }
+.lb-nav:disabled{ cursor: default; }
+
+/* === HERO CAPTION (bottom-left editorial text) === */
+.hero-caption{
+  position: absolute;
+  left: 40px;
+  bottom: 50px;
+  max-width: 720px;
+
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-weight: 600;
+
+  font-size: clamp(30px, 4.0vw, 72px);
+  line-height: 1.12;
+  letter-spacing: 0; /* important for Playfair */
+
+  color: rgba(255,255,255,0.92);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Mobile refinement */
+@media (max-width: 640px){
+  .hero-caption{
+    left: 10px;
+    right: 20px;
+    bottom: 24px;          /* extra clearance from arrow */
+    max-width: none;
+
+    font-size: 24px;
+    line-height: 1.24;
+  }
+}
+
+/* Hide mobile-only line breaks by default (desktop & tablet) */
+.m-br {
+  display: none;
+}
+
+/* Enable line breaks on mobile only */
+@media (max-width: 640px) {
+  .m-br {
+    display: inline;
+  }
+}
+
+/* === HERO — contained parallax hero (stronger) === */
+.hero{
+  position: relative;
+  height: 92vh;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* Overscan: make the image taller than the hero so it can move */
+.hero-media{
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -10%;
+  bottom: -10%;
+  background-size: cover;
+  background-position: center;
+  transform: translate3d(0, 0, 0) scale(1.14);
+  will-change: transform;
+}
+
+/* === WHITE BANNER BELOW HERO (NOW STICKY HEADER) === */
+.hero-banner{
+  position: sticky;
+  top: 0;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+}
+
+.hero-banner-inner{
+  height: 72px;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--pad);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-banner-title{
+  font-size: 16px;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: #111;
+  opacity: .9;
+}
+
+.hero-banner-divider{
+  height: 1.5px;
+  background: var(--line);
+}
+
+/* === HERO SCROLL CUE (arrow) — smooth, continuous float === */
+.hero-scroll{
+  position: absolute;
+  left: 50%;
+  bottom: 36px;
+  transform: translateX(-50%);
+  width: 58px;     /* bigger */
+  height: 58px;    /* bigger */
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  z-index: 2;
+  opacity: .9;
+
+  /* Smooth continuous scroll cue */
+  animation: heroScrollFloat 1.35s ease-in-out infinite;
+}
+
+/* Draw the chevron using borders */
+.hero-scroll::before{
+  content:"";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;          /* MATCH lightbox arrow scale */
+  height: 22px;         /* MATCH lightbox arrow scale */
+  border-right: 3px solid rgba(255,255,255,0.9);
+  border-bottom: 3px solid rgba(255,255,255,0.9);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* Smooth, continuous vertical motion */
+.hero-scroll::after{
+  content:"";
+  position: absolute;
+  inset: -8px;      /* slightly bigger halo */
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(0,0,0,0.22), rgba(0,0,0,0) 60%);
+}
+
+.hero-scroll:hover{ opacity: 1; }
+
+.hero-scroll:focus-visible{
+  outline: 2px solid rgba(255,255,255,0.85);
+  outline-offset: 3px;
+}
+
+/* Smooth, continuous vertical motion */
+@keyframes heroScrollFloat{
+  0%   { transform: translateX(-50%) translateY(0); }
+  50%  { transform: translateX(-50%) translateY(10px); }
+  100% { transform: translateX(-50%) translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .hero-scroll{ animation: none; }
+}
+
+/* === LIGHTBOX NAV ARROWS — chevron shape (match HERO cue style) === */
+
+/* Hide the ‹ › characters but keep them accessible */
+.lb-nav{
+  color: transparent;          /* hides the glyph */
+  text-shadow: none;
+  position: absolute;          /* already is, but keep explicit */
+}
+
+/* Draw chevrons with borders (same visual language as .hero-scroll) */
+.lb-nav::before{
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;                 /* tweak size */
+  height: 16px;                /* tweak size */
+  border-right: 3px solid rgba(17,17,17,0.9);
+  border-bottom: 3px solid rgba(17,17,17,0.9);
+  transform: translate(-50%, -50%) rotate(135deg); /* default: LEFT */
+}
+
+/* Right chevron */
+.lb-next::before{
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Optional: make disabled state feel consistent */
+.lb-nav:disabled::before{
+  opacity: 0.25;
+}
+
+/* Optional: slightly bigger on large screens (feel free to remove) */
+@media (min-width: 900px){
+  .lb-nav::before{
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* === FOOTER SCROLL (EXACT SAME ARROW, ROTATED UP) === */
+.footer-scroll{
+  position: static;              /* override hero absolute positioning */
+  left: auto;
+  bottom: auto;
+  transform: none;               /* remove translateX(-50%) from hero */
+  margin: 18px auto 0;           /* center it inside footer */
+  display: inline-block;
+  animation: none;               /* keep footer arrow still */
+}
+
+/* Make the chevron point UP (rotate 180° relative to hero) */
+.footer-scroll::before{
+  transform: translate(-50%, -50%) rotate(-135deg);
+}
+
+/* Keep the halo but without interfering with layout */
+.footer-scroll::after{
+  inset: -8px;
+}
