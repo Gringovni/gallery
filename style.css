@@ -184,29 +184,31 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 
 /* === FOOTER BACK-TO-TOP (chevron up, matches hero cue language) === */
 .footer-top{
-  width: 44px;
-  height: 44px;
+  width: 58px;
+  height: 58px;
   border: 0;
   padding: 0;
   background: transparent;
   cursor: pointer;
   opacity: .55;
   display: inline-block;
-  margin: 10px auto 8px;  /* tweak spacing */
+  margin: 10px auto 8px;
+  animation: heroScrollFloat 1.35s ease-in-out infinite;
+  position: relative;
 }
 
 .footer-top:hover{ opacity: 1; }
 
 .footer-top::before{
   content:"";
-  display:block;
-  width: 14px;
-  height: 14px;
-  margin: 0 auto;
-  border-right: 2px solid rgba(17,17,17,0.55);
-  border-bottom: 2px solid rgba(17,17,17,0.55);
-  transform: rotate(-135deg); /* UP chevron */
-}
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;      /* SAME as hero */
+  height: 22px;     /* SAME as hero */
+  border-right: 3px solid rgba(17,17,17,0.9); /* dark version */
+  border-bottom: 3px solid rgba(17,17,17,0.9);
+  transform: translate(-50%, -50%) rotate(-135deg); /* UP arrow */
 
 /* Lightbox (UPDATED — only section changed) */
 .lb{
