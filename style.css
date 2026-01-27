@@ -549,3 +549,15 @@ html, body{
 .footer-scroll::after{
   inset: -8px;
 }
+
+/* FORCE footer arrow to live in the footer, not the hero */
+.site-footer .footer-scroll{
+  position: relative !important;
+  left: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  margin: 18px auto 0;
+  display: inline-block;
+  animation: none !important;
+  z-index: 1;
+}
