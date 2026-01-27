@@ -292,38 +292,39 @@
     });
   })();
 
-  // FOOTER ARROW CLICK → SCROLL TO BANNER (match hero speed/easing)
-  (function(){
-    const btn = document.querySelector(".footer-scroll");
+// FOOTER ARROW CLICK → SCROLL TO BANNER (delegated + match hero speed/easing)
+(function(){
+  function easeInOutCubic(t){
+    return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+  }
+
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".footer-scroll");
+    if(!btn) return;
+    console.log("footer arrow click detected");
+
     const target = document.getElementById("banner");
-    if(!btn || !target) return;
+    if(!target) return;
 
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+    e.preventDefault();
+    e.stopPropagation();
 
-      const startY = window.scrollY;
-      const targetY = target.getBoundingClientRect().top + window.scrollY;
-      const distance = targetY - startY;
+    const startY = window.scrollY;
+    const targetY = target.getBoundingClientRect().top + window.scrollY;
+    const distance = targetY - startY;
 
-      const duration = 1400; // match hero
-      const startTime = performance.now();
+    const duration = 1400; // match hero
+    const startTime = performance.now();
 
-      function easeInOutCubic(t){
-        return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
-      }
+    function step(now){
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed / duration, 1);
+      const eased = easeInOutCubic(t);
+      window.scrollTo(0, startY + distance * eased);
+      if(t < 1) requestAnimationFrame(step);
+    }
 
-      function step(now){
-        const elapsed = now - startTime;
-        const t = Math.min(elapsed / duration, 1);
-        const eased = easeInOutCubic(t);
-        window.scrollTo(0, startY + distance * eased);
-        if(t < 1) requestAnimationFrame(step);
-      }
-
-      requestAnimationFrame(step);
-    });
-  })();
+    requestAnimationFrame(step);
+  });
+})();
 </script>
-</body>
-</html>
