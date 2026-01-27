@@ -182,6 +182,32 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   background: #e9e9e9;   /* exact line color */
 }
 
+/* === FOOTER BACK-TO-TOP (chevron up, matches hero cue language) === */
+.footer-top{
+  width: 44px;
+  height: 44px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  opacity: .55;
+  display: inline-block;
+  margin: 10px auto 8px;  /* tweak spacing */
+}
+
+.footer-top:hover{ opacity: 1; }
+
+.footer-top::before{
+  content:"";
+  display:block;
+  width: 14px;
+  height: 14px;
+  margin: 0 auto;
+  border-right: 2px solid rgba(17,17,17,0.55);
+  border-bottom: 2px solid rgba(17,17,17,0.55);
+  transform: rotate(-135deg); /* UP chevron */
+}
+
 /* Lightbox (UPDATED — only section changed) */
 .lb{
   position: fixed;
