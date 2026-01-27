@@ -565,17 +565,20 @@ body{
   transform: none !important;
   margin: 18px auto 0;
   display: inline-block;
-  animation: none !important;
   z-index: 1;
+  pointer-events: auto;
+
+  /* Footer arrow is intentionally static (no bounce) */
+  animation: none !important;
 }
 
-/* FOOTER arrow: visible on white, no halo/shadow */
+/* Footer arrow: lighter tone, no shadow */
 .site-footer .footer-scroll::before{
-  border-right: 3px solid rgba(17,17,17,0.5); /* dark arrow */
+  border-right: 3px solid rgba(17,17,17,0.5);
   border-bottom: 3px solid rgba(17,17,17,0.5);
 }
 
-/* Remove the halo entirely in footer */
+/* Remove halo entirely in footer */
 .site-footer .footer-scroll::after{
   display: none;
 }
