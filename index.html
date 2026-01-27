@@ -295,39 +295,42 @@
       });
     })();
 
-    // FOOTER ARROW CLICK → SCROLL TO BANNER (MATCH HERO SPEED/EASING)
-    (function(){
-      const btn = document.querySelector(".footer-scroll");
-      const target = document.getElementById("banner");
-      if(!btn || !target) return;
+// FOOTER ARROW CLICK → SCROLL TO BANNER (MATCH HERO SPEED/EASING)
+(function(){
+  const btn = document.querySelector(".footer-scroll");
+  const target = document.getElementById("banner");
+  if(!btn || !target) return;
 
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
 
-        const startY = window.scrollY;
-        const targetY = target.getBoundingClientRect().top + window.scrollY;
-        const distance = targetY - startY;
+    const startY = window.scrollY;
 
-        const duration = 1400; // EXACT match to hero scroll
-        const startTime = performance.now();
+    // Scroll so the banner's top aligns exactly with the viewport top
+    const targetY = target.getBoundingClientRect().top + window.scrollY;
 
-        function easeInOutCubic(t){
-          return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
-        }
+    const distance = targetY - startY;
 
-        function step(now){
-          const elapsed = now - startTime;
-          const t = Math.min(elapsed / duration, 1);
-          const eased = easeInOutCubic(t);
+    const duration = 1400; // MUST match hero duration
+    const startTime = performance.now();
 
-          window.scrollTo(0, startY + distance * eased);
+    function easeInOutCubic(t){
+      return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+    }
 
-          if(t < 1) requestAnimationFrame(step);
-        }
+    function step(now){
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed / duration, 1);
+      const eased = easeInOutCubic(t);
 
-        requestAnimationFrame(step);
-      });
-    })();
+      window.scrollTo(0, startY + distance * eased);
+
+      if(t < 1) requestAnimationFrame(step);
+    }
+
+    requestAnimationFrame(step);
+  });
+})();
   </script>
 </body>
 </html>
