@@ -52,8 +52,6 @@
     <section id="masonry" class="masonry" aria-label="Gallery"></section>
   </main>
 
-  <div class="footer-divider"></div>
-
   <footer class="site-footer">
     <div class="footer-line footer-main">
       © 2026 Latent Illumination |
@@ -77,6 +75,12 @@
         GitHub
       </a>
     </div>
+
+    <!-- Footer scroll-to-top arrow (NEW) -->
+    <button class="footer-scroll" id="footerScroll" type="button" aria-label="Scroll to top"></button>
+
+    <!-- Footer divider line (moved here so arrow sits between text and line) -->
+    <div class="footer-divider"></div>
   </footer>
 
   <!-- Lightbox (UPDATED only) -->
@@ -272,6 +276,38 @@ const scale = 1.14 - progress * maxScaleOut;
         const distance = targetY - startY;
 
         const duration = 1400; // ms (increase = slower)
+        const startTime = performance.now();
+
+        function easeInOutCubic(t){
+          return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+        }
+
+        function step(now){
+          const elapsed = now - startTime;
+          const t = Math.min(elapsed / duration, 1);
+          const eased = easeInOutCubic(t);
+
+          window.scrollTo(0, startY + distance * eased);
+
+          if(t < 1) requestAnimationFrame(step);
+        }
+
+        requestAnimationFrame(step);
+      });
+    })();
+
+    // FOOTER ARROW CLICK → SCROLL TO TOP (mirrored behavior)
+    (function(){
+      const btn = document.getElementById("footerScroll");
+      const hero = document.getElementById("hero");
+      if(!btn || !hero) return;
+
+      btn.addEventListener("click", () => {
+        const startY = window.scrollY;
+        const targetY = hero.getBoundingClientRect().top + window.scrollY;
+        const distance = targetY - startY;
+
+        const duration = 1400; // ms (matches hero)
         const startTime = performance.now();
 
         function easeInOutCubic(t){
