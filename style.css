@@ -182,6 +182,60 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   background: #e9e9e9;   /* exact line color */
 }
 
+/* === FOOTER SCROLL CUE (arrow) — matches HERO cue style, points upward === */
+.footer-scroll{
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 58px;     /* same as hero */
+  height: 58px;    /* same as hero */
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  z-index: 2;
+  opacity: .9;
+
+  /* same motion as hero */
+  animation: heroScrollFloat 1.35s ease-in-out infinite;
+
+  /* spacing between footer text and divider line */
+  margin-top: 16px;
+}
+
+/* Draw the chevron using borders (same thickness) — rotated to point UP */
+.footer-scroll::before{
+  content:"";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;          /* same as hero */
+  height: 22px;         /* same as hero */
+  border-right: 3px solid rgba(255,255,255,0.9);
+  border-bottom: 3px solid rgba(255,255,255,0.9);
+  transform: translate(-50%, -50%) rotate(-135deg);
+}
+
+/* same halo as hero */
+.footer-scroll::after{
+  content:"";
+  position: absolute;
+  inset: -8px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(0,0,0,0.22), rgba(0,0,0,0) 60%);
+}
+
+.footer-scroll:hover{ opacity: 1; }
+
+.footer-scroll:focus-visible{
+  outline: 2px solid rgba(255,255,255,0.85);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .footer-scroll{ animation: none; }
+}
+
 /* Lightbox (UPDATED — only section changed) */
 .lb{
   position: fixed;
