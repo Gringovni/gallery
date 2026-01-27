@@ -16,6 +16,11 @@
 html,body{ margin:0; padding:0; background:var(--bg); color:var(--text); }
 body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
 
+/* Prevent horizontal scroll (side overflow) */
+html, body{
+  overflow-x: hidden;
+}
+
 /* Top bar */
 .topbar{
   position: sticky;
