@@ -295,41 +295,48 @@
       });
     })();
 
-// FOOTER ARROW CLICK → SCROLL TO BANNER (MATCH HERO SPEED/EASING)
+// FOOTER ARROW CLICK → SCROLL TO BANNER (robust attach)
 (function(){
-  const btn = document.querySelector(".footer-scroll");
-  const target = document.getElementById("banner");
-  if(!btn || !target) return;
+  function attachFooterScroll(){
+    const btn = document.querySelector(".footer-scroll");
+    const target = document.getElementById("banner");
+    if(!btn || !target) return;
 
-  btn.addEventListener("click", (e) => {
-    e.stopPropagation();
+    // prevent double-binding if script runs twice
+    if(btn.dataset.bound === "1") return;
+    btn.dataset.bound = "1";
 
-    const startY = window.scrollY;
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-    // Scroll so the banner's top aligns exactly with the viewport top
-    const targetY = target.getBoundingClientRect().top + window.scrollY;
+      const startY = window.scrollY;
+      const targetY = target.getBoundingClientRect().top + window.scrollY;
+      const distance = targetY - startY;
 
-    const distance = targetY - startY;
+      const duration = 1400; // match hero
+      const startTime = performance.now();
 
-    const duration = 1400; // MUST match hero duration
-    const startTime = performance.now();
+      function easeInOutCubic(t){
+        return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+      }
 
-    function easeInOutCubic(t){
-      return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
-    }
+      function step(now){
+        const elapsed = now - startTime;
+        const t = Math.min(elapsed / duration, 1);
+        const eased = easeInOutCubic(t);
+        window.scrollTo(0, startY + distance * eased);
+        if(t < 1) requestAnimationFrame(step);
+      }
 
-    function step(now){
-      const elapsed = now - startTime;
-      const t = Math.min(elapsed / duration, 1);
-      const eased = easeInOutCubic(t);
+      requestAnimationFrame(step);
+    });
+  }
 
-      window.scrollTo(0, startY + distance * eased);
-
-      if(t < 1) requestAnimationFrame(step);
-    }
-
-    requestAnimationFrame(step);
-  });
+  // Attach now + after DOM is ready (covers timing / errors elsewhere)
+  attachFooterScroll();
+  document.addEventListener("DOMContentLoaded", attachFooterScroll);
+  window.addEventListener("load", attachFooterScroll);
 })();
   </script>
 </body>
