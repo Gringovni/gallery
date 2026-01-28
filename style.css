@@ -345,32 +345,60 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
    - top row: image (fits)
    - bottom row: prompt (scrolls)
 */
+/* MOBILE: strict stack, no overlap, bigger image */
 @media (max-width: 900px){
-  .lb-content,
-  .lb-figure{
-    width: min(1200px, 92vw);
-    height: min(92vh, 92dvh);       /* FIX: never exceed viewport */
-    max-height: min(92vh, 92dvh);
-    grid-template-columns: 1fr;
-    grid-template-rows: minmax(0, 1fr) minmax(160px, 40dvh);
-    gap: 16px;
-    overflow: hidden;              /* FIX: prevent whole overlay scrolling */
-    padding: 64px 0 18px;          /* FIX: reserve space for the X */
+  /* Make overlay truly viewport-sized (removes “centered card” feeling) */
+  .lb{
     align-items: stretch;
+    justify-content: stretch;
   }
 
+  /* Force a vertical stack instead of grid (prevents overlap bugs) */
+  .lb-content,
+  .lb-figure{
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 14px;
+    overflow: hidden;
+
+    /* Reserve space for the fixed X */
+    padding: 72px 16px 16px;
+    margin: 0;
+  }
+
+  /* Image block (bigger, centered) */
   .lb-media{
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     min-height: 0;
   }
 
   .lb-img{
-    max-height: 100%;              /* FIX: fit inside first row */
+    width: 100%;
+    max-width: 100%;
+    max-height: 58dvh;     /* bigger image */
+    object-fit: contain;
   }
 
+  /* Prompt block (scrolls independently) */
   .lb-side{
-    padding: 0 16px 0;
-    overflow: auto;                /* FIX: prompt scrolls independently */
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
     -webkit-overflow-scrolling: touch;
+    padding: 0;
+  }
+
+  /* Keep nav arrows usable on mobile (optional tweak) */
+  .lb-nav{
+    top: 45%;
   }
 }
 
