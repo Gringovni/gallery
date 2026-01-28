@@ -192,11 +192,15 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   top: -20px;                 /* move ONLY the line upward */
 }
 
-/* Lightbox (UPDATED — only section changed) */
+/* =========================================================
+   LIGHTBOX (PHASE 1 FIX — mobile-safe, no collisions, solid bg)
+   ========================================================= */
+
+/* Overlay */
 .lb{
   position: fixed;
   inset: 0;
-  background: rgba(255,255,255,0.96);
+  background: #ffffff;              /* FIX: solid (no transparency) */
   display: none;
   align-items: center;
   justify-content: center;
@@ -205,22 +209,18 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 
 .lb.open{ display:flex; }
 
-/* New “balanced” lightbox layout:
-   - desktop: image left, prompt right
-   - mobile: prompt below
-   Supports both:
-   - your older structure (.lb-figure, .lb-caption)
-   - the newer structure (.lb-content, .lb-media, .lb-side, .lb-prompt)
-*/
+/* Desktop layout: keep your intent (image left, prompt right) */
 .lb-content,
 .lb-figure{
   margin: 0;
   width: min(1200px, 92vw);
   height: min(86vh, 860px);
   display: grid;
-  grid-template-columns: 1fr 460px; /* was 320px */
+  grid-template-columns: 1fr 460px;
   gap: 28px;
   align-items: center;
+
+  min-height: 0;                    /* FIX: allow children to shrink */
 }
 
 /* Image area */
@@ -232,7 +232,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   min-height: 0;
 }
 
-/* Image sizing (prevents oversizing / keeps centered) */
+/* Image sizing */
 .lb-img{
   max-width: 100%;
   max-height: 86vh;
@@ -241,26 +241,27 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   box-shadow: 0 8px 24px rgba(0,0,0,.08);
 }
 
-/* Prompt panel (right on desktop) */
+/* Prompt panel */
 .lb-side{
   align-self: center;
   justify-self: stretch;
   min-width: 0;
+  min-height: 0;                    /* FIX: required for overflow scrolling */
   color: var(--muted);
   letter-spacing: .02em;
   line-height: 1.5;
   padding-right: 6px;
 }
 
-/* Prompt text (label + content styling) */
+/* Prompt text */
 .lb-prompt{
   margin: 0;
   white-space: pre-wrap;
   font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
   font-style: italic;
   font-weight: 300;
-  font-size: 18px;     /* down from 20px */
-  line-height: 1.38;  /* tighter but readable */
+  font-size: 18px;
+  line-height: 1.38;
   color: #444;
   padding-top: 6px;
 }
@@ -274,39 +275,11 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   color: #222;
   letter-spacing: 0.08em;
   line-height: 1.25;
-  /* remove padding-top */
 }
 
-/* Mobile: stack prompt below image, keep centered */
-@media (max-width: 900px){
-  .lb-content,
-  .lb-figure{
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
-    height: auto;
-    max-height: 92vh;
-    overflow: auto;
-    padding: 18px 0;
-  }
-  
-  @media (max-width: 640px){
-  .lb-prompt{
-    font-size: 16px;
-    line-height: 1.5;
-  }
-}
-  .lb-img{
-    max-height: 70vh;
-  }
-
-  .lb-side{
-    padding: 14px 16px 0;
-    text-align: left;
-  }
-}
-
+/* Close button: always tappable (mobile + desktop) */
 .lb-close{
-  position: absolute;
+  position: fixed;                  /* FIX: not absolute */
   top: 16px;
   right: 18px;
   border: none;
@@ -316,9 +289,11 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   cursor: pointer;
   color: #111;
   opacity: .65;
+  z-index: 60;                      /* FIX: stays above image/prompt */
 }
 .lb-close:hover{ opacity: 1; }
 
+/* Nav buttons */
 .lb-nav{
   position: absolute;
   top: 50%;
@@ -327,16 +302,84 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   background: transparent;
   font-size: 44px;
   cursor: pointer;
-  color: #111;
   padding: 14px 18px;
   opacity: .55;
   user-select: none;
+
+  color: transparent;               /* keep glyph hidden (you draw chevrons) */
+  text-shadow: none;
 }
 .lb-nav:hover{ opacity: 1; }
 
 .lb-prev{ left: 14px; }
 .lb-next{ right: 14px; }
 .lb-nav:disabled{ cursor: default; }
+
+/* Chevron shape (matches hero cue language) */
+.lb-nav::before{
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  border-right: 3px solid rgba(17,17,17,0.9);
+  border-bottom: 3px solid rgba(17,17,17,0.9);
+  transform: translate(-50%, -50%) rotate(135deg);
+}
+.lb-next::before{
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+.lb-nav:disabled::before{
+  opacity: 0.25;
+}
+
+@media (min-width: 900px){
+  .lb-nav::before{
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* MOBILE: viewport-safe layout (no overlay collisions)
+   - top row: image (fits)
+   - bottom row: prompt (scrolls)
+*/
+@media (max-width: 900px){
+  .lb-content,
+  .lb-figure{
+    width: min(1200px, 92vw);
+    height: min(92vh, 92dvh);       /* FIX: never exceed viewport */
+    max-height: min(92vh, 92dvh);
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) minmax(160px, 40dvh);
+    gap: 16px;
+    overflow: hidden;              /* FIX: prevent whole overlay scrolling */
+    padding: 64px 0 18px;          /* FIX: reserve space for the X */
+    align-items: stretch;
+  }
+
+  .lb-media{
+    min-height: 0;
+  }
+
+  .lb-img{
+    max-height: 100%;              /* FIX: fit inside first row */
+  }
+
+  .lb-side{
+    padding: 0 16px 0;
+    overflow: auto;                /* FIX: prompt scrolls independently */
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 640px){
+  .lb-prompt{
+    font-size: 16px;
+    line-height: 1.5;
+  }
+}
 
 /* === HERO CAPTION (bottom-left editorial text) === */
 .hero-caption{
@@ -494,46 +537,6 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   .hero-scroll{ animation: none; }
 }
 
-/* === LIGHTBOX NAV ARROWS — chevron shape (match HERO cue style) === */
-
-/* Hide the ‹ › characters but keep them accessible */
-.lb-nav{
-  color: transparent;          /* hides the glyph */
-  text-shadow: none;
-  position: absolute;          /* already is, but keep explicit */
-}
-
-/* Draw chevrons with borders (same visual language as .hero-scroll) */
-.lb-nav::before{
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 16px;                 /* tweak size */
-  height: 16px;                /* tweak size */
-  border-right: 3px solid rgba(17,17,17,0.9);
-  border-bottom: 3px solid rgba(17,17,17,0.9);
-  transform: translate(-50%, -50%) rotate(135deg); /* default: LEFT */
-}
-
-/* Right chevron */
-.lb-next::before{
-  transform: translate(-50%, -50%) rotate(-45deg);
-}
-
-/* Optional: make disabled state feel consistent */
-.lb-nav:disabled::before{
-  opacity: 0.25;
-}
-
-/* Optional: slightly bigger on large screens (feel free to remove) */
-@media (min-width: 900px){
-  .lb-nav::before{
-    width: 18px;
-    height: 18px;
-  }
-}
-
 /* === FOOTER SCROLL CUE (arrow) — matches HERO cue style, points upward === */
 .footer-scroll{
   width: 58px;
@@ -546,18 +549,18 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   opacity: .9;
 
   position: relative;
-  left: 50%;                                  /* CHG: enable hero-identical animation transform */
-  transform: translateX(-50%);                /* CHG: matches hero baseline */
-  animation: heroScrollFloat 1.35s ease-in-out infinite; /* CHG: restore footer animation */
+  left: 50%;
+  transform: translateX(-50%);
+  animation: heroScrollFloat 1.35s ease-in-out infinite;
 
-  margin: 0 0 12px;                           /* CHG: space between arrow and footer text */
-  order: 2;                                   /* CHG: Divider → Arrow → Text */
+  margin: 0 0 12px;
+  order: 2;
 }
 
-.footer-main{ order: 3; }                     /* CHG: Divider → Arrow → Text */
-.footer-powered{ order: 4; }                  /* CHG: Divider → Arrow → Text */
+.footer-main{ order: 3; }
+.footer-powered{ order: 4; }
 
-/* Draw the chevron using borders (same thickness) — rotated to point UP */
+/* Draw the chevron using borders — rotated to point UP */
 .footer-scroll::before{
   content:"";
   position: absolute;
@@ -565,20 +568,19 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   top: 50%;
   width: 22px;
   height: 22px;
-  border-right: 3px solid rgba(17, 17, 17, 0.5);   /* CHG: exact required color */
-  border-bottom: 3px solid rgba(17, 17, 17, 0.5);  /* CHG: exact required color */
+  border-right: 3px solid rgba(17, 17, 17, 0.5);
+  border-bottom: 3px solid rgba(17, 17, 17, 0.5);
   transform: translate(-50%, -50%) rotate(-135deg);
 }
 
-/* No halo / glow / blur-like treatment */
 .footer-scroll::after{
-  content: none;                               /* CHG: remove halo entirely */
+  content: none;
 }
 
 .footer-scroll:hover{ opacity: 1; }
 
 .footer-scroll:focus-visible{
-  outline: 2px solid rgba(17, 17, 17, 0.5);     /* CHG: exact required color */
+  outline: 2px solid rgba(17, 17, 17, 0.5);
   outline-offset: 3px;
 }
 
