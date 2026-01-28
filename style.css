@@ -576,4 +576,40 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
     width: 18px;
     height: 18px;
   }
+
+  /* === FOOTER SCROLL CUE (arrow) — VISUAL REFINEMENT ONLY === */
+
+/* 1) Positioning: make it structurally anchored + centered (no “floating” offset logic) */
+.footer-scroll{
+  display: block;                 /* centers reliably without positional tricks */
+  margin: 12px auto 0;            /* sits under footer text block */
+  left: auto;                     /* remove centering via left/transform */
+  transform: none;                /* remove centering via left/transform */
+  position: relative;             /* keep existing layout participation */
+  animation: none;                /* anchored (no bobbing) */
+}
+
+/* 2) Rendering quality: remove any halo / glow / blur-like treatment */
+.footer-scroll::after{
+  content: none;                  /* removes radial halo entirely */
+}
+
+/* 3) Arrow color: exact required value (and consistent) */
+.footer-scroll::before{
+  border-right: 3px solid rgba(17, 17, 17, 0.5);  /* exact color */
+  border-bottom: 3px solid rgba(17, 17, 17, 0.5); /* exact color */
+}
+
+/* 4) Hover/focus: keep the same exact stroke color (no alternate grays) */
+.footer-scroll:hover{
+  opacity: .9;                    /* keep existing feel without changing stroke color */
+}
+
+.footer-scroll:focus-visible{
+  outline: 2px solid rgba(17, 17, 17, 0.5);       /* exact color */
+}
+
+/* 5) Divider spacing: keep line directly under arrow (no “floating” gap) */
+.footer-divider{
+  margin: 10px auto 0;            /* tighter spacing so arrow feels anchored to the line */
 }
