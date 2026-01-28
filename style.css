@@ -177,7 +177,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   max-width: var(--container);
   width: 100%;
   margin: 20px auto 0;
-  padding: 0 var(--pad);      /* keep aligned with gallery edges */
+  padding: 0;                 /* keep aligned with gallery edges */
   order: 1;                   /* Divider → Arrow → Text */
 }
 
