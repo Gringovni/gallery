@@ -145,9 +145,9 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   letter-spacing: .02em;
   line-height: 1.4;
 
-  display: flex;                 /* enable CSS-only reordering */
-  flex-direction: column;        /* vertical stack */
-  align-items: stretch;          /* keep footer lines full width */
+  display: flex;                 /* CHG: enable CSS-only reordering */
+  flex-direction: column;        /* CHG: vertical stack */
+  align-items: stretch;          /* CHG: keep footer lines full width */
 }
 
 .footer-line{
@@ -157,11 +157,9 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 
 .footer-main{
   margin-bottom: 4px;
-  order: 3;                      /* text */
 }
 
 .footer-powered{
-  order: 4;                      /* text */
   /* keep spacing only, no font changes */
 }
 
@@ -177,21 +175,16 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 /* === FOOTER DIVIDER (matches header line) === */
 .footer-divider{
   max-width: var(--container);
-  margin: 10px auto 0;
+  margin: 10px auto 0;           /* CHG: sit directly below footer text */
   padding: 0 var(--pad);
-  order: 1;                      /* line first */
+  order: 4;                      /* CHG: Arrow → Text → Divider */
 }
 
 .footer-divider::before{
   content: "";
   display: block;
-  height: 1px;                   /* same thickness as top-divider */
-  background: #e9e9e9;           /* exact line color */
-}
-
-/* === FOOTER ARROW === */
-.footer-scroll{
-  order: 2;                      /* arrow between line and text */
+  height: 1px;        /* same thickness as top-divider */
+  background: #e9e9e9;   /* exact line color */
 }
 
 /* Lightbox (UPDATED — only section changed) */
@@ -553,12 +546,11 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   animation: heroScrollFloat 1.35s ease-in-out infinite; /* CHG: restore footer animation */
 
   margin: 0 0 12px;                           /* CHG: space between arrow and footer text */
+  order: 1;                                   /* CHG: Arrow → Text → Divider */
 }
 
-.footer-main{ order: 1; }
-.footer-powered{ order: 2; }
-.footer-divider{ order: 3; }
-.footer-scroll{ order: 4; }
+.footer-main{ order: 2; }                     /* CHG: Arrow → Text → Divider */
+.footer-powered{ order: 3; }                  /* CHG: Arrow → Text → Divider */
 
 /* Draw the chevron using borders (same thickness) — rotated to point UP */
 .footer-scroll::before{
