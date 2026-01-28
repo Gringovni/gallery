@@ -175,16 +175,16 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 /* === FOOTER DIVIDER (matches header line) === */
 .footer-divider{
   max-width: var(--container);
-  width: 100%;                    /* FIX: give the flex item real width */
-  margin: 20px auto 0;            /* restore original spacing */
-  padding: 0 var(--pad);
-  order: 1;                       /* Divider → Arrow → Text */
+  width: 100%;
+  margin: 8px auto 0;          /* TWEAK: move line upward (more space below) */
+  padding: 0;                  /* TWEAK: extend line to exact gallery edges */
+  order: 1;                    /* Divider → Arrow → Text */
 }
 
 .footer-divider::before{
   content: "";
   display: block;
-  width: 100%;                    /* REQUIRED */
+  width: 100%;
   height: 1px;
   background: var(--line);
 }
