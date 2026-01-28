@@ -299,15 +299,18 @@ const scale = 1.14 - progress * maxScaleOut;
     })();
 
     // FOOTER ARROW CLICK → SCROLL TO TOP (mirrored behavior)
-    (function(){
-      const btn = document.getElementById("footerScroll");
-      const hero = document.getElementById("hero");
-      if(!btn || !hero) return;
+(function(){
+  const btn = document.getElementById("footerScroll");
+  const target = document.getElementById("masonry");
+  const banner = document.querySelector(".hero-banner");
+  if(!btn || !target) return;
 
-      btn.addEventListener("click", () => {
-        const startY = window.scrollY;
-        const targetY = hero.getBoundingClientRect().top + window.scrollY;
-        const distance = targetY - startY;
+  btn.addEventListener("click", () => {
+    const startY = window.scrollY;
+    const offset = banner ? banner.offsetHeight : 0;
+    const targetY =
+      target.getBoundingClientRect().top + window.scrollY - offset;
+    const distance = targetY - startY;
 
         const duration = 1400; // ms (matches hero)
         const startTime = performance.now();
