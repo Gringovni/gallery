@@ -176,9 +176,9 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 .footer-divider{
   max-width: var(--container);
   width: 100%;
-  margin: -20px auto 0;         /* nudges line upward */
-  padding: 0;                  /* TWEAK: extend line to exact gallery edges */
-  order: 1;                    /* Divider → Arrow → Text */
+  margin: 20px auto 0;
+  padding: 0 var(--pad);      /* keep aligned with gallery edges */
+  order: 1;                   /* Divider → Arrow → Text */
 }
 
 .footer-divider::before{
@@ -187,6 +187,9 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   width: 100%;
   height: 1px;
   background: var(--line);
+
+  position: relative;         /* REQUIRED */
+  top: -20px;                 /* move ONLY the line upward */
 }
 
 /* Lightbox (UPDATED — only section changed) */
