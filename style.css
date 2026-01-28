@@ -1,202 +1,8 @@
-/* style.css */
-
-:root{
-  --bg: #ffffff;
-  --text: #111;
-  --muted: #777;
-  --line: #e9e9e9;
-
-  /* Tuning knobs */
-  --container: 1585px;  /* wider = less side margin */
-  --pad: 12px;          /* smaller = less side margin */
-  --gap: 6px;           /* smaller = tighter spacing */
-}
-
-*{ box-sizing: border-box; }
-html,body{ margin:0; padding:0; background:var(--bg); color:var(--text); }
-body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-
-/* Top bar */
-.topbar{
-  position: sticky;
-  top: 0;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(8px);
-  z-index: 10;
-}
-
-.topbar-inner{
-  height: 72px;
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: 0 var(--pad);
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-}
-
-/* === BRAND / BANNER TITLE === */
-.hero-banner-title{
-  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-weight: 300;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-@media (max-width: 640px){
-  .hero-banner-title{
-    font-weight: 400;
-    letter-spacing: 0.12em;
-  }
-}
-
-/* We removed Gallery/Shop, so keep this empty */
-.tabs{
-  display:flex;
-  gap: 28px;
-  font-size: 14px;
-}
-
-.brand{
-  font-size: 14px;
-  letter-spacing: .10em;
-  text-transform: uppercase;
-  color: #111;
-  opacity: .9;
-}
-
-.top-actions{ justify-self: end; }
-
-/* thin gray line ONLY */
-.top-divider{
-  height: 1.5px;
-  background: var(--line);
-}
-
-/* Layout
-   IMPORTANT:
-   padding-top: 0; so the line touches the first row of images
-*/
-.wrap{
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: 0 var(--pad) 40px;
-}
-
-/* Masonry */
-.masonry{
-  column-count: 3;
-  column-gap: var(--gap);
-  margin: 0;
-  padding-top: 0;
-}
-
-@media (max-width: 1100px){
-  .masonry{ column-count: 2; }
-}
-
-@media (max-width: 640px){
-  .masonry{ column-count: 1; }
-
-  .topbar-inner{
-    grid-template-columns: 1fr;
-    gap: 10px;
-    height: auto;
-    padding: 14px 12px;
-    justify-items: center; /* ensures children center in the 1-col grid */
-  }
-
-  .brand{
-    justify-self: center;
-    text-align: center;
-    width: 100%;
-  }
-}
-
-/* Card */
-.card{
-  break-inside: avoid;
-  margin: 0 0 var(--gap);
-}
-
-.card-img{
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 0;
-  transition: transform .15s ease, filter .15s ease;
-}
-
-.card-img:hover{
-  transform: translateY(-1px);
-  filter: contrast(1.02);
-}
-
-/* Footer */
-.site-footer{
-  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-weight: 400; /* or 300 if you want lighter */
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: 28px var(--pad) 32px;
-  text-align: center;
-  color: #b0b0b0;
-  font-size: 13px;
-  letter-spacing: .02em;
-  line-height: 1.4;
-
-  display: flex;                 /* CHG: enable CSS-only reordering */
-  flex-direction: column;        /* CHG: vertical stack */
-  align-items: stretch;          /* CHG: keep footer lines full width */
-}
-
-.footer-line{
-  font-size: inherit;
-  letter-spacing: inherit;
-}
-
-.footer-main{
-  margin-bottom: 4px;
-}
-
-.footer-powered{
-  /* keep spacing only, no font changes */
-}
-
-.site-footer a{
-  color: inherit;
-  text-decoration: none;
-}
-
-.site-footer a:hover{
-  color: #111;
-}
-
-/* === FOOTER DIVIDER (matches header line) === */
-.footer-divider{
-  max-width: var(--container);
-  width: 100%;
-  margin: 20px auto 0;
-  padding: 0;                 /* keep aligned with gallery edges */
-  order: 1;                   /* Divider → Arrow → Text */
-}
-
-.footer-divider::before{
-  content: "";
-  display: block;
-  width: 100%;
-  height: 1px;
-  background: var(--line);
-
-  position: relative;         /* REQUIRED */
-  top: -20px;                 /* move ONLY the line upward */
-}
-
 /* Lightbox (UPDATED — only section changed) */
 .lb{
   position: fixed;
   inset: 0;
-  background: rgba(255,255,255,0.96);
+  background: #ffffff; /* CHG: remove transparency (solid white) */
   display: none;
   align-items: center;
   justify-content: center;
@@ -221,6 +27,8 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   grid-template-columns: 1fr 460px; /* was 320px */
   gap: 28px;
   align-items: center;
+
+  min-height: 0; /* CHG: allow children to shrink instead of overflowing */
 }
 
 /* Image area */
@@ -246,6 +54,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   align-self: center;
   justify-self: stretch;
   min-width: 0;
+  min-height: 0; /* CHG: required so overflow rules can work predictably */
   color: var(--muted);
   letter-spacing: .02em;
   line-height: 1.5;
@@ -277,36 +86,44 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   /* remove padding-top */
 }
 
-/* Mobile: stack prompt below image, keep centered */
+/* Mobile: viewport-safe layout (no overflow), prompt scrolls independently */
 @media (max-width: 900px){
   .lb-content,
   .lb-figure{
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
-    height: auto;
-    max-height: 92vh;
-    overflow: auto;
-    padding: 18px 0;
+    grid-template-rows: minmax(0, 1fr) minmax(160px, 40vh); /* CHG: constrain prompt area */
+    height: min(92vh, 92dvh);    /* CHG: never exceed viewport height */
+    max-height: min(92vh, 92dvh);/* CHG: never exceed viewport height */
+    overflow: hidden;            /* CHG: prevent overall lightbox content overflow */
+    padding: 64px 0 18px;        /* CHG: reserves space so image never collides with close X */
   }
-  
-  @media (max-width: 640px){
-  .lb-prompt{
-    font-size: 16px;
-    line-height: 1.5;
+
+  .lb-media{
+    min-height: 0;               /* CHG: ensures image area can shrink */
   }
-}
+
   .lb-img{
-    max-height: 70vh;
+    max-height: 100%;            /* CHG: fit inside the constrained first row */
   }
 
   .lb-side{
     padding: 14px 16px 0;
     text-align: left;
+    overflow: auto;              /* CHG: prompt scrolls independently */
+    -webkit-overflow-scrolling: touch; /* CHG: smoother iOS scrolling */
+    min-height: 0;
+  }
+}
+
+@media (max-width: 640px){
+  .lb-prompt{
+    font-size: 16px;
+    line-height: 1.5;
   }
 }
 
 .lb-close{
-  position: absolute;
+  position: fixed;  /* CHG: always visible/tappable even if content scrolls */
   top: 16px;
   right: 18px;
   border: none;
@@ -316,6 +133,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   cursor: pointer;
   color: #111;
   opacity: .65;
+  z-index: 60;      /* CHG: ensure it stays above image/content */
 }
 .lb-close:hover{ opacity: 1; }
 
@@ -337,162 +155,6 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 .lb-prev{ left: 14px; }
 .lb-next{ right: 14px; }
 .lb-nav:disabled{ cursor: default; }
-
-/* === HERO CAPTION (bottom-left editorial text) === */
-.hero-caption{
-  position: absolute;
-  left: 40px;
-  bottom: 50px;
-  max-width: 720px;
-
-  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
-  font-weight: 600;
-
-  font-size: clamp(30px, 4.0vw, 72px);
-  line-height: 1.12;
-  letter-spacing: 0; /* important for Playfair */
-
-  color: rgba(255,255,255,0.92);
-  z-index: 2;
-  pointer-events: none;
-}
-
-/* Mobile refinement */
-@media (max-width: 640px){
-  .hero-caption{
-    left: 10px;
-    right: 20px;
-    bottom: 50px;          /* extra clearance from arrow */
-    max-width: none;
-
-    font-size: 24px;
-    line-height: 1.24;
-  }
-}
-
-/* Hide mobile-only line breaks by default (desktop & tablet) */
-.m-br {
-  display: none;
-}
-
-/* Enable line breaks on mobile only */
-@media (max-width: 640px) {
-  .m-br {
-    display: inline;
-  }
-}
-
-/* === HERO — contained parallax hero (stronger) === */
-.hero{
-  position: relative;
-  height: 92vh;
-  overflow: hidden;
-  background: #fff;
-}
-
-/* Overscan: make the image taller than the hero so it can move */
-.hero-media{
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: -10%;
-  bottom: -10%;
-  background-size: cover;
-  background-position: center;
-  transform: translate3d(0, 0, 0) scale(1.14);
-  will-change: transform;
-}
-
-/* === WHITE BANNER BELOW HERO (NOW STICKY HEADER) === */
-.hero-banner{
-  position: sticky;
-  top: 0;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(8px);
-  z-index: 10;
-}
-
-.hero-banner-inner{
-  height: 72px;
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: 0 var(--pad);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hero-banner-title{
-  font-size: 16px;
-  letter-spacing: .10em;
-  text-transform: uppercase;
-  color: #111;
-  opacity: .9;
-}
-
-.hero-banner-divider{
-  height: 1.5px;
-  background: var(--line);
-}
-
-/* === HERO SCROLL CUE (arrow) — smooth, continuous float === */
-.hero-scroll{
-  position: absolute;
-  left: 50%;
-  bottom: 36px;
-  transform: translateX(-50%);
-  width: 58px;     /* bigger */
-  height: 58px;    /* bigger */
-  border: 0;
-  padding: 0;
-  background: transparent;
-  cursor: pointer;
-  z-index: 2;
-  opacity: .9;
-
-  /* Smooth continuous scroll cue */
-  animation: heroScrollFloat 1.35s ease-in-out infinite;
-}
-
-/* Draw the chevron using borders */
-.hero-scroll::before{
-  content:"";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 22px;          /* MATCH lightbox arrow scale */
-  height: 22px;         /* MATCH lightbox arrow scale */
-  border-right: 3px solid rgba(255,255,255,0.9);
-  border-bottom: 3px solid rgba(255,255,255,0.9);
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-
-/* Smooth, continuous vertical motion */
-.hero-scroll::after{
-  content:"";
-  position: absolute;
-  inset: -8px;      /* slightly bigger halo */
-  border-radius: 999px;
-  background: none;
-}
-
-.hero-scroll:hover{ opacity: 1; }
-
-.hero-scroll:focus-visible{
-  outline: 2px solid rgba(255,255,255,0.85);
-  outline-offset: 3px;
-}
-
-/* Smooth, continuous vertical motion */
-@keyframes heroScrollFloat{
-  0%   { transform: translateX(-50%) translateY(0); }
-  50%  { transform: translateX(-50%) translateY(10px); }
-  100% { transform: translateX(-50%) translateY(0); }
-}
-
-@media (prefers-reduced-motion: reduce){
-  .hero-scroll{ animation: none; }
-}
 
 /* === LIGHTBOX NAV ARROWS — chevron shape (match HERO cue style) === */
 
@@ -532,56 +194,4 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
     width: 18px;
     height: 18px;
   }
-}
-
-/* === FOOTER SCROLL CUE (arrow) — matches HERO cue style, points upward === */
-.footer-scroll{
-  width: 58px;
-  height: 58px;
-  border: 0;
-  padding: 0;
-  background: transparent;
-  cursor: pointer;
-  z-index: 2;
-  opacity: .9;
-
-  position: relative;
-  left: 50%;                                  /* CHG: enable hero-identical animation transform */
-  transform: translateX(-50%);                /* CHG: matches hero baseline */
-  animation: heroScrollFloat 1.35s ease-in-out infinite; /* CHG: restore footer animation */
-
-  margin: 0 0 12px;                           /* CHG: space between arrow and footer text */
-  order: 2;                                   /* CHG: Divider → Arrow → Text */
-}
-
-.footer-main{ order: 3; }                     /* CHG: Divider → Arrow → Text */
-.footer-powered{ order: 4; }                  /* CHG: Divider → Arrow → Text */
-
-/* Draw the chevron using borders (same thickness) — rotated to point UP */
-.footer-scroll::before{
-  content:"";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 22px;
-  height: 22px;
-  border-right: 3px solid rgba(17, 17, 17, 0.5);   /* CHG: exact required color */
-  border-bottom: 3px solid rgba(17, 17, 17, 0.5);  /* CHG: exact required color */
-  transform: translate(-50%, -50%) rotate(-135deg);
-}
-
-/* No halo / glow / blur-like treatment */
-.footer-scroll::after{
-  content: none;                               /* CHG: remove halo entirely */
-}
-
-.footer-scroll:hover{ opacity: 1; }
-
-.footer-scroll:focus-visible{
-  outline: 2px solid rgba(17, 17, 17, 0.5);     /* CHG: exact required color */
-  outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: reduce){
-  .footer-scroll{ animation: none; }
 }
