@@ -157,11 +157,11 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 
 .footer-main{
   margin-bottom: 4px;
-  order: 1;                      /* footer text */
+  order: 3;                      /* text */
 }
 
 .footer-powered{
-  order: 2;                      /* footer text */
+  order: 4;                      /* text */
   /* keep spacing only, no font changes */
 }
 
@@ -177,16 +177,21 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 /* === FOOTER DIVIDER (matches header line) === */
 .footer-divider{
   max-width: var(--container);
-  margin: 10px auto 0;           /* sits below footer text */
+  margin: 10px auto 0;
   padding: 0 var(--pad);
-  order: 3;                      /* Text → Divider → Arrow */
+  order: 1;                      /* line first */
 }
 
 .footer-divider::before{
   content: "";
   display: block;
   height: 1px;                   /* same thickness as top-divider */
-  background: #e9e9e9;            /* exact line color */
+  background: #e9e9e9;           /* exact line color */
+}
+
+/* === FOOTER ARROW === */
+.footer-scroll{
+  order: 2;                      /* arrow between line and text */
 }
 
 /* Lightbox (UPDATED — only section changed) */
