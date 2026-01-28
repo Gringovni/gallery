@@ -473,7 +473,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   position: absolute;
   inset: -8px;      /* slightly bigger halo */
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(0,0,0,0.22), rgba(0,0,0,0) 60%);
+  background: none;
 }
 
 .hero-scroll:hover{ opacity: 1; }
