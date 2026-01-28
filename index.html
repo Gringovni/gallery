@@ -272,7 +272,9 @@ const scale = 1.14 - progress * maxScaleOut;
 
       hero.addEventListener("click", () => {
         const startY = window.scrollY;
-        const targetY = target.getBoundingClientRect().top + window.scrollY;
+        const banner = document.querySelector(".hero-banner");
+        const offset = banner ? banner.offsetHeight : 0;
+        const targetY = target.getBoundingClientRect().top + window.scrollY - offset;
         const distance = targetY - startY;
 
         const duration = 1400; // ms (increase = slower)
