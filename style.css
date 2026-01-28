@@ -183,8 +183,9 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 .footer-divider::before{
   content: "";
   display: block;
-  height: 1px;                   /* same thickness as original divider */
-  background: #e9e9e9;           /* exact line color */
+  width: 100%;              /* REQUIRED */
+  height: 1px;
+  background: var(--line);
 }
 
 /* Lightbox (UPDATED — only section changed) */
