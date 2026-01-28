@@ -298,37 +298,37 @@ const scale = 1.14 - progress * maxScaleOut;
       });
     })();
 
-    // FOOTER ARROW CLICK → SCROLL TO TOP (mirrored behavior)
-    (function(){
-      const btn = document.getElementById("footerScroll");
-      const hero = document.getElementById("hero");
-      if(!btn || !hero) return;
+// FOOTER ARROW CLICK → SCROLL TO GALLERY START (matches hero click)
+(function(){
+  const btn = document.getElementById("footerScroll");
+  const target = document.getElementById("masonry");
+  const banner = document.querySelector(".hero-banner");
+  if(!btn || !target) return;
 
-      btn.addEventListener("click", () => {
-        const startY = window.scrollY;
-        const targetY = hero.getBoundingClientRect().top + window.scrollY;
-        const distance = targetY - startY;
+  btn.addEventListener("click", () => {
+    const startY = window.scrollY;
+    const offset = banner ? banner.offsetHeight : 0;
+    const targetY =
+      target.getBoundingClientRect().top + window.scrollY - offset;
+    const distance = targetY - startY;
 
-        const duration = 1400; // ms (matches hero)
-        const startTime = performance.now();
+    const duration = 1400; // ms (matches hero)
+    const startTime = performance.now();
 
-        function easeInOutCubic(t){
-          return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
-        }
+    function easeInOutCubic(t){
+      return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+    }
 
-        function step(now){
-          const elapsed = now - startTime;
-          const t = Math.min(elapsed / duration, 1);
-          const eased = easeInOutCubic(t);
+    function step(now){
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed / duration, 1);
+      const eased = easeInOutCubic(t);
 
-          window.scrollTo(0, startY + distance * eased);
+      window.scrollTo(0, startY + distance * eased);
 
-          if(t < 1) requestAnimationFrame(step);
-        }
+      if(t < 1) requestAnimationFrame(step);
+    }
 
-        requestAnimationFrame(step);
-      });
-    })();
-  </script>
-</body>
-</html>
+    requestAnimationFrame(step);
+  });
+})();
