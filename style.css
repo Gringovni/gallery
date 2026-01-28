@@ -218,7 +218,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   width: min(1200px, 92vw);
   height: min(86vh, 860px);
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: 1fr 460px; /* was 320px */
   gap: 28px;
   align-items: center;
 }
