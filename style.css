@@ -176,7 +176,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 .footer-divider{
   max-width: var(--container);
   width: 100%;
-  margin: 8px auto 0;          /* TWEAK: move line upward (more space below) */
+  margin: -6px auto 0;         /* nudges line upward */
   padding: 0;                  /* TWEAK: extend line to exact gallery edges */
   order: 1;                    /* Divider → Arrow → Text */
 }
