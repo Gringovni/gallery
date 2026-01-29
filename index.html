@@ -144,10 +144,10 @@ function formatPrompt(raw){
     .join("\n")
     .trim();
 
-  // Remove leading PROMPT: (we show PROMPT as a UI label now)
-  out = out.replace(/^\s*PROMPT\s*:\s*\n?/i, "").trim();
+// Remove leading PROMPT: (we show PROMPT as a UI label now)
+out = out.replace(/^\s*PROMPT\s*:\s*\n+/i, "").trimStart();
 
-  return out;
+return out;
 }
 
     function openLB(index){
