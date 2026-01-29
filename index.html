@@ -137,17 +137,19 @@
 function formatPrompt(raw){
   const text = (raw || "").toString();
 
-  // Remove any MODEL line(s)
+  // remove MODEL lines
   let out = text
     .split(/\r?\n/)
     .filter(line => !/^\s*MODEL\s*:/i.test(line.trim()))
-    .join("\n")
-    .trim();
+    .join("\n");
 
-// Remove leading PROMPT: (we show PROMPT as a UI label now)
-out = out.replace(/^\s*PROMPT\s*:\s*\n+/i, "").trimStart();
+  // remove leading PROMPT: line if present (and any blank lines after it)
+  out = out.replace(/^\s*PROMPT\s*:\s*(\r?\n)+/i, "");
 
-return out;
+  // IMPORTANT: remove any extra blank lines / whitespace at the very start
+  out = out.replace(/^\s+/, "");
+
+  return out;
 }
 
     function openLB(index){
