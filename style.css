@@ -9,12 +9,44 @@
   /* Tuning knobs */
   --container: 1585px;  /* wider = less side margin */
   --pad: 12px;          /* smaller = less side margin */
+  --footer-pad: clamp(24px, 6vw, 48px);  /* footer horizontal padding; line aligns to gallery (--pad) */
   --gap: 6px;           /* smaller = tighter spacing */
 }
 
 *{ box-sizing: border-box; }
 html,body{ margin:0; padding:0; background:var(--bg); color:var(--text); }
 body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+
+/* Skip link (accessibility) */
+.skip-link{
+  position: absolute;
+  left: -9999px;
+  z-index: 100;
+  padding: 12px 20px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 14px;
+  text-decoration: none;
+  border-radius: 4px;
+}
+.skip-link:focus{
+  left: 16px;
+  top: 16px;
+}
+
+.hidden{ display: none !important; }
+
+/* Gallery loading / error states (span full width above columns) */
+.masonry-loading,
+.masonry-error{
+  margin: 0;
+  padding: 24px var(--pad);
+  text-align: center;
+  color: var(--muted);
+  font-size: 15px;
+  column-span: all;
+}
+.masonry-error{ color: #a44; }
 
 /* Top bar */
 .topbar{
@@ -96,7 +128,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 }
 
 @media (max-width: 640px){
-  .masonry{ column-count: 1; }
+  .masonry{ column-count: 2; }
 
   .topbar-inner{
     grid-template-columns: 1fr;
@@ -135,26 +167,24 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 /* === THIN PHOTO FRAME (GALLERY THUMBNAILS) === */
 .card-img{
   background: #fff;                 /* ensures “paper” edge reads clean */
-  border: 1px solid rgba(17,17,17,0.10);  /* thin, elegant, not too dark */
-  box-shadow: 0 1px 0 rgba(0,0,0,0.03);   /* barely-there lift */
 }
 
-/* Footer */
+/* Footer — centered two-line layout on all devices */
 .site-footer{
   font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-weight: 400; /* or 300 if you want lighter */
+  font-weight: 400;
   max-width: var(--container);
   margin: 0 auto;
-  padding: 28px var(--pad) 32px;
+  padding: 8px calc(var(--footer-pad) * 0.9) 15px;
   text-align: center;
   color: #b0b0b0;
   font-size: 13px;
   letter-spacing: .02em;
   line-height: 1.4;
 
-  display: flex;                 /* CHG: enable CSS-only reordering */
-  flex-direction: column;        /* CHG: vertical stack */
-  align-items: stretch;          /* CHG: keep footer lines full width */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
 .footer-line{
@@ -164,6 +194,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 
 .footer-main{
   margin-bottom: 4px;
+  white-space: nowrap;   /* line 1: copyright | email on one line */
 }
 
 .footer-powered{
@@ -179,24 +210,28 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   color: #111;
 }
 
-/* === FOOTER DIVIDER (matches header line) === */
-.footer-divider{
-  max-width: var(--container);
-  width: 100%;
-  margin: 20px auto 0;
-  padding: 0;                 /* keep aligned with gallery edges */
-  order: 1;                   /* Divider → Arrow → Text */
+/* Mobile: smaller footer font + more padding so line 1 fits and isn’t cut off */
+@media (max-width: 640px){
+  .site-footer{
+    --footer-pad: 28px;
+    font-size: 11px;
+    padding: 8px 18px 17px 18px;
+    transform: translateY(-5%);
+  }
+  /* Footer line: match gallery edge exactly (12px from viewport = wrap --pad) */
+  .site-footer .footer-divider{
+    width: calc(100% + 12px);
+    margin: 20px -6px 0;
+  }
+  /* Footer arrow: push up 18% (was 13%, +5%) */
+  .footer-scroll{
+    transform: translateX(-50%) translateY(-18%);
+  }
 }
 
-.footer-divider::before{
-  content: "";
-  display: block;
-  width: 100%;
-  height: 1px;
-  background: var(--line);
-
-  position: relative;         /* REQUIRED */
-  top: -20px;                 /* move ONLY the line upward */
+/* === FOOTER DIVIDER — hidden (gray line removed) === */
+.footer-divider{
+  display: none;
 }
 
 /* =========================================================
@@ -237,6 +272,17 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   justify-content: center;
   min-width: 0;
   min-height: 0;
+}
+
+/* Image link: click opens in new tab on desktop only */
+.lb-media-link{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  color: inherit;
+  text-decoration: none;
 }
 
 /* === LIGHTBOX IMAGE (single authoritative rule) === */
@@ -309,23 +355,98 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   line-height: 1.25;
 }
 
-/* Close button: always tappable (mobile + desktop) */
+/* Prompt wrapper (for mobile collapse) */
+.lb-prompt-wrap{
+  min-width: 0;
+}
+
+/* "More" button: mobile only, toggles prompt expand */
+.lb-prompt-more{
+  display: none;
+  margin: 0;
+  padding: 4px;
+  align-items: center;
+  justify-content: center;
+  color: #444;
+  opacity: 0.6;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+}
+.lb-prompt-more:hover{ background: transparent; opacity: 1; color: #222; }
+.lb-prompt-more:focus-visible{ outline: 2px solid #444; outline-offset: 2px; }
+.lb-prompt-more svg{ display: block; width: 20px; height: 20px; }
+
+/* Lightbox prompt actions (copy + open in new tab) */
+.lb-actions{
+  margin-top: 12px;
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Copy prompt button (icon only) */
+.lb-copy{
+  padding: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #444;
+  opacity: 0.6;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+}
+.lb-copy:hover{ background: transparent; opacity: 1; color: #222; }
+.lb-copy:focus-visible{ outline: 2px solid #444; outline-offset: 2px; }
+.lb-copy-icon{
+  font-family: "Material Symbols Outlined", sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+/* Open image in new tab button */
+.lb-open-new{
+  padding: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #444;
+  opacity: 0.6;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+}
+.lb-open-new:hover{ background: transparent; opacity: 1; color: #222; }
+.lb-open-new:focus-visible{ outline: 2px solid #444; outline-offset: 2px; }
+.lb-open-new svg{ display: block; width: 20px; height: 20px; }
+
+/* Close button: match nav arrow size, weight, color, opacity, hover */
 .lb-close{
-  position: fixed;                  /* FIX: not absolute */
-  top: 16px;
+  position: fixed;
+  top: 8px;
   right: 18px;
   border: none;
   background: transparent;
   font-size: 36px;
   line-height: 1;
   cursor: pointer;
-  color: #111;
-  opacity: .65;
-  z-index: 60;                      /* FIX: stays above image/prompt */
+  color: rgba(17,17,17,0.9);
+  opacity: .55;
+  user-select: none;
+  z-index: 60;
+  transition: opacity 0.2s ease;
+  outline: none; /* no blue ring when focused on open */
 }
 .lb-close:hover{ opacity: 1; }
 
-/* Nav buttons */
+/* Nav buttons: same hover (opacity .55 → 1) and transition as close */
 .lb-nav{
   position: absolute;
   top: 50%;
@@ -335,19 +456,17 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   font-size: 44px;
   cursor: pointer;
   padding: 14px 18px;
-  opacity: .55;
   user-select: none;
 
   color: transparent;               /* keep glyph hidden (you draw chevrons) */
   text-shadow: none;
 }
-.lb-nav:hover{ opacity: 1; }
 
 .lb-prev{ left: 14px; }
 .lb-next{ right: 14px; }
 .lb-nav:disabled{ cursor: default; }
 
-/* Chevron shape (matches hero cue language) */
+/* Chevron shape: opacity and hover on ::before so hover effect is visible */
 .lb-nav::before{
   content: "";
   position: absolute;
@@ -358,6 +477,11 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   border-right: 3px solid rgba(17,17,17,0.9);
   border-bottom: 3px solid rgba(17,17,17,0.9);
   transform: translate(-50%, -50%) rotate(135deg);
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
+}
+.lb-nav:hover::before{
+  opacity: 1;
 }
 .lb-next::before{
   transform: translate(-50%, -50%) rotate(-45deg);
@@ -377,8 +501,8 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
    - top row: image (fits)
    - bottom row: prompt (scrolls)
 */
-/* MOBILE: strict stack, no overlap, bigger image */
-@media (max-width: 900px){
+/* MOBILE: strict stack, no overlap, bigger image (phones only; tablet uses 641–1024px side‑by‑side) */
+@media (max-width: 640px){
   /* Make overlay truly viewport-sized (removes “centered card” feeling) */
   .lb{
     align-items: stretch;
@@ -413,6 +537,9 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
     margin-top: -14px;   /* tweak: try -8px to -20px */
   }
 
+  /* Disable image link on mobile so tap doesn’t open new tab */
+  .lb-media-link{ pointer-events: none; }
+
   /* Prompt block (scrolls independently) */
   .lb-side{
     flex: 1 1 auto;
@@ -422,9 +549,67 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
     padding: 0;
   }
 
-  /* Keep nav arrows usable on mobile (optional tweak) */
+  /* Mobile: show first 4 lines of prompt; "more" button reveals rest */
+  .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt{
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+  }
+  .lb-prompt-more{
+    display: inline-flex;
+  }
+
+  /* Hide prev/next arrows on mobile; use swipe instead */
   .lb-nav{
-    top: 45%;
+    display: none;
+  }
+}
+
+/* Tablet 641–1024px: keep prompt visible (side‑by‑side like landscape); no .lb-prompt typography changes */
+@media (min-width: 641px) and (max-width: 1024px){
+  .lb{
+    align-items: center;
+    justify-content: center;
+  }
+  .lb-content,
+  .lb-figure{
+    width: min(96vw, 900px);
+    height: min(86vh, 860px);
+    max-height: none;
+    display: grid;
+    grid-template-columns: 1fr min(300px, 38vw);
+    gap: 20px;
+    flex-direction: unset;
+    overflow: visible;
+    padding: 0;
+    margin: 0;
+  }
+  .lb-media{
+    flex: unset;
+    margin-top: 0;
+  }
+  .lb-media-link{
+    pointer-events: auto;
+  }
+  .lb-side{
+    flex: unset;
+    overflow: visible;
+    -webkit-overflow-scrolling: unset;
+    padding-right: 6px;
+  }
+  .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt{
+    display: block;
+    -webkit-line-clamp: unset;
+    -webkit-box-orient: unset;
+    overflow: visible;
+  }
+  .lb-prompt-more{
+    display: none;
+  }
+  /* Tablet: hide < > arrows; use swipe on image to go prev/next */
+  .lb-nav{
+    display: none;
   }
 }
 
@@ -439,14 +624,14 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 .hero-caption{
   position: absolute;
   left: 40px;
-  bottom: 50px;
+  bottom: 198px;      /* pushed down 20% from 248px */
   max-width: 720px;
 
   font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-weight: 600;
 
-  font-size: clamp(30px, 4.0vw, 72px);
-  line-height: 1.12;
+  font-size: clamp(43px, 5.9vw, 103px);
+  line-height: 1.14;
   letter-spacing: 0; /* important for Playfair */
 
   color: rgba(255,255,255,0.92);
@@ -454,28 +639,22 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   pointer-events: none;
 }
 
-/* Mobile refinement */
+.hero-caption-line{
+  display: block;
+  white-space: nowrap;
+}
+
+/* Mobile: same three lines as desktop, left-aligned */
 @media (max-width: 640px){
   .hero-caption{
-    left: 10px;
-    right: 20px;
-    bottom: 50px;          /* extra clearance from arrow */
+    left: 20px;
+    bottom: 182px;     /* pushed down 20% from 227px */
     max-width: none;
+    transform: none;
+    text-align: left;
 
-    font-size: 24px;
-    line-height: 1.24;
-  }
-}
-
-/* Hide mobile-only line breaks by default (desktop & tablet) */
-.m-br {
-  display: none;
-}
-
-/* Enable line breaks on mobile only */
-@media (max-width: 640px) {
-  .m-br {
-    display: inline;
+    font-size: 32px;
+    line-height: 1.2;
   }
 }
 
@@ -485,6 +664,13 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   height: 92vh;
   overflow: hidden;
   background: #fff;
+}
+
+/* Mobile only: hero + banner fill viewport so banner bottom matches screen bottom on first visit */
+@media (max-width: 640px){
+  .hero{
+    height: calc(100dvh - 74px);  /* 74px = banner inner (72px) + divider (1.5px) */
+  }
 }
 
 /* Overscan: make the image taller than the hero so it can move */
@@ -528,8 +714,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 }
 
 .hero-banner-divider{
-  height: 1.5px;
-  background: var(--line);
+  display: none;   /* gray line below LATENT ILLUMINATION banner removed */
 }
 
 /* === HERO SCROLL CUE (arrow) — smooth, continuous float === */
@@ -607,7 +792,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   transform: translateX(-50%);
   animation: heroScrollFloat 1.35s ease-in-out infinite;
 
-  margin: 0 0 12px;
+  margin: -20px 0 2px;   /* negative top pulls arrow + text up as a group */
   order: 2;
 }
 
