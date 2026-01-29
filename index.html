@@ -134,23 +134,21 @@
     let items = [];
     let currentIndex = -1;
 
-    function formatPrompt(raw){
-      const text = (raw || "").toString();
+function formatPrompt(raw){
+  const text = (raw || "").toString();
 
-      // Remove any MODEL line(s)
-      const noModel = text
-        .split(/\r?\n/)
-        .filter(line => !/^\s*MODEL\s*:/i.test(line.trim()))
-        .join("\n")
-        .trim();
+  // Remove any MODEL line(s)
+  let out = text
+    .split(/\r?\n/)
+    .filter(line => !/^\s*MODEL\s*:/i.test(line.trim()))
+    .join("\n")
+    .trim();
 
-      // If the remaining text already starts with PROMPT:, keep it.
-      if (/^\s*PROMPT\s*:/i.test(noModel)) return noModel.trim();
+  // Remove leading PROMPT: (we show PROMPT as a UI label now)
+  out = out.replace(/^\s*PROMPT\s*:\s*\n?/i, "").trim();
 
-      // Otherwise, wrap it as PROMPT:
-      if (!noModel) return "";
-      return `PROMPT:\n${noModel}`;
-    }
+  return out;
+}
 
     function openLB(index){
       currentIndex = index;
