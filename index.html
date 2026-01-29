@@ -97,9 +97,25 @@
         <img id="lbImg" class="lb-img" alt="" />
       </div>
 
-      <aside class="lb-side" aria-label="Prompt">
-        <pre class="lb-prompt" id="lbPrompt"></pre>
-      </aside>
+<aside class="lb-side" aria-label="Prompt">
+  <!-- PROMPT label + toggle -->
+  <div class="lb-prompt-header">
+    <span class="lb-prompt-label">PROMPT:</span>
+
+    <!-- Mobile-only expand toggle -->
+    <button
+      class="lb-prompt-toggle"
+      type="button"
+      aria-label="Expand prompt"
+      aria-expanded="false"
+    >
+      <span class="material-symbols-outlined">more_horiz</span>
+    </button>
+  </div>
+
+  <!-- Prompt content (collapsible on mobile) -->
+  <pre class="lb-prompt lb-prompt-content" id="lbPrompt"></pre>
+</aside>
     </div>
 
     <button class="lb-nav lb-next" id="lbNext" aria-label="Next">›</button>
