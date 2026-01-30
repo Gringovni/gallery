@@ -249,34 +249,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   z-index: 50;
 }
 
-.lb.open{
-  display: block;
-  overflow: hidden;
-}
-
-/* 3-panel infinite track */
-.lb-track{
-  display: flex;
-  width: 300%;
-  height: 100%;
-  transform: translate3d(-33.3333%, 0, 0);
-  will-change: transform;
-}
-
-.lb-slide-slot{
-  width: 33.3333%;
-  height: 100%;
-  flex: 0 0 33.3333%;
-}
-
-.lb-slide-slot.lb-slot-hidden{
-  visibility: hidden;
-}
-
-/* Utility class for the release animation */
-.lb-animating{
-  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
+.lb.open{ display:flex; }
 
 /* Desktop layout: keep your intent (image left, prompt right) */
 .lb-content,
@@ -290,13 +263,6 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   align-items: center;
 
   min-height: 0;                    /* FIX: allow children to shrink */
-}
-
-/* .lb-content inside slots: full width, no conflicting margins */
-.lb-slide-slot .lb-content{
-  width: 100%;
-  margin: 0;
-  box-sizing: border-box;
 }
 
 /* Image area */
