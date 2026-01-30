@@ -1,618 +1,1057 @@
-<!-- index.html -->
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Latent Illumination</title>
-
-  <!-- Google Fonts preconnect (shared) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <!-- Playfair Display (Hero slogan font) -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
-
-  <!-- Inter (Banner + PROMPT label) -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-
-  <!-- Source Serif 4 (Prompt content) -->
-  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@1,300&display=swap" rel="stylesheet">
-
-  <!-- Material Symbols (copy icon) -->
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
-
-  <!-- Your site styles -->
-  <link rel="stylesheet" href="style.css">
-  <!-- Favicon: add <link rel="icon" href="assets/your-icon.png"> when you have an assets folder -->
-
-  <meta name="description" content="Latent Illumination — where creative intent becomes visual clarity. A gallery of AI-generated imagery with prompts." />
-</head>
-
-<body>
-  <a href="#masonry" class="skip-link">Skip to gallery</a>
-
-  <!-- HERO -->
-<section class="hero" id="hero" aria-label="Hero" data-scroll-target="#masonry">
-  <div class="hero-media" id="heroMedia" style="background-image:url('https://images.pexels.com/photos/20398189/pexels-photo-20398189.jpeg?auto=compress&cs=tinysrgb&w=2400');"></div>
-
-    <!-- Hero editorial text -->
-<div class="hero-caption">
-  <span class="hero-caption-line">Where creative</span>
-  <span class="hero-caption-line">intent becomes</span>
-  <span class="hero-caption-line">visual clarity</span>
-</div>
-
-  <!-- Scroll cue arrow -->
-  <button class="hero-scroll" type="button" aria-label="Scroll to gallery" id="heroScrollBtn"></button>
-</section>
-
-  <!-- WHITE BANNER — lives directly below the hero image (NOW the only header; becomes sticky when it reaches top) -->
-  <section class="hero-banner" aria-label="Banner">
-    <div class="hero-banner-inner">
-      <div class="hero-banner-title">LATENT ILLUMINATION</div>
-    </div>
-    <div class="hero-banner-divider"></div>
-  </section>
-
-  <main class="wrap">
-    <section id="masonry" class="masonry" aria-label="Gallery" aria-busy="false" aria-live="polite">
-      <p class="masonry-loading" id="masonryLoading">Loading gallery…</p>
-      <p class="masonry-error hidden" id="masonryError" role="alert"></p>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <!-- Footer divider line (restored; must be first visually) -->
-    <div class="footer-divider"></div>
-
-    <!-- Footer scroll-to-top arrow (NEW) -->
-    <button class="footer-scroll" id="footerScroll" type="button" aria-label="Scroll to gallery"></button>
-
-    <div class="footer-line footer-main">© 2026 Latent Illumination | <a class="footer-email" href="mailto:contact@latentillumination.com" title="Email Latent Illumination">contact@latentillumination.com</a></div>
-    <div class="footer-line footer-powered">Powered by <a class="footer-github" href="https://github.com/" target="_blank" rel="noopener noreferrer">GitHub</a></div>
-  </footer>
-
-  <!-- Lightbox (UPDATED only) -->
-  <div class="lb" id="lb" aria-hidden="true" role="dialog" aria-label="Image viewer">
-    <button class="lb-close" id="lbClose" aria-label="Close">×</button>
-
-    <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">‹</button>
-
-    <div class="lb-content" role="document">
-      <div class="lb-media">
-        <a id="lbImgLink" class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
-          <img id="lbImg" class="lb-img" alt="" />
-        </a>
-      </div>
-
-      <aside class="lb-side" aria-label="Prompt">
-        <div class="lb-prompt-wrap" id="lbPromptWrap">
-          <pre class="lb-prompt" id="lbPrompt"></pre>
-        </div>
-        <div class="lb-actions">
-          <button type="button" class="lb-prompt-more" id="lbPromptMore" aria-label="Show more prompt" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></button>
-          <button type="button" class="lb-copy" id="lbCopy" aria-label="Copy prompt to clipboard"><span class="material-symbols-outlined lb-copy-icon" aria-hidden="true">content_copy</span></button>
-          <button type="button" class="lb-open-new" id="lbOpenNew" aria-label="Open image in new tab"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg></button>
-        </div>
-      </aside>
-    </div>
-
-    <button class="lb-nav lb-next" id="lbNext" aria-label="Next">›</button>
-  </div>
-
-  <script>
-    const masonry = document.getElementById("masonry");
-
-    const lb = document.getElementById("lb");
-    const lbImg = document.getElementById("lbImg");
-    const lbPrompt = document.getElementById("lbPrompt");
-    const lbClose = document.getElementById("lbClose");
-    const lbPrev = document.getElementById("lbPrev");
-    const lbNext = document.getElementById("lbNext");
-    const lbCopy = document.getElementById("lbCopy");
-    const lbOpenNew = document.getElementById("lbOpenNew");
-    const lbPromptWrap = document.getElementById("lbPromptWrap");
-    const lbPromptMore = document.getElementById("lbPromptMore");
-    const masonryLoading = document.getElementById("masonryLoading");
-    const masonryError = document.getElementById("masonryError");
-
-    let items = [];
-    let currentIndex = -1;
-    let lastFocusBeforeLB = null;
-
-    function formatPrompt(raw){
-      const text = (raw || "").toString();
-
-      // Remove any MODEL line(s)
-      const noModel = text
-        .split(/\r?\n/)
-        .filter(line => !/^\s*MODEL\s*:/i.test(line.trim()))
-        .join("\n")
-        .trim();
-
-      // If the remaining text already starts with PROMPT:, keep it.
-      if (/^\s*PROMPT\s*:/i.test(noModel)) return noModel.trim();
-
-      // Otherwise, wrap it as PROMPT:
-      if (!noModel) return "";
-      return `PROMPT:\n${noModel}`;
-    }
-
-    function openLB(index){
-      currentIndex = index;
-      const item = items[currentIndex];
-      lastFocusBeforeLB = document.activeElement;
-
-      lbImg.src = item.src;
-      lbImg.alt = item.title || "";
-      const lbImgLink = document.getElementById("lbImgLink");
-      if (lbImgLink) { lbImgLink.href = item.src; }
-
-      const raw = item.prompt ?? item.caption ?? "";
-      lbPrompt.textContent = formatPrompt(raw);
-
-      lb.classList.add("open");
-      lb.setAttribute("aria-hidden", "false");
-      updateNavState();
-      lbClose.focus();
-      // Reset mobile prompt collapse when opening a new image
-      if (lbPromptWrap) lbPromptWrap.classList.remove("lb-prompt-expanded");
-      if (lbPromptMore) lbPromptMore.setAttribute("aria-expanded", "false");
-    }
-
-    function closeLB(){
-      lb.classList.remove("open");
-      lb.setAttribute("aria-hidden", "true");
-      lbImg.src = "";
-      lbPrompt.textContent = "";
-      const lbImgLink = document.getElementById("lbImgLink");
-      if (lbImgLink) { lbImgLink.removeAttribute("href"); }
-      currentIndex = -1;
-      if (lastFocusBeforeLB && lastFocusBeforeLB.focus) lastFocusBeforeLB.focus();
-    }
-
-    function updateNavState(){
-      const hasPrev = currentIndex > 0;
-      const hasNext = currentIndex < items.length - 1;
-      lbPrev.disabled = !hasPrev;
-      lbNext.disabled = !hasNext;
-      lbPrev.style.opacity = hasPrev ? "1" : "0.25";
-      lbNext.style.opacity = hasNext ? "1" : "0.25";
-    }
-
-    function prev(){
-      if(currentIndex > 0) openLB(currentIndex - 1);
-    }
-    function next(){
-      if(currentIndex < items.length - 1) openLB(currentIndex + 1);
-    }
-
-    async function load(){
-      masonry.setAttribute("aria-busy", "true");
-      masonryLoading.classList.remove("hidden");
-      masonryError.classList.add("hidden");
-      masonryError.textContent = "";
-
-      try {
-        const res = await fetch("gallery.json?v=" + Date.now(), { cache: "no-store" });
-        if (!res.ok) throw new Error("Failed to load gallery");
-        items = await res.json();
-      } catch (err) {
-        masonryError.textContent = "Could not load gallery. Please try again later.";
-        masonryError.classList.remove("hidden");
-        masonryLoading.classList.add("hidden");
-        masonry.setAttribute("aria-busy", "false");
-        return;
-      }
-
-      masonryLoading.classList.add("hidden");
-      masonryError.classList.add("hidden");
-      masonry.setAttribute("aria-busy", "false");
-
-      const existingCards = masonry.querySelectorAll(".card");
-      existingCards.forEach((el) => el.remove());
-
-      items.forEach((item, i) => {
-        const card = document.createElement("article");
-        card.className = "card";
-
-        const img = document.createElement("img");
-        img.loading = "lazy";
-        img.src = item.thumb || item.src;
-        img.alt = item.title || "";
-        img.className = "card-img";
-        img.addEventListener("click", () => openLB(i));
-
-        card.appendChild(img);
-        masonry.appendChild(card);
-      });
-    }
-
-    lbClose.addEventListener("click", closeLB);
-    lbPrev.addEventListener("click", prev);
-    lbNext.addEventListener("click", next);
-
-    if (lbOpenNew) {
-      lbOpenNew.addEventListener("click", () => {
-        if (currentIndex >= 0 && items[currentIndex]) {
-          window.open(items[currentIndex].src, "_blank", "noopener,noreferrer");
-        }
-      });
-    }
-
-    if (lbPromptMore && lbPromptWrap) {
-      lbPromptMore.addEventListener("click", () => {
-        const expanded = lbPromptWrap.classList.toggle("lb-prompt-expanded");
-        lbPromptMore.setAttribute("aria-expanded", expanded);
-        lbPromptMore.setAttribute("aria-label", expanded ? "Show less prompt" : "Show more prompt");
-      });
-    }
-
-    if (lbCopy) {
-      lbCopy.addEventListener("click", () => {
-        let text = (lbPrompt.textContent || "").trim();
-        if (!text) return;
-        // Copy only the prompt description, not the "PROMPT:" label
-        text = text.replace(/^\s*PROMPT\s*:\s*\n?/i, "").trim();
-        navigator.clipboard.writeText(text).then(() => {
-          const icon = lbCopy.querySelector(".lb-copy-icon");
-          if (icon) {
-            const orig = icon.textContent;
-            icon.textContent = "done";
-            setTimeout(() => { icon.textContent = orig; }, 1500);
-          }
-        });
-      });
-    }
-
-    lb.addEventListener("click", (e) => {
-      if(e.target === lb) closeLB();
-    });
-
-    lb.addEventListener("keydown", (e) => {
-      if (!lb.classList.contains("open")) return;
-      if (e.key === "Tab") {
-        const focusables = Array.from(lb.querySelectorAll("button:not([disabled])"));
-        const first = focusables[0], last = focusables[focusables.length - 1];
-        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-      }
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if(!lb.classList.contains("open")) return;
-      if(e.key === "Escape") closeLB();
-      if(e.key === "ArrowLeft") prev();
-      if(e.key === "ArrowRight") next();
-    });
-
-    // Drag-to-swipe: whole slide (image + prompt + icons) moves together; pointer events (touch + trackpad)
-    (function(){
-      const lbContent = document.querySelector(".lb-content");
-      if (!lbContent || !lb) return;
-
-      const DRAG_THRESHOLD_PX = 10;
-      const COMMIT_DISTANCE_RATIO = 0.22;
-      const RESISTANCE = 0.35;
-      const VELOCITY_THRESHOLD_PX = 120;
-
-      let startX = 0, startY = 0, pointerId = null;
-      let overlay = null, track = null, slideWidth = 0;
-      let direction = null; // "next" | "prev"
-      let hasNext = false, hasPrev = false;
-      let lastX = 0, lastMoveTime = 0;
-      let didDrag = false;
-
-      function buildSlideEl(item){
-        const slide = document.createElement("div");
-        slide.className = "lb-swipe-slide";
-        const media = document.createElement("div");
-        media.className = "lb-media";
-        const link = document.createElement("a");
-        link.className = "lb-media-link";
-        link.href = item.src;
-        link.setAttribute("aria-label", "Open image in new tab");
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        const img = document.createElement("img");
-        img.className = "lb-img";
-        img.src = item.src;
-        img.alt = item.title || "";
-        link.appendChild(img);
-        media.appendChild(link);
-        const side = document.createElement("aside");
-        side.className = "lb-side";
-        side.setAttribute("aria-label", "Prompt");
-        const wrap = document.createElement("div");
-        wrap.className = "lb-prompt-wrap";
-        const pre = document.createElement("pre");
-        pre.className = "lb-prompt";
-        pre.textContent = formatPrompt(item.prompt ?? item.caption ?? "");
-        wrap.appendChild(pre);
-        const actions = document.createElement("div");
-        actions.className = "lb-actions";
-        const moreBtn = document.createElement("button");
-        moreBtn.type = "button";
-        moreBtn.className = "lb-prompt-more";
-        moreBtn.setAttribute("aria-hidden", "true");
-        moreBtn.innerHTML = "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewBox=\"0 -960 960 960\" width=\"24\" fill=\"currentColor\"><path d=\"M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z\"/></svg>";
-        const copyBtn = document.createElement("button");
-        copyBtn.type = "button";
-        copyBtn.className = "lb-copy";
-        copyBtn.setAttribute("aria-hidden", "true");
-        copyBtn.innerHTML = "<span class=\"material-symbols-outlined lb-copy-icon\">content_copy</span>";
-        const openBtn = document.createElement("button");
-        openBtn.type = "button";
-        openBtn.className = "lb-open-new";
-        openBtn.setAttribute("aria-hidden", "true");
-        openBtn.innerHTML = "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewBox=\"0 -960 960 960\" width=\"24\" fill=\"currentColor\"><path d=\"M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z\"/></svg>";
-        actions.append(moreBtn, copyBtn, openBtn);
-        side.appendChild(wrap);
-        side.appendChild(actions);
-        slide.appendChild(media);
-        slide.appendChild(side);
-        return slide;
-      }
-
-      function removeOverlay(){
-        if (!overlay) return;
-        overlay.remove();
-        overlay = null;
-        track = null;
-        lb.classList.remove("lb-swiping");
-        lbContent.classList.remove("lb-content-swiping");
-      }
-
-      function setTrackX(px){
-        if (!track) return;
-        track.style.transform = "translateX(" + px + "px)";
-      }
-
-      function finishDrag(commitToNext, commitToPrev){
-        if (!track || !overlay) return;
-        track.classList.add("lb-swipe-snapping");
-        const targetX = commitToNext ? -slideWidth : (commitToPrev ? 0 : (direction === "prev" && hasPrev ? -slideWidth : 0));
-        setTrackX(targetX);
-        const onEnd = () => {
-          track.removeEventListener("transitionend", onEnd);
-          if (commitToNext) next();
-          else if (commitToPrev) prev();
-          removeOverlay();
-        };
-        track.addEventListener("transitionend", onEnd);
-      }
-
-      function onPointerDown(e){
-        if (!lb.classList.contains("open") || items.length === 0) return;
-        if (overlay) return;
-        startX = e.clientX;
-        startY = e.clientY;
-        pointerId = e.pointerId;
-        lastX = startX;
-        lastMoveTime = performance.now();
-        didDrag = false;
-        lbContent.setPointerCapture(pointerId);
-      }
-
-      function onPointerMove(e){
-        if (pointerId === null || e.pointerId !== pointerId) return;
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-
-        if (!overlay) {
-          if (Math.abs(dx) <= DRAG_THRESHOLD_PX && Math.abs(dy) <= DRAG_THRESHOLD_PX) return;
-          if (Math.abs(dx) < Math.abs(dy)) return;
-          didDrag = true;
-          const rect = lbContent.getBoundingClientRect();
-          slideWidth = rect.width;
-          hasNext = currentIndex < items.length - 1;
-          hasPrev = currentIndex > 0;
-          direction = dx < 0 ? "next" : "prev";
-          overlay = document.createElement("div");
-          overlay.className = "lb-swipe-overlay";
-          overlay.style.position = "absolute";
-          overlay.style.top = "0";
-          overlay.style.left = "0";
-          overlay.style.right = "0";
-          overlay.style.bottom = "0";
-          overlay.style.width = "100%";
-          overlay.style.height = "100%";
-          overlay.style.overflow = "hidden";
-          overlay.style.background = "#fff";
-          overlay.style.zIndex = "1";
-          track = document.createElement("div");
-          track.className = "lb-swipe-track";
-          track.style.height = "100%";
-          track.style.minHeight = "100%";
-          if (direction === "next" && hasNext) {
-            track.appendChild(buildSlideEl(items[currentIndex]));
-            track.appendChild(buildSlideEl(items[currentIndex + 1]));
-            setTrackX(dx);
-          } else if (direction === "prev" && hasPrev) {
-            track.appendChild(buildSlideEl(items[currentIndex - 1]));
-            track.appendChild(buildSlideEl(items[currentIndex]));
-            setTrackX(-slideWidth + dx);
-          } else {
-            track.appendChild(buildSlideEl(items[currentIndex]));
-            setTrackX(0);
-          }
-          overlay.appendChild(track);
-          lbContent.insertBefore(overlay, lbContent.firstChild);
-          lbContent.classList.add("lb-content-swiping");
-          lb.classList.add("lb-swiping");
-        } else {
-          lastX = e.clientX;
-          lastMoveTime = performance.now();
-          let tx;
-          if (direction === "next" && hasNext) tx = dx;
-          else if (direction === "prev" && hasPrev) tx = -slideWidth + dx;
-          else tx = 0;
-          setTrackX(tx);
-        }
-      }
-
-      function onPointerUp(e){
-        if (pointerId === null || e.pointerId !== pointerId) return;
-        lbContent.releasePointerCapture(pointerId);
-        pointerId = null;
-
-        if (!overlay || !track) {
-          if (didDrag && lbImgLink) {
-            lbImgLink.addEventListener("click", function prevent(e){ e.preventDefault(); e.stopPropagation(); }, { once: true, capture: true });
-          }
-          return;
-        }
-
-        const dx = e.clientX - startX;
-        const velocity = Math.abs(e.clientX - lastX) / Math.max(0.001, (performance.now() - lastMoveTime) / 1000);
-        const commitDistance = COMMIT_DISTANCE_RATIO * slideWidth;
-        const committedNext = direction === "next" && hasNext && (dx <= -commitDistance || velocity >= VELOCITY_THRESHOLD_PX);
-        const committedPrev = direction === "prev" && hasPrev && (dx >= commitDistance || velocity >= VELOCITY_THRESHOLD_PX);
-
-        if (didDrag && lbImgLink) {
-          lbImgLink.addEventListener("click", function prevent(e){ e.preventDefault(); e.stopPropagation(); }, { once: true, capture: true });
-        }
-
-        if (committedNext) finishDrag(true, false);
-        else if (committedPrev) finishDrag(false, true);
-        else finishDrag(false, false);
-      }
-
-      function onPointerCancel(e){
-        if (e.pointerId !== pointerId) return;
-        pointerId = null;
-        if (overlay && track) {
-          track.classList.add("lb-swipe-snapping");
-          setTrackX(direction === "next" ? 0 : -slideWidth);
-          const onEnd = () => { track.removeEventListener("transitionend", onEnd); removeOverlay(); };
-          track.addEventListener("transitionend", onEnd);
-        } else removeOverlay();
-      }
-
-      lbContent.addEventListener("pointerdown", onPointerDown, { passive: true });
-      document.addEventListener("pointermove", onPointerMove, { passive: true });
-      document.addEventListener("pointerup", onPointerUp, { passive: false });
-      document.addEventListener("pointercancel", onPointerCancel, { passive: true });
-    })();
-
-    load();
-
-    // HERO PARALLAX — stronger + overscan-safe
-    (function(){
-      const hero = document.getElementById("hero");
-      const media = document.getElementById("heroMedia");
-      if(!hero || !media) return;
-
-      const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if(reduceMotion) return;
-
-      let ticking = false;
-
-      function update(){
-        const rect = hero.getBoundingClientRect();
-
-        // Only compute while hero is visible
-        if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
-
-        // Progress from 0 → 1 while scrolling through the hero
-        const progress = Math.min(Math.max(-rect.top / rect.height, 0), 1);
-
-        // Stronger parallax:
-        // - more travel (translate)
-        // - more zoom-out
-        const isDesktop = window.innerWidth >= 900;
-
-// Mobile = current feel (unchanged)
-const maxTranslate = isDesktop ? 260 : 170;
-const maxScaleOut  = isDesktop ? 0.14 : 0.10;
-
-const translate = progress * maxTranslate;
-const scale = 1.14 - progress * maxScaleOut;
-
-        media.style.transform = `translate3d(0, ${translate}px, 0) scale(${scale})`;
-      }
-
-      function onScroll(){
-        if(!ticking){
-          requestAnimationFrame(() => {
-            update();
-            ticking = false;
-          });
-          ticking = true;
-        }
-      }
-
-      window.addEventListener("scroll", onScroll, { passive: true });
-      window.addEventListener("resize", onScroll);
-      update();
-    })();
-
-    // Smooth scroll to gallery (used by hero click and hero scroll button)
-    function smoothScrollToGallery(){
-      const target = document.getElementById("masonry");
-      const banner = document.querySelector(".hero-banner");
-      if(!target) return;
-      const startY = window.scrollY;
-      const offset = banner ? banner.offsetHeight : 0;
-      const targetY = target.getBoundingClientRect().top + window.scrollY - offset;
-      const distance = targetY - startY;
-      const duration = 1400;
-      const startTime = performance.now();
-      function easeInOutCubic(t){ return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2; }
-      function step(now){
-        const elapsed = now - startTime;
-        const t = Math.min(elapsed / duration, 1);
-        window.scrollTo(0, startY + distance * easeInOutCubic(t));
-        if(t < 1) requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    }
-
-    (function(){
-      const hero = document.getElementById("hero");
-      const heroScrollBtn = document.getElementById("heroScrollBtn");
-      const target = document.getElementById("masonry");
-      if(!hero || !target) return;
-      hero.style.cursor = "pointer";
-      hero.addEventListener("click", (e) => { if (e.target === hero || e.target.closest(".hero-media") || e.target.closest(".hero-caption")) smoothScrollToGallery(); });
-      if (heroScrollBtn) heroScrollBtn.addEventListener("click", (e) => { e.stopPropagation(); smoothScrollToGallery(); });
-    })();
-
-    // FOOTER ARROW CLICK → SCROLL TO TOP (mirrored behavior)
-(function(){
-  const btn = document.getElementById("footerScroll");
-  const target = document.getElementById("masonry");
-  const banner = document.querySelector(".hero-banner");
-  if(!btn || !target) return;
-
-  btn.addEventListener("click", () => {
-    const startY = window.scrollY;
-    const offset = banner ? banner.offsetHeight : 0;
-    const targetY =
-      target.getBoundingClientRect().top + window.scrollY - offset;
-    const distance = targetY - startY;
-
-        const duration = 1400; // ms (matches hero)
-        const startTime = performance.now();
-
-        function easeInOutCubic(t){
-          return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
-        }
-
-        function step(now){
-          const elapsed = now - startTime;
-          const t = Math.min(elapsed / duration, 1);
-          const eased = easeInOutCubic(t);
-
-          window.scrollTo(0, startY + distance * eased);
-
-          if(t < 1) requestAnimationFrame(step);
-        }
-
-        requestAnimationFrame(step);
-      });
-    })();
-  </script>
-</body>
-</html>
+/* style.css */
+
+:root{
+  --bg: #ffffff;
+  --text: #111;
+  --muted: #777;
+  --line: #e9e9e9;
+
+  /* Tuning knobs */
+  --container: 1585px;  /* wider = less side margin */
+  --pad: 12px;          /* smaller = less side margin */
+  --footer-pad: clamp(24px, 6vw, 48px);  /* footer horizontal padding; line aligns to gallery (--pad) */
+  --gap: 6px;           /* smaller = tighter spacing */
+}
+
+*{ box-sizing: border-box; }
+html,body{ margin:0; padding:0; background:var(--bg); color:var(--text); }
+body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+
+/* Skip link (accessibility) */
+.skip-link{
+  position: absolute;
+  left: -9999px;
+  z-index: 100;
+  padding: 12px 20px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 14px;
+  text-decoration: none;
+  border-radius: 4px;
+}
+.skip-link:focus{
+  left: 16px;
+  top: 16px;
+}
+
+.hidden{ display: none !important; }
+
+/* Gallery loading / error states (span full width above columns) */
+.masonry-loading,
+.masonry-error{
+  margin: 0;
+  padding: 24px var(--pad);
+  text-align: center;
+  color: var(--muted);
+  font-size: 15px;
+  column-span: all;
+}
+.masonry-error{ color: #a44; }
+
+/* Top bar */
+.topbar{
+  position: sticky;
+  top: 0;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+}
+
+.topbar-inner{
+  height: 72px;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--pad);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+}
+
+/* === BRAND / BANNER TITLE === */
+.hero-banner-title{
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 640px){
+  .hero-banner-title{
+    font-weight: 400;
+    letter-spacing: 0.12em;
+  }
+}
+
+/* We removed Gallery/Shop, so keep this empty */
+.tabs{
+  display:flex;
+  gap: 28px;
+  font-size: 14px;
+}
+
+.brand{
+  font-size: 14px;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: #111;
+  opacity: .9;
+}
+
+.top-actions{ justify-self: end; }
+
+/* thin gray line ONLY */
+.top-divider{
+  height: 1.5px;
+  background: var(--line);
+}
+
+/* Layout
+   IMPORTANT:
+   padding-top: 0; so the line touches the first row of images
+*/
+.wrap{
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--pad) 40px;
+}
+
+/* Masonry */
+.masonry{
+  column-count: 3;
+  column-gap: var(--gap);
+  margin: 0;
+  padding-top: 0;
+}
+
+@media (max-width: 1100px){
+  .masonry{ column-count: 2; }
+}
+
+@media (max-width: 640px){
+  .masonry{ column-count: 2; }
+
+  .topbar-inner{
+    grid-template-columns: 1fr;
+    gap: 10px;
+    height: auto;
+    padding: 14px 12px;
+    justify-items: center; /* ensures children center in the 1-col grid */
+  }
+
+  .brand{
+    justify-self: center;
+    text-align: center;
+    width: 100%;
+  }
+}
+
+/* Card */
+.card{
+  break-inside: avoid;
+  margin: 0 0 var(--gap);
+}
+
+.card-img{
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 0;
+  transition: transform .15s ease, filter .15s ease;
+}
+
+.card-img:hover{
+  transform: translateY(-1px);
+  filter: contrast(1.02);
+}
+
+/* === THIN PHOTO FRAME (GALLERY THUMBNAILS) === */
+.card-img{
+  background: #fff;                 /* ensures “paper” edge reads clean */
+}
+
+/* Footer — centered two-line layout on all devices */
+.site-footer{
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 400;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 8px calc(var(--footer-pad) * 0.9) 15px;
+  text-align: center;
+  color: #b0b0b0;
+  font-size: 13px;
+  letter-spacing: .02em;
+  line-height: 1.4;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.footer-line{
+  font-size: inherit;
+  letter-spacing: inherit;
+}
+
+.footer-main{
+  margin-bottom: 4px;
+  white-space: nowrap;   /* line 1: copyright | email on one line */
+}
+
+.footer-powered{
+  /* keep spacing only, no font changes */
+}
+
+.site-footer a{
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-footer a:hover{
+  color: #111;
+}
+
+/* Mobile: smaller footer font + more padding so line 1 fits and isn’t cut off */
+@media (max-width: 640px){
+  .site-footer{
+    --footer-pad: 28px;
+    font-size: 11px;
+    padding: 8px 18px 17px 18px;
+    transform: translateY(-5%);
+  }
+  /* Footer line: match gallery edge exactly (12px from viewport = wrap --pad) */
+  .site-footer .footer-divider{
+    width: calc(100% + 12px);
+    margin: 20px -6px 0;
+  }
+  /* Footer arrow: push up 18% (was 13%, +5%) */
+  .footer-scroll{
+    transform: translateX(-50%) translateY(-18%);
+  }
+}
+
+/* === FOOTER DIVIDER — hidden (gray line removed) === */
+.footer-divider{
+  display: none;
+}
+
+/* =========================================================
+   LIGHTBOX (PHASE 1 FIX — mobile-safe, no collisions, solid bg)
+   ========================================================= */
+
+/* Overlay */
+.lb{
+  position: fixed;
+  inset: 0;
+  background: #ffffff;              /* FIX: solid (no transparency) */
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.lb.open{ display:flex; }
+
+/* Desktop layout: keep your intent (image left, prompt right) */
+.lb-content,
+.lb-figure{
+  margin: 0;
+  width: min(1200px, 92vw);
+  height: min(86vh, 860px);
+  display: grid;
+  grid-template-columns: 1fr 460px;
+  gap: 28px;
+  align-items: center;
+
+  min-height: 0;                    /* FIX: allow children to shrink */
+}
+
+/* Image area */
+.lb-media{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Image link: click opens in new tab on desktop only */
+.lb-media-link{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* === LIGHTBOX IMAGE (single authoritative rule) === */
+.lb-img{
+  width: 100%;
+  max-width: 100%;
+  max-height: 58dvh;           /* keep your tuned size */
+  object-fit: contain;
+  display: block;
+
+  /* Subtle photographic frame */
+  background: #fff;
+  padding: 8px;                       /* thicker frame */
+  border: 1px solid rgba(0,0,0,0.12); /* slightly darker */
+  
+  /* Depth, very restrained */
+  box-shadow: none; /* shadow OFF (non-destructive) */
+}
+
+/* === LIGHTBOX FRAME CONSISTENCY FIX (safe override) === */
+.lb-media{
+  /* keep your frame styling here; this just guarantees consistent geometry */
+  align-items: center;
+  justify-content: center;
+}
+
+/* Override any earlier width:100% rules that stretch certain aspect ratios */
+.lb-img{
+  width: auto !important;
+  height: auto !important;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Prompt panel */
+.lb-side{
+  align-self: center;
+  justify-self: stretch;
+  min-width: 0;
+  min-height: 0;                    /* FIX: required for overflow scrolling */
+  color: var(--muted);
+  letter-spacing: .02em;
+  line-height: 1.5;
+  padding-right: 6px;
+}
+
+/* Prompt text */
+.lb-prompt{
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 18px;
+  line-height: 1.38;
+  color: #444;
+  padding-top: 6px;
+}
+
+/* PROMPT: label (first line) */
+.lb-prompt::first-line{
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 12px;
+  color: #222;
+  letter-spacing: 0.08em;
+  line-height: 1.25;
+}
+
+/* Prompt wrapper (for mobile collapse) */
+.lb-prompt-wrap{
+  min-width: 0;
+}
+
+/* "More" button: mobile only, toggles prompt expand */
+.lb-prompt-more{
+  display: none;
+  margin: 0;
+  padding: 4px;
+  align-items: center;
+  justify-content: center;
+  color: #444;
+  opacity: 0.6;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+}
+.lb-prompt-more:hover{ background: transparent; opacity: 1; color: #222; }
+.lb-prompt-more:focus-visible{ outline: 2px solid #444; outline-offset: 2px; }
+.lb-prompt-more svg{ display: block; width: 20px; height: 20px; }
+
+/* Lightbox prompt actions (copy + open in new tab) */
+.lb-actions{
+  margin-top: 12px;
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Copy prompt button (icon only) */
+.lb-copy{
+  padding: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #444;
+  opacity: 0.6;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+}
+.lb-copy:hover{ background: transparent; opacity: 1; color: #222; }
+.lb-copy:focus-visible{ outline: 2px solid #444; outline-offset: 2px; }
+.lb-copy-icon{
+  font-family: "Material Symbols Outlined", sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+/* Open image in new tab button */
+.lb-open-new{
+  padding: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #444;
+  opacity: 0.6;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+}
+.lb-open-new:hover{ background: transparent; opacity: 1; color: #222; }
+.lb-open-new:focus-visible{ outline: 2px solid #444; outline-offset: 2px; }
+.lb-open-new svg{ display: block; width: 20px; height: 20px; }
+
+/* Close button: match nav arrow size, weight, color, opacity, hover */
+.lb-close{
+  position: fixed;
+  top: 8px;
+  right: 18px;
+  border: none;
+  background: transparent;
+  font-size: 36px;
+  line-height: 1;
+  cursor: pointer;
+  color: rgba(17,17,17,0.9);
+  opacity: .55;
+  user-select: none;
+  z-index: 60;
+  transition: opacity 0.2s ease;
+  outline: none; /* no blue ring when focused on open */
+}
+.lb-close:hover{ opacity: 1; }
+
+/* Nav buttons: same hover (opacity .55 → 1) and transition as close */
+.lb-nav{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  font-size: 44px;
+  cursor: pointer;
+  padding: 14px 18px;
+  user-select: none;
+
+  color: transparent;               /* keep glyph hidden (you draw chevrons) */
+  text-shadow: none;
+}
+
+.lb-prev{ left: 14px; }
+.lb-next{ right: 14px; }
+.lb-nav:disabled{ cursor: default; }
+
+/* Chevron shape: opacity and hover on ::before so hover effect is visible */
+.lb-nav::before{
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  border-right: 3px solid rgba(17,17,17,0.9);
+  border-bottom: 3px solid rgba(17,17,17,0.9);
+  transform: translate(-50%, -50%) rotate(135deg);
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
+}
+.lb-nav:hover::before{
+  opacity: 1;
+}
+.lb-next::before{
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+.lb-nav:disabled::before{
+  opacity: 0.25;
+}
+
+/* Swipe overlay: only during drag; hide real content so layout stays */
+.lb-content{
+  position: relative;
+  touch-action: pan-y;
+}
+/* Hide all real content when overlay is present (no ghosting) */
+.lb-content.lb-content-swiping > *:not(.lb-swipe-overlay){
+  visibility: hidden;
+}
+.lb-swipe-overlay{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  touch-action: pan-y;
+  z-index: 1;
+  pointer-events: auto;
+  background: #fff;
+}
+.lb-swipe-track{
+  display: flex;
+  width: 200%;
+  height: 100%;
+  min-height: 100%;
+  flex-shrink: 0;
+  transform: translateX(0);
+}
+.lb-swipe-track.lb-swipe-snapping{
+  transition: transform 0.25s ease-out;
+}
+.lb-swipe-slide{
+  margin: 0;
+  width: 50%;
+  flex: 0 0 50%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 460px;
+  gap: 28px;
+  align-items: center;
+}
+.lb-swipe-slide .lb-media,
+.lb-swipe-slide .lb-side{
+  min-width: 0;
+  min-height: 0;
+}
+.lb-swipe-slide .lb-img{
+  width: auto !important;
+  height: auto !important;
+  max-width: 100%;
+  max-height: 58dvh;
+  object-fit: contain;
+  display: block;
+  background: #fff;
+  padding: 8px;
+  border: 1px solid rgba(0,0,0,0.12);
+}
+.lb-swipe-slide .lb-media-link{
+  pointer-events: none;
+}
+.lb-swipe-slide .lb-prompt-more{
+  display: none;
+}
+
+@media (min-width: 900px){
+  .lb-nav::before{
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* MOBILE: viewport-safe layout (no overlay collisions)
+   - top row: image (fits)
+   - bottom row: prompt (scrolls)
+*/
+/* MOBILE: strict stack, no overlap, bigger image (phones only; tablet uses 641–1024px side‑by‑side) */
+@media (max-width: 640px){
+  /* Make overlay truly viewport-sized (removes “centered card” feeling) */
+  .lb{
+    align-items: stretch;
+    justify-content: stretch;
+  }
+
+  /* Force a vertical stack instead of grid (prevents overlap bugs) */
+  .lb-content,
+  .lb-figure{
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 14px;
+    overflow: hidden;
+
+    /* Reserve space for the fixed X */
+    padding: 72px 16px 16px;
+    margin: 0;
+  }
+
+  /* Image block (bigger, centered) */
+  .lb-media{
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    margin-top: -14px;   /* tweak: try -8px to -20px */
+  }
+
+  /* Disable image link on mobile so tap doesn’t open new tab */
+  .lb-media-link{ pointer-events: none; }
+
+  /* Prompt block (scrolls independently) */
+  .lb-side{
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0;
+  }
+
+  /* Mobile: show first 4 lines of prompt; "more" button reveals rest */
+  .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt{
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+  }
+  .lb-prompt-more{
+    display: inline-flex;
+  }
+
+  /* Hide prev/next arrows on mobile; use swipe instead */
+  .lb-nav{
+    display: none;
+  }
+
+  /* Swipe overlay: stacked layout on mobile */
+  .lb-swipe-slide{
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: unset;
+    gap: 14px;
+    overflow: hidden;
+  }
+  .lb-swipe-slide .lb-media{
+    flex: 0 0 auto;
+    min-height: 0;
+  }
+  .lb-swipe-slide .lb-side{
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+  }
+  .lb-swipe-slide .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt{
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+  }
+}
+
+/* Tablet 641–1024px: keep prompt visible (side‑by‑side like landscape); no .lb-prompt typography changes */
+@media (min-width: 641px) and (max-width: 1024px) and (min-height: 501px) {
+  .lb{
+    align-items: center;
+    justify-content: center;
+  }
+  .lb-content,
+  .lb-figure{
+    width: min(96vw, 900px);
+    height: min(86vh, 860px);
+    max-height: none;
+    display: grid;
+    grid-template-columns: 1fr min(300px, 38vw);
+    gap: 20px;
+    flex-direction: unset;
+    overflow: visible;
+    padding: 0;
+    margin: 0;
+  }
+  .lb-media{
+    flex: unset;
+    margin-top: 0;
+  }
+  .lb-media-link{
+    pointer-events: auto;
+  }
+  .lb-side{
+    flex: unset;
+    overflow: visible;
+    -webkit-overflow-scrolling: unset;
+    padding-right: 6px;
+  }
+  .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt{
+    display: block;
+    -webkit-line-clamp: unset;
+    -webkit-box-orient: unset;
+    overflow: visible;
+  }
+  .lb-prompt-more{
+    display: none;
+  }
+  /* Tablet: hide < > arrows; use swipe on image to go prev/next */
+  .lb-nav{
+    display: none;
+  }
+
+  /* Swipe overlay: tablet grid */
+  .lb-swipe-slide{
+    display: grid;
+    grid-template-columns: 1fr min(300px, 38vw);
+    gap: 20px;
+    flex-direction: unset;
+  }
+  .lb-swipe-slide .lb-media{ flex: unset; }
+  .lb-swipe-slide .lb-side{ flex: unset; overflow: visible; }
+}
+
+/* Mobile landscape (phone): stacked layout — image capped 50vh, prompt scrolls; same structure as mobile (width often >640 so above rule doesn’t match) */
+@media (max-width: 640px){
+  .lb-prompt{
+    font-size: 16px;
+    line-height: 1.5;
+  }
+}
+
+/* === HERO CAPTION (bottom-left editorial text) === */
+.hero-caption{
+  position: absolute;
+  left: 40px;
+  bottom: 198px;      /* pushed down 20% from 248px */
+  max-width: 720px;
+
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-weight: 600;
+
+  font-size: clamp(43px, 5.9vw, 103px);
+  line-height: 1.14;
+  letter-spacing: 0; /* important for Playfair */
+
+  color: rgba(255,255,255,0.92);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hero-caption-line{
+  display: block;
+  white-space: nowrap;
+}
+
+/* Tablet portrait: larger caption to match desktop aspect ratio (default clamp is small at ~768px) */
+@media (min-width: 641px) and (max-width: 1024px) and (min-height: 501px) {
+  .hero-caption{
+    font-size: clamp(52px, 6.8vw, 95px);
+    line-height: 1.14;
+  }
+}
+
+/* Mobile: same three lines as desktop, left-aligned */
+@media (max-width: 640px){
+  .hero-caption{
+    left: 20px;
+    bottom: 182px;     /* pushed down 20% from 227px */
+    max-width: none;
+    transform: none;
+    text-align: left;
+
+    font-size: 32px;
+    line-height: 1.2;
+  }
+}
+
+/* Mobile landscape: short viewport — smaller caption and lower position so all three lines fit (no top clip) */
+@media (max-width: 640px) and (orientation: landscape){
+  .hero-caption{
+    font-size: 24px;
+    line-height: 1.2;
+    bottom: 88px;      /* room for scroll arrow below; caption block fits in short hero */
+  }
+}
+
+/* Short viewport landscape (mobile horizontal when width > 640px): full caption visible, no right clip */
+@media (orientation: landscape) and (max-height: 500px){
+  .hero-caption{
+    left: 20px;
+    bottom: 88px;
+    max-width: calc(100% - 40px);   /* use full hero width so text isn’t clipped on the right */
+    font-size: 48px;
+    line-height: 1.2;
+    text-align: left;
+  }
+}
+
+/* === HERO — contained parallax hero (stronger) === */
+.hero{
+  position: relative;
+  height: 92vh;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* Mobile + tablet: hero + banner fill viewport so banner bottom matches screen bottom on first visit */
+@media (max-width: 1024px){
+  .hero{
+    height: calc(100dvh - 72px);  /* 72px = .hero-banner-inner height; hero + banner = 100dvh */
+  }
+}
+/* Mobile landscape: same flush hero+banner when viewport height is short (covers horizontal phone) */
+@media (orientation: landscape) and (max-height: 500px){
+  .hero{
+    height: calc(100dvh - 72px);
+  }
+}
+
+/* Overscan: make the image taller than the hero so it can move */
+.hero-media{
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -10%;
+  bottom: -10%;
+  background-size: cover;
+  background-position: center;
+  transform: translate3d(0, 0, 0) scale(1.14);
+  will-change: transform;
+}
+
+/* === WHITE BANNER BELOW HERO (NOW STICKY HEADER) === */
+.hero-banner{
+  position: sticky;
+  top: 0;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+}
+
+.hero-banner-inner{
+  height: 72px;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--pad);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-banner-title{
+  font-size: 16px;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: #111;
+  opacity: .9;
+}
+
+.hero-banner-divider{
+  display: none;   /* gray line below LATENT ILLUMINATION banner removed */
+}
+
+/* === HERO SCROLL CUE (arrow) — smooth, continuous float === */
+.hero-scroll{
+  position: absolute;
+  left: 50%;
+  bottom: 36px;
+  transform: translateX(-50%);
+  width: 58px;     /* bigger */
+  height: 58px;    /* bigger */
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  z-index: 2;
+  opacity: .9;
+
+  /* Smooth continuous scroll cue */
+  animation: heroScrollFloat 1.35s ease-in-out infinite;
+}
+
+/* Draw the chevron using borders */
+.hero-scroll::before{
+  content:"";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;          /* MATCH lightbox arrow scale */
+  height: 22px;         /* MATCH lightbox arrow scale */
+  border-right: 3px solid rgba(255,255,255,0.9);
+  border-bottom: 3px solid rgba(255,255,255,0.9);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* Smooth, continuous vertical motion */
+.hero-scroll::after{
+  content:"";
+  position: absolute;
+  inset: -8px;      /* slightly bigger halo */
+  border-radius: 999px;
+  background: none;
+}
+
+.hero-scroll:hover{ opacity: 1; }
+
+.hero-scroll:focus-visible{
+  outline: 2px solid rgba(255,255,255,0.85);
+  outline-offset: 3px;
+}
+
+/* Smooth, continuous vertical motion */
+@keyframes heroScrollFloat{
+  0%   { transform: translateX(-50%) translateY(0); }
+  50%  { transform: translateX(-50%) translateY(10px); }
+  100% { transform: translateX(-50%) translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .hero-scroll{ animation: none; }
+}
+
+/* === FOOTER SCROLL CUE (arrow) — matches HERO cue style, points upward === */
+.footer-scroll{
+  width: 58px;
+  height: 58px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  z-index: 2;
+  opacity: .9;
+
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: heroScrollFloat 1.35s ease-in-out infinite;
+
+  margin: -20px 0 2px;   /* negative top pulls arrow + text up as a group */
+  order: 2;
+}
+
+.footer-main{ order: 3; }
+.footer-powered{ order: 4; }
+
+/* Draw the chevron using borders — rotated to point UP */
+.footer-scroll::before{
+  content:"";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  border-right: 3px solid rgba(17, 17, 17, 0.5);
+  border-bottom: 3px solid rgba(17, 17, 17, 0.5);
+  transform: translate(-50%, -50%) rotate(-135deg);
+}
+
+.footer-scroll::after{
+  content: none;
+}
+
+.footer-scroll:hover{ opacity: 1; }
+
+.footer-scroll:focus-visible{
+  outline: 2px solid rgba(17, 17, 17, 0.5);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .footer-scroll{ animation: none; }
+}
+
+/* Mobile landscape: Safari/iOS flex intrinsic min-height fix — break image wrapper shrink refusal */
+@media (orientation: landscape) and (max-height: 500px) {
+
+  .lb {
+    min-height: 0;
+  }
+
+  .lb-content,
+  .lb-figure {
+    display: flex !important;
+    flex-direction: column;
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+    padding: 10px 16px 16px;
+    gap: 10px;
+    margin: 0;
+  }
+
+  /* Critical: min-height: 0 breaks intrinsic link; strict flex-basis + height caps image area */
+  .lb-media {
+    flex: 0 0 50dvh;
+    height: 50dvh;
+    min-height: 0;
+    max-height: 50dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* Override global .lb-img { height: auto } — force fill container so wrapper can enforce cap */
+  .lb-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain;
+  }
+
+  /* Text area: min-height: 0 so it can shrink; overflow-y: auto so it scrolls, not pushed off */
+  .lb-side {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+  }
+
+  .lb-prompt {
+    font-size: 15px;
+    white-space: pre-wrap;
+  }
+
+  .lb-nav {
+    display: none;
+  }
+
+  .lb-close {
+    top: 4px;
+    right: 12px;
+    font-size: 28px;
+  }
+
+  /* Swipe overlay: landscape stacked */
+  .lb-swipe-slide{
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: unset;
+    gap: 10px;
+  }
+  .lb-swipe-slide .lb-media{
+    flex: 0 0 50dvh;
+    height: 50dvh;
+    min-height: 0;
+    max-height: 50dvh;
+  }
+  .lb-swipe-slide .lb-img{
+    max-height: 100%;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  .lb-swipe-slide .lb-side{
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+  }
+}
