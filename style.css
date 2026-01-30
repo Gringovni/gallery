@@ -35,6 +35,21 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   align-items: center;
 }
 
+/* === BRAND / BANNER TITLE === */
+.hero-banner-title{
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 640px){
+  .hero-banner-title{
+    font-weight: 400;
+    letter-spacing: 0.12em;
+  }
+}
+
 /* We removed Gallery/Shop, so keep this empty */
 .tabs{
   display:flex;
@@ -54,7 +69,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 
 /* thin gray line ONLY */
 .top-divider{
-  height: 1px;
+  height: 1.5px;
   background: var(--line);
 }
 
@@ -119,13 +134,16 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 
 /* Footer */
 .site-footer{
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 400; /* or 300 if you want lighter */
   max-width: var(--container);
   margin: 0 auto;
-  padding: 44px var(--pad) 56px;
+  padding: 28px var(--pad) 32px;
   text-align: center;
   color: #b0b0b0;
   font-size: 13px;
   letter-spacing: .02em;
+  line-height: 1.4;
 }
 
 .footer-line{
@@ -134,7 +152,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 }
 
 .footer-main{
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .footer-powered{
@@ -148,6 +166,20 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 
 .site-footer a:hover{
   color: #111;
+}
+
+/* === FOOTER DIVIDER (matches header line) === */
+.footer-divider{
+  max-width: var(--container);
+  margin: 20px auto 0;   /* spacing between gallery and footer */
+  padding: 0 var(--pad);
+}
+
+.footer-divider::before{
+  content: "";
+  display: block;
+  height: 1px;        /* same thickness as top-divider */
+  background: #e9e9e9;   /* exact line color */
 }
 
 /* Lightbox (UPDATED — only section changed) */
@@ -205,40 +237,34 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   justify-self: stretch;
   min-width: 0;
   color: var(--muted);
-  font-size: 12px;
   letter-spacing: .02em;
   line-height: 1.5;
   padding-right: 6px;
 }
 
-/* Title can be there but stays subtle */
-.lb-title{
-  font-size: 11px;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: #111;
-  opacity: .55;
-  margin-bottom: 10px;
-}
-
-/* Prompt text */
+/* Prompt text (label + content styling) */
 .lb-prompt{
   margin: 0;
   white-space: pre-wrap;
-  font-family: inherit;
-  font-size: 12px;
-  line-height: 1.6;
+  font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 18px;     /* down from 20px */
+  line-height: 1.38;  /* tighter but readable */
   color: #444;
+  padding-top: 6px;
 }
 
-/* If your older version uses .lb-caption, keep it quiet/optional */
-.lb-caption{
-  width: 100%;
-  padding: 16px 4px 0;
-  font-size: 14px;
-  color: var(--muted);
-  letter-spacing: .02em;
-  text-align: center;
+/* PROMPT: label (first line) */
+.lb-prompt::first-line{
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 12px;
+  color: #222;
+  letter-spacing: 0.08em;
+  line-height: 1.25;
+  /* remove padding-top */
 }
 
 /* Mobile: stack prompt below image, keep centered */
@@ -252,7 +278,13 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
     overflow: auto;
     padding: 18px 0;
   }
-
+  
+  @media (max-width: 640px){
+  .lb-prompt{
+    font-size: 16px;
+    line-height: 1.5;
+  }
+}
   .lb-img{
     max-height: 70vh;
   }
@@ -296,6 +328,50 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 .lb-next{ right: 14px; }
 .lb-nav:disabled{ cursor: default; }
 
+/* === HERO CAPTION (bottom-left editorial text) === */
+.hero-caption{
+  position: absolute;
+  left: 40px;
+  bottom: 50px;
+  max-width: 720px;
+
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-weight: 600;
+
+  font-size: clamp(30px, 4.0vw, 72px);
+  line-height: 1.12;
+  letter-spacing: 0; /* important for Playfair */
+
+  color: rgba(255,255,255,0.92);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Mobile refinement */
+@media (max-width: 640px){
+  .hero-caption{
+    left: 10px;
+    right: 20px;
+    bottom: 24px;          /* extra clearance from arrow */
+    max-width: none;
+
+    font-size: 24px;
+    line-height: 1.24;
+  }
+}
+
+/* Hide mobile-only line breaks by default (desktop & tablet) */
+.m-br {
+  display: none;
+}
+
+/* Enable line breaks on mobile only */
+@media (max-width: 640px) {
+  .m-br {
+    display: inline;
+  }
+}
+
 /* === HERO — contained parallax hero (stronger) === */
 .hero{
   position: relative;
@@ -337,7 +413,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 }
 
 .hero-banner-title{
-  font-size: 14px;
+  font-size: 16px;
   letter-spacing: .10em;
   text-transform: uppercase;
   color: #111;
@@ -345,7 +421,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 }
 
 .hero-banner-divider{
-  height: 1px;
+  height: 1.5px;
   background: var(--line);
 }
 
@@ -353,7 +429,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 .hero-scroll{
   position: absolute;
   left: 50%;
-  bottom: 18px;
+  bottom: 36px;
   transform: translateX(-50%);
   width: 58px;     /* bigger */
   height: 58px;    /* bigger */
@@ -365,7 +441,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   opacity: .9;
 
   /* Smooth continuous scroll cue */
-  animation: heroScrollDrop 1.55s cubic-bezier(.22,.61,.36,1) infinite;
+  animation: heroScrollFloat 1.35s ease-in-out infinite;
 }
 
 /* Draw the chevron using borders */
@@ -374,40 +450,76 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 18px;
-  height: 18px;
-  border-right: 2px solid rgba(255,255,255,0.85);
-  border-bottom: 2px solid rgba(255,255,255,0.85);
-  transform: translate(-50%, -55%) rotate(45deg);
+  width: 22px;          /* MATCH lightbox arrow scale */
+  height: 22px;         /* MATCH lightbox arrow scale */
+  border-right: 3px solid rgba(255,255,255,0.9);
+  border-bottom: 3px solid rgba(255,255,255,0.9);
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
 /* Smooth, continuous vertical motion */
 .hero-scroll::after{
   content:"";
   position: absolute;
-  inset: -8px;     /* slightly bigger halo */
+  inset: -8px;      /* slightly bigger halo */
   border-radius: 999px;
   background: radial-gradient(circle, rgba(0,0,0,0.22), rgba(0,0,0,0) 60%);
 }
 
 .hero-scroll:hover{ opacity: 1; }
+
 .hero-scroll:focus-visible{
   outline: 2px solid rgba(255,255,255,0.85);
   outline-offset: 3px;
 }
 
 /* Smooth, continuous vertical motion */
-@keyframes heroScrollDrop{
-  0%   { transform: translateX(-50%) translateY(0);  opacity: .95; }
-  55%  { transform: translateX(-50%) translateY(16px); opacity: .95; }
-  80%  { transform: translateX(-50%) translateY(26px); opacity: 0; }
-
-  /* instant reset (hidden) */
-  81%  { transform: translateX(-50%) translateY(0);  opacity: 0; }
-
-  100% { transform: translateX(-50%) translateY(0);  opacity: .95; }
+@keyframes heroScrollFloat{
+  0%   { transform: translateX(-50%) translateY(0); }
+  50%  { transform: translateX(-50%) translateY(10px); }
+  100% { transform: translateX(-50%) translateY(0); }
 }
 
 @media (prefers-reduced-motion: reduce){
   .hero-scroll{ animation: none; }
+}
+
+/* === LIGHTBOX NAV ARROWS — chevron shape (match HERO cue style) === */
+
+/* Hide the ‹ › characters but keep them accessible */
+.lb-nav{
+  color: transparent;          /* hides the glyph */
+  text-shadow: none;
+  position: absolute;          /* already is, but keep explicit */
+}
+
+/* Draw chevrons with borders (same visual language as .hero-scroll) */
+.lb-nav::before{
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;                 /* tweak size */
+  height: 16px;                /* tweak size */
+  border-right: 3px solid rgba(17,17,17,0.9);
+  border-bottom: 3px solid rgba(17,17,17,0.9);
+  transform: translate(-50%, -50%) rotate(135deg); /* default: LEFT */
+}
+
+/* Right chevron */
+.lb-next::before{
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Optional: make disabled state feel consistent */
+.lb-nav:disabled::before{
+  opacity: 0.25;
+}
+
+/* Optional: slightly bigger on large screens (feel free to remove) */
+@media (min-width: 900px){
+  .lb-nav::before{
+    width: 18px;
+    height: 18px;
+  }
 }
