@@ -872,46 +872,66 @@ body {
   display: none;   /* gray line below LATENT ILLUMINATION banner removed */
 }
 
-/* === HERO SCROLL CUE (arrow) — Slide & Fade Animation === */
+/* === HERO SCROLL CUE (arrow) — smooth, continuous float === */
 .hero-scroll{
   position: absolute;
   left: 50%;
   bottom: 36px;
   transform: translateX(-50%);
-  width: 58px;
-  height: 58px;
+  width: 58px;     /* bigger */
+  height: 58px;    /* bigger */
   border: 0;
   padding: 0;
   background: transparent;
   cursor: pointer;
   z-index: 2;
-  opacity: 0; /* Start invisible for the animation loop */
+  opacity: .9;
 
-  /* New "Drop & Fade" loop to match the GIF style */
-  animation: scrollDrop 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+  /* Smooth continuous scroll cue */
+  animation: heroScrollFloat 1.35s ease-in-out infinite;
 }
 
-/* Draw the chevron */
+/* Draw the chevron using borders */
 .hero-scroll::before{
   content:"";
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 22px;
-  height: 22px;
+  width: 22px;          /* MATCH lightbox arrow scale */
+  height: 22px;         /* MATCH lightbox arrow scale */
   border-right: 3px solid rgba(255,255,255,0.9);
   border-bottom: 3px solid rgba(255,255,255,0.9);
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
-.hero-scroll::after{ content: none; }
-.hero-scroll:hover{ animation-play-state: paused; opacity: 1; }
+/* Smooth, continuous vertical motion */
+.hero-scroll::after{
+  content:"";
+  position: absolute;
+  inset: -8px;      /* slightly bigger halo */
+  border-radius: 999px;
+  background: none;
+}
+
+.hero-scroll:hover{ opacity: 1; }
+
 .hero-scroll:focus-visible{
   outline: 2px solid rgba(255,255,255,0.85);
   outline-offset: 3px;
 }
 
-/* === FOOTER SCROLL CUE — Points & Moves UP === */
+/* Smooth, continuous vertical motion */
+@keyframes heroScrollFloat{
+  0%   { transform: translateX(-50%) translateY(0); }
+  50%  { transform: translateX(-50%) translateY(10px); }
+  100% { transform: translateX(-50%) translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .hero-scroll{ animation: none; }
+}
+
+/* === FOOTER SCROLL CUE (arrow) — matches HERO cue style, points upward === */
 .footer-scroll{
   width: 58px;
   height: 58px;
@@ -920,23 +940,21 @@ body {
   background: transparent;
   cursor: pointer;
   z-index: 2;
-  opacity: 0;
+  opacity: .9;
 
   position: relative;
   left: 50%;
-  
-  /* "Rise & Fade" loop (Reverse of hero) */
-  animation: scrollRise 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+  transform: translateX(-50%);
+  animation: heroScrollFloat 1.35s ease-in-out infinite;
 
-  margin: -20px 0 2px;
+  margin: -20px 0 2px;   /* negative top pulls arrow + text up as a group */
   order: 2;
-  transform: translateX(-50%); /* Base position */
 }
 
 .footer-main{ order: 3; }
 .footer-powered{ order: 4; }
 
-/* Chevron rotated to point UP */
+/* Draw the chevron using borders — rotated to point UP */
 .footer-scroll::before{
   content:"";
   position: absolute;
@@ -949,30 +967,17 @@ body {
   transform: translate(-50%, -50%) rotate(-135deg);
 }
 
-.footer-scroll:hover{ animation-play-state: paused; opacity: 1; }
+.footer-scroll::after{
+  content: none;
+}
+
+.footer-scroll:hover{ opacity: 1; }
+
 .footer-scroll:focus-visible{
   outline: 2px solid rgba(17, 17, 17, 0.5);
   outline-offset: 3px;
 }
 
-/* === ANIMATION KEYFRAMES === */
-
-/* Hero: Starts top, slides DOWN, fades out */
-@keyframes scrollDrop{
-  0%   { transform: translateX(-50%) translateY(0);    opacity: 0; }
-  15%  { transform: translateX(-50%) translateY(0);    opacity: 1; }
-  85%  { transform: translateX(-50%) translateY(14px); opacity: 0; }
-  100% { transform: translateX(-50%) translateY(14px); opacity: 0; }
-}
-
-/* Footer: Starts bottom, slides UP, fades out */
-@keyframes scrollRise{
-  0%   { transform: translateX(-50%) translateY(0);     opacity: 0; }
-  15%  { transform: translateX(-50%) translateY(0);     opacity: 1; }
-  85%  { transform: translateX(-50%) translateY(-14px); opacity: 0; }
-  100% { transform: translateX(-50%) translateY(-14px); opacity: 0; }
-}
-
 @media (prefers-reduced-motion: reduce){
-  .hero-scroll, .footer-scroll{ animation: none; opacity: 1; }
+  .footer-scroll{ animation: none; }
 }
