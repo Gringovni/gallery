@@ -289,7 +289,9 @@
 
     // Drag-to-swipe: whole slide (image + prompt + icons) moves together; pointer events (touch + trackpad)
     (function(){
-      const lbContent = document.querySelector(".lb-content");
+      const lbContent = lb.querySelector(".lb-content");
+      const lbImgLinkReal = lb.querySelector("#lbImgLink");
+      const lbSide = lbContent ? lbContent.querySelector(".lb-side") : null;
       if (!lbContent || !lb) return;
 
       const DRAG_THRESHOLD_PX = 10;
@@ -303,6 +305,8 @@
       let hasNext = false, hasPrev = false;
       let lastX = 0, lastMoveTime = 0;
       let didDrag = false;
+      let lockedScrollTop = 0, lockedContentScrollTop = 0, lockedSideScrollTop = 0;
+      let scrollPinHandler = null;
 
       function buildSlideEl(item){
         const slide = document.createElement("div");
@@ -352,6 +356,7 @@
         side.appendChild(actions);
         slide.appendChild(media);
         slide.appendChild(side);
+        slide.querySelectorAll("[id]").forEach(function(el){ el.removeAttribute("id"); });
         return slide;
       }
 
@@ -362,6 +367,12 @@
         track = null;
         lb.classList.remove("lb-swiping");
         lbContent.classList.remove("lb-content-swiping");
+        if (scrollPinHandler) {
+          lb.removeEventListener("scroll", scrollPinHandler, true);
+          lbContent.removeEventListener("scroll", scrollPinHandler, true);
+          if (lbSide) lbSide.removeEventListener("scroll", scrollPinHandler, true);
+          scrollPinHandler = null;
+        }
       }
 
       function setTrackX(px){
@@ -409,39 +420,51 @@
           hasNext = currentIndex < items.length - 1;
           hasPrev = currentIndex > 0;
           direction = dx < 0 ? "next" : "prev";
-          overlay = document.createElement("div");
-          overlay.className = "lb-swipe-overlay";
-          overlay.style.position = "absolute";
-          overlay.style.top = "0";
-          overlay.style.left = "0";
-          overlay.style.right = "0";
-          overlay.style.bottom = "0";
-          overlay.style.width = "100%";
-          overlay.style.height = "100%";
-          overlay.style.overflow = "hidden";
-          overlay.style.background = "#fff";
-          overlay.style.zIndex = "1";
-          track = document.createElement("div");
-          track.className = "lb-swipe-track";
-          track.style.height = "100%";
-          track.style.minHeight = "100%";
+          const overlayEl = document.createElement("div");
+          overlayEl.className = "lb-swipe-overlay";
+          overlayEl.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;overflow:hidden;background:#fff;z-index:1;display:flex;align-items:stretch";
+          const trackEl = document.createElement("div");
+          trackEl.className = "lb-swipe-track";
+          trackEl.style.cssText = "height:100%;min-height:100%;display:flex;width:200%;flex-shrink:0";
           if (direction === "next" && hasNext) {
-            track.appendChild(buildSlideEl(items[currentIndex]));
-            track.appendChild(buildSlideEl(items[currentIndex + 1]));
-            setTrackX(dx);
+            trackEl.appendChild(buildSlideEl(items[currentIndex]));
+            trackEl.appendChild(buildSlideEl(items[currentIndex + 1]));
+            trackEl.style.transform = "translateX(" + dx + "px)";
           } else if (direction === "prev" && hasPrev) {
-            track.appendChild(buildSlideEl(items[currentIndex - 1]));
-            track.appendChild(buildSlideEl(items[currentIndex]));
-            setTrackX(-slideWidth + dx);
+            trackEl.appendChild(buildSlideEl(items[currentIndex - 1]));
+            trackEl.appendChild(buildSlideEl(items[currentIndex]));
+            trackEl.style.transform = "translateX(" + (-slideWidth + dx) + "px)";
           } else {
-            track.appendChild(buildSlideEl(items[currentIndex]));
-            setTrackX(0);
+            trackEl.appendChild(buildSlideEl(items[currentIndex]));
+            trackEl.style.transform = "translateX(0px)";
           }
-          overlay.appendChild(track);
-          lbContent.insertBefore(overlay, lbContent.firstChild);
-          lbContent.classList.add("lb-content-swiping");
-          lb.classList.add("lb-swiping");
+          overlayEl.appendChild(trackEl);
+          overlay = overlayEl;
+          track = trackEl;
+          requestAnimationFrame(function(){
+            if (pointerId === null) { overlay = null; track = null; return; }
+            lockedScrollTop = lb.scrollTop;
+            lockedContentScrollTop = lbContent.scrollTop;
+            lockedSideScrollTop = lbSide ? lbSide.scrollTop : 0;
+            lbContent.insertBefore(overlay, lbContent.firstChild);
+            lbContent.classList.add("lb-content-swiping");
+            lb.classList.add("lb-swiping");
+            lb.scrollTop = lockedScrollTop;
+            lbContent.scrollTop = lockedContentScrollTop;
+            if (lbSide) lbSide.scrollTop = lockedSideScrollTop;
+            scrollPinHandler = function(){
+              lb.scrollTop = lockedScrollTop;
+              lbContent.scrollTop = lockedContentScrollTop;
+              if (lbSide) lbSide.scrollTop = lockedSideScrollTop;
+            };
+            lb.addEventListener("scroll", scrollPinHandler, true);
+            lbContent.addEventListener("scroll", scrollPinHandler, true);
+            if (lbSide) lbSide.addEventListener("scroll", scrollPinHandler, true);
+          });
         } else {
+          lb.scrollTop = lockedScrollTop;
+          lbContent.scrollTop = lockedContentScrollTop;
+          if (lbSide) lbSide.scrollTop = lockedSideScrollTop;
           lastX = e.clientX;
           lastMoveTime = performance.now();
           let tx;
@@ -458,8 +481,8 @@
         pointerId = null;
 
         if (!overlay || !track) {
-          if (didDrag && lbImgLink) {
-            lbImgLink.addEventListener("click", function prevent(e){ e.preventDefault(); e.stopPropagation(); }, { once: true, capture: true });
+          if (didDrag && lbImgLinkReal) {
+            lbImgLinkReal.addEventListener("click", function prevent(e){ e.preventDefault(); e.stopPropagation(); }, { once: true, capture: true });
           }
           return;
         }
@@ -470,8 +493,8 @@
         const committedNext = direction === "next" && hasNext && (dx <= -commitDistance || velocity >= VELOCITY_THRESHOLD_PX);
         const committedPrev = direction === "prev" && hasPrev && (dx >= commitDistance || velocity >= VELOCITY_THRESHOLD_PX);
 
-        if (didDrag && lbImgLink) {
-          lbImgLink.addEventListener("click", function prevent(e){ e.preventDefault(); e.stopPropagation(); }, { once: true, capture: true });
+        if (didDrag && lbImgLinkReal) {
+          lbImgLinkReal.addEventListener("click", function prevent(e){ e.preventDefault(); e.stopPropagation(); }, { once: true, capture: true });
         }
 
         if (committedNext) finishDrag(true, false);
