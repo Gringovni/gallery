@@ -808,9 +808,15 @@ body {
 }
 
 /* Mobile + tablet: hero + banner fill viewport so banner bottom matches screen bottom on first visit */
+/* Mobile + tablet: hero + banner fill viewport
+   FIX: Changed 100dvh to 100svh (Small Viewport Height).
+   'dvh' resizes when the address bar moves, causing the page to jump/snap.
+   'svh' is static and stable.
+*/
 @media (max-width: 1024px){
   .hero{
-    height: calc(100dvh - 72px);  /* 72px = .hero-banner-inner height; hero + banner = 100dvh */
+    height: calc(100svh - 72px);  /* svh is stable */
+    min-height: 500px; /* Safety min-height */
   }
 }
 /* Mobile landscape: same flush hero+banner when viewport height is short (covers horizontal phone) */
