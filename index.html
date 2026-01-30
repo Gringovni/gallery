@@ -1,115 +1,157 @@
-<!-- index.html -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Latent Illumination</title>
+  <title>Latent Illumination — AI Art Gallery</title>
 
-  <!-- Google Fonts preconnect (shared) -->
+  <meta name="description" content="Latent Illumination — where creative intent becomes visual clarity. A gallery of AI-generated imagery with prompts." />
+  <meta name="theme-color" content="#ffffff" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Latent Illumination" />
+  <meta property="og:description" content="Where creative intent becomes visual clarity. A gallery of AI-generated imagery with prompts." />
+  <meta property="og:image" content="https://images.pexels.com/photos/20398189/pexels-photo-20398189.jpeg?auto=compress&cs=tinysrgb&w=1200" />
+
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <!-- Playfair Display (Hero slogan font) -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
-
-  <!-- Inter (Banner + PROMPT label) -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-
-  <!-- Source Serif 4 (Prompt content) -->
   <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
 
-  <!-- Your site styles -->
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" type="image/png" href="assets/01-fast-forward.png">
 </head>
 
 <body>
+  <a href="#masonry" class="skip-link">Skip to gallery</a>
+
   <!-- HERO -->
 <section class="hero" id="hero" aria-label="Hero" data-scroll-target="#masonry">
   <div class="hero-media" id="heroMedia" style="background-image:url('https://images.pexels.com/photos/20398189/pexels-photo-20398189.jpeg?auto=compress&cs=tinysrgb&w=2400');"></div>
 
     <!-- Hero editorial text -->
 <div class="hero-caption">
-  Where creative <span class="m-br"><br></span>
-  intent becomes <span class="m-br"><br></span>
-  visual clarity
+  <span class="hero-caption-line">Where creative</span>
+  <span class="hero-caption-line">intent becomes</span>
+  <span class="hero-caption-line">visual clarity</span>
 </div>
 
-  <!-- Scroll cue arrow (NEW) -->
-  <button class="hero-scroll" type="button" aria-label="Scroll to gallery"></button>
+  <!-- Scroll cue arrow -->
+  <button class="hero-scroll" type="button" aria-label="Scroll to gallery" id="heroScrollBtn"></button>
 </section>
 
-  <!-- WHITE BANNER — lives directly below the hero image (NOW the only header; becomes sticky when it reaches top) -->
-  <section class="hero-banner" aria-label="Banner">
+  <header class="hero-banner" role="banner" aria-label="Site header">
     <div class="hero-banner-inner">
       <div class="hero-banner-title">LATENT ILLUMINATION</div>
     </div>
     <div class="hero-banner-divider"></div>
-  </section>
+  </header>
 
   <main class="wrap">
-    <section id="masonry" class="masonry" aria-label="Gallery"></section>
+    <section id="masonry" class="masonry" aria-label="Gallery" aria-busy="false" aria-live="polite">
+      <p class="masonry-loading" id="masonryLoading">Loading gallery…</p>
+      <p class="masonry-error hidden" id="masonryError" role="alert"></p>
+    </section>
   </main>
 
-  <div class="footer-divider"></div>
+  <footer class="site-footer" role="contentinfo">
+    <!-- Footer divider line (restored; must be first visually) -->
+    <div class="footer-divider"></div>
 
-  <footer class="site-footer">
-    <div class="footer-line footer-main">
-      © 2026 Latent Illumination |
-      <a
-        class="footer-email"
-        href="mailto:contact@latentillumination.com"
-        title="Email Latent Illumination"
-      >
-        contact@latentillumination.com
-      </a>
-    </div>
+    <!-- Footer scroll-to-top arrow (NEW) -->
+    <button class="footer-scroll" id="footerScroll" type="button" aria-label="Scroll to gallery"></button>
 
-    <div class="footer-line footer-powered">
-      Powered by
-      <a
-        class="footer-github"
-        href="https://github.com/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        GitHub
-      </a>
-    </div>
+    <div class="footer-line footer-main">© 2026 Latent Illumination | <a class="footer-email" href="mailto:contact@latentillumination.com" title="Email Latent Illumination">contact@latentillumination.com</a></div>
+    <div class="footer-line footer-powered">Powered by <a class="footer-github" href="https://github.com/" target="_blank" rel="noopener noreferrer">GitHub</a></div>
   </footer>
 
-  <!-- Lightbox (UPDATED only) -->
-  <div class="lb" id="lb" aria-hidden="true" role="dialog" aria-label="Image viewer">
-    <button class="lb-close" id="lbClose" aria-label="Close">×</button>
-
-    <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">‹</button>
-
-    <div class="lb-content" role="document">
-      <div class="lb-media">
-        <img id="lbImg" class="lb-img" alt="" />
+  <!-- Lightbox: close button outside .lb so touches always register on mobile -->
+  <div class="lb-container" id="lbContainer" aria-hidden="true">
+    <div class="lb" id="lb" role="dialog" aria-label="Image viewer">
+      <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">‹</button>
+      <div class="lb-viewport">
+      <div class="lb-track">
+      <div class="lb-slide-slot">
+        <div class="lb-content" role="document">
+          <div class="lb-media">
+            <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
+              <img class="lb-img" alt="" />
+            </a>
+          </div>
+          <aside class="lb-side" aria-label="Prompt">
+            <div class="lb-prompt-wrap">
+              <pre class="lb-prompt"></pre>
+            </div>
+            <div class="lb-actions">
+              <button type="button" class="lb-prompt-more" aria-label="Show more prompt" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></button>
+              <button type="button" class="lb-copy" aria-label="Copy prompt to clipboard"><span class="material-symbols-outlined lb-copy-icon" aria-hidden="true">content_copy</span></button>
+              <button type="button" class="lb-open-new" aria-label="Open image in new tab"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg></button>
+            </div>
+          </aside>
+        </div>
       </div>
-
-      <aside class="lb-side" aria-label="Prompt">
-        <pre class="lb-prompt" id="lbPrompt"></pre>
-      </aside>
+      <div class="lb-slide-slot">
+        <div class="lb-content" role="document">
+          <div class="lb-media">
+            <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
+              <img class="lb-img" alt="" />
+            </a>
+          </div>
+          <aside class="lb-side" aria-label="Prompt">
+            <div class="lb-prompt-wrap">
+              <pre class="lb-prompt"></pre>
+            </div>
+            <div class="lb-actions">
+              <button type="button" class="lb-prompt-more" aria-label="Show more prompt" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></button>
+              <button type="button" class="lb-copy" aria-label="Copy prompt to clipboard"><span class="material-symbols-outlined lb-copy-icon" aria-hidden="true">content_copy</span></button>
+              <button type="button" class="lb-open-new" aria-label="Open image in new tab"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg></button>
+            </div>
+          </aside>
+        </div>
+      </div>
+      <div class="lb-slide-slot">
+        <div class="lb-content" role="document">
+          <div class="lb-media">
+            <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
+              <img class="lb-img" alt="" />
+            </a>
+          </div>
+          <aside class="lb-side" aria-label="Prompt">
+            <div class="lb-prompt-wrap">
+              <pre class="lb-prompt"></pre>
+            </div>
+            <div class="lb-actions">
+              <button type="button" class="lb-prompt-more" aria-label="Show more prompt" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></button>
+              <button type="button" class="lb-copy" aria-label="Copy prompt to clipboard"><span class="material-symbols-outlined lb-copy-icon" aria-hidden="true">content_copy</span></button>
+              <button type="button" class="lb-open-new" aria-label="Open image in new tab"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg></button>
+            </div>
+          </aside>
+        </div>
+      </div>
     </div>
-
-    <button class="lb-nav lb-next" id="lbNext" aria-label="Next">›</button>
+      </div>
+      <button class="lb-nav lb-next" id="lbNext" aria-label="Next">›</button>
+    </div>
+    <button class="lb-close" id="lbClose" aria-label="Close">×</button>
   </div>
 
   <script>
     const masonry = document.getElementById("masonry");
 
+    const lbContainer = document.getElementById("lbContainer");
     const lb = document.getElementById("lb");
-    const lbImg = document.getElementById("lbImg");
-    const lbPrompt = document.getElementById("lbPrompt");
     const lbClose = document.getElementById("lbClose");
     const lbPrev = document.getElementById("lbPrev");
     const lbNext = document.getElementById("lbNext");
+    const masonryLoading = document.getElementById("masonryLoading");
+    const masonryError = document.getElementById("masonryError");
 
     let items = [];
     let currentIndex = -1;
+    let lastFocusBeforeLB = null;
 
     function formatPrompt(raw){
       const text = (raw || "").toString();
@@ -129,28 +171,59 @@
       return `PROMPT:\n${noModel}`;
     }
 
-    function openLB(index){
-      currentIndex = index;
-      const item = items[currentIndex];
-
-      lbImg.src = item.src;
-      lbImg.alt = item.title || "";
-
-      // Prefer item.prompt, fallback to item.caption; always formatted as PROMPT only.
-      const raw = item.prompt ?? item.caption ?? "";
-      lbPrompt.textContent = formatPrompt(raw);
-
-      lb.classList.add("open");
-      lb.setAttribute("aria-hidden", "false");
-      updateNavState();
+    function populateSlot(slot, index) {
+      const img = slot.querySelector(".lb-img");
+      const link = slot.querySelector(".lb-media-link");
+      const promptEl = slot.querySelector(".lb-prompt");
+      const wrap = slot.querySelector(".lb-prompt-wrap");
+      const moreBtn = slot.querySelector(".lb-prompt-more");
+      if (index < 0 || index >= items.length) {
+        slot.classList.add("lb-slot-hidden");
+        if (img) { img.src = ""; img.alt = ""; }
+        if (link) link.removeAttribute("href");
+        if (promptEl) promptEl.textContent = "";
+        if (wrap) wrap.classList.remove("lb-prompt-expanded");
+        if (moreBtn) moreBtn.setAttribute("aria-expanded", "false");
+        return;
+      }
+      slot.classList.remove("lb-slot-hidden");
+      const item = items[index];
+      if (img) { img.src = item.src; img.alt = item.title || ""; }
+      if (link) link.href = item.src;
+      if (promptEl) promptEl.textContent = formatPrompt(item.prompt ?? item.caption ?? "");
+      if (wrap) wrap.classList.remove("lb-prompt-expanded");
+      if (moreBtn) moreBtn.setAttribute("aria-expanded", "false");
     }
 
-    function closeLB(){
-      lb.classList.remove("open");
-      lb.setAttribute("aria-hidden", "true");
-      lbImg.src = "";
-      lbPrompt.textContent = "";
+    function renderCarousel(centerIndex) {
+      const track = lb.querySelector(".lb-track");
+      const slots = lb.querySelectorAll(".lb-slide-slot");
+      if (!track || slots.length !== 3) return;
+      const idxPrev = centerIndex - 1;
+      const idxCur = centerIndex;
+      const idxNext = centerIndex + 1;
+      populateSlot(slots[0], idxPrev);
+      populateSlot(slots[1], idxCur);
+      populateSlot(slots[2], idxNext);
+      track.classList.remove("lb-animating");
+      track.style.transform = "translate3d(-33.3333%, 0, 0)";
+    }
+
+    function openLB(index) {
+      currentIndex = index;
+      lastFocusBeforeLB = document.activeElement;
+      renderCarousel(currentIndex);
+      lbContainer.classList.add("open");
+      lbContainer.setAttribute("aria-hidden", "false");
+      updateNavState();
+      lbClose.focus();
+    }
+
+    function closeLB() {
+      lbContainer.classList.remove("open");
+      lbContainer.setAttribute("aria-hidden", "true");
       currentIndex = -1;
+      if (lastFocusBeforeLB && lastFocusBeforeLB.focus) lastFocusBeforeLB.focus();
     }
 
     function updateNavState(){
@@ -162,29 +235,60 @@
       lbNext.style.opacity = hasNext ? "1" : "0.25";
     }
 
-    function prev(){
-      if(currentIndex > 0) openLB(currentIndex - 1);
+    function prev() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderCarousel(currentIndex);
+      }
     }
-    function next(){
-      if(currentIndex < items.length - 1) openLB(currentIndex + 1);
+    function next() {
+      if (currentIndex < items.length - 1) {
+        currentIndex++;
+        renderCarousel(currentIndex);
+      }
     }
 
     async function load(){
-      const res = await fetch("gallery.json?v=" + Date.now(), { cache: "no-store" });
-      items = await res.json();
+      masonry.setAttribute("aria-busy", "true");
+      masonryLoading.classList.remove("hidden");
+      masonryError.classList.add("hidden");
+      masonryError.textContent = "";
 
-      masonry.innerHTML = "";
+      try {
+        const res = await fetch("gallery.json?v=" + Date.now(), { cache: "no-store" });
+        if (!res.ok) throw new Error("Failed to load gallery");
+        items = await res.json();
+      } catch (err) {
+        masonryError.textContent = "Could not load gallery. Please try again later.";
+        masonryError.classList.remove("hidden");
+        masonryLoading.classList.add("hidden");
+        masonry.setAttribute("aria-busy", "false");
+        return;
+      }
+
+      masonryLoading.classList.add("hidden");
+      masonryError.classList.add("hidden");
+      masonry.setAttribute("aria-busy", "false");
+
+      const existingCards = masonry.querySelectorAll(".card");
+      existingCards.forEach((el) => el.remove());
 
       items.forEach((item, i) => {
         const card = document.createElement("article");
         card.className = "card";
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        card.setAttribute("aria-label", `View image ${i + 1}: ${item.title || "Untitled"}`);
 
         const img = document.createElement("img");
         img.loading = "lazy";
         img.src = item.thumb || item.src;
         img.alt = item.title || "";
         img.className = "card-img";
-        img.addEventListener("click", () => openLB(i));
+
+        const openImage = () => openLB(i);
+        card.addEventListener("click", openImage);
+        card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openImage(); } });
 
         card.appendChild(img);
         masonry.appendChild(card);
@@ -196,19 +300,154 @@
     lbNext.addEventListener("click", next);
 
     lb.addEventListener("click", (e) => {
-      if(e.target === lb) closeLB();
+      const slot = e.target.closest(".lb-slide-slot");
+      if (!slot) return;
+      const openNewBtn = e.target.closest(".lb-open-new");
+      const promptMoreBtn = e.target.closest(".lb-prompt-more");
+      const copyBtn = e.target.closest(".lb-copy");
+      if (openNewBtn) {
+        const link = slot.querySelector(".lb-media-link");
+        if (link && link.href) window.open(link.href, "_blank", "noopener,noreferrer");
+        return;
+      }
+      if (promptMoreBtn) {
+        const wrap = slot.querySelector(".lb-prompt-wrap");
+        if (wrap) {
+          const expanded = wrap.classList.toggle("lb-prompt-expanded");
+          promptMoreBtn.setAttribute("aria-expanded", expanded);
+          promptMoreBtn.setAttribute("aria-label", expanded ? "Show less prompt" : "Show more prompt");
+        }
+        return;
+      }
+      if (copyBtn) {
+        const promptEl = slot.querySelector(".lb-prompt");
+        let text = (promptEl && promptEl.textContent || "").trim();
+        if (!text) return;
+        text = text.replace(/^\s*PROMPT\s*:\s*\n?/i, "").trim();
+        navigator.clipboard.writeText(text).then(() => {
+          const icon = copyBtn.querySelector(".lb-copy-icon");
+          if (icon) {
+            const orig = icon.textContent;
+            icon.textContent = "done";
+            setTimeout(() => { icon.textContent = orig; }, 1500);
+          }
+        });
+      }
+    });
+
+    lb.addEventListener("click", (e) => {
+      if (e.target === lb) closeLB();
+    });
+
+    /* Mobile: touchend fallback so close works even when click is blocked */
+    lbClose.addEventListener("touchend", (e) => {
+      e.preventDefault();
+      closeLB();
+    }, { passive: false });
+
+    lbContainer.addEventListener("keydown", (e) => {
+      if (!lbContainer.classList.contains("open")) return;
+      if (e.key === "Tab") {
+        const focusables = Array.from(lbContainer.querySelectorAll("button:not([disabled])"));
+        const first = focusables[0], last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
     });
 
     document.addEventListener("keydown", (e) => {
-      if(!lb.classList.contains("open")) return;
+      if (!lbContainer.classList.contains("open")) return;
       if(e.key === "Escape") closeLB();
       if(e.key === "ArrowLeft") prev();
       if(e.key === "ArrowRight") next();
     });
 
+    // Mobile: Live drag on 3-panel track; swipe-back fixed via better intent detection
+    (function(){
+      const track = document.querySelector(".lb-track");
+      if (!track) return;
+
+      let startX = 0, startY = 0;
+      let currentDeltaX = 0;
+      let isDragging = false;
+      let isScrolling = false;
+      let isIntentDetermined = false;
+      const thresholdPercent = 0.2;
+      const intentThresholdPx = 12;  /* don't decide scroll vs swipe until we've moved this far */
+      const scrollRatio = 1.5;       /* require vertical to be 1.5× horizontal to treat as scroll */
+
+      function setTrackTransform(offsetPx) {
+        track.style.transform = `translate3d(calc(-33.3333% + ${offsetPx}px), 0, 0)`;
+      }
+
+      track.addEventListener("touchstart", (e) => {
+        if (e.touches.length > 1) return;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        currentDeltaX = 0;
+        isDragging = true;
+        isScrolling = false;
+        isIntentDetermined = false;
+        track.classList.remove("lb-animating");
+      }, { passive: true });
+
+      track.addEventListener("touchmove", (e) => {
+        if (!isDragging) return;
+        const x = e.touches[0].clientX;
+        const y = e.touches[0].clientY;
+        const deltaX = x - startX;
+        const deltaY = y - startY;
+        const absX = Math.abs(deltaX);
+        const absY = Math.abs(deltaY);
+
+        if (!isIntentDetermined) {
+          const total = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+          if (total < intentThresholdPx) return; /* wait for meaningful movement */
+          if (absY > scrollRatio * absX) {
+            isScrolling = true;
+            isDragging = false;
+            return;
+          }
+          isIntentDetermined = true;
+        }
+        if (isScrolling) return;
+        currentDeltaX = deltaX;
+        setTrackTransform(deltaX);
+      }, { passive: true });
+
+      track.addEventListener("touchend", (e) => {
+        if (!isDragging || isScrolling) return;
+        isDragging = false;
+        track.classList.add("lb-animating");
+        const thresholdPx = lb.offsetWidth * thresholdPercent;
+        const goPrev = currentDeltaX > thresholdPx && currentIndex > 0;
+        const goNext = currentDeltaX < -thresholdPx && currentIndex < items.length - 1;
+
+        if (goNext) {
+          track.style.transform = "translate3d(-66.6666%, 0, 0)";
+          track.addEventListener("transitionend", function onEnd() {
+            track.removeEventListener("transitionend", onEnd);
+            currentIndex++;
+            renderCarousel(currentIndex);
+            updateNavState();
+          }, { once: true });
+        } else if (goPrev) {
+          track.style.transform = "translate3d(0%, 0, 0)";
+          track.addEventListener("transitionend", function onEnd() {
+            track.removeEventListener("transitionend", onEnd);
+            currentIndex--;
+            renderCarousel(currentIndex);
+            updateNavState();
+          }, { once: true });
+        } else {
+          track.style.transform = "translate3d(-33.3333%, 0, 0)";
+        }
+      });
+    })();
+
     load();
 
-    // HERO PARALLAX — stronger + overscan-safe
+    // HERO PARALLAX — RAF loop for smooth updates on mobile (iOS delays scroll events)
     (function(){
       const hero = document.getElementById("hero");
       const media = document.getElementById("heroMedia");
@@ -217,61 +456,73 @@
       const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if(reduceMotion) return;
 
-      let ticking = false;
-
       function update(){
         const rect = hero.getBoundingClientRect();
-
-        // Only compute while hero is visible
         if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
 
-        // Progress from 0 → 1 while scrolling through the hero
         const progress = Math.min(Math.max(-rect.top / rect.height, 0), 1);
-
-        // Stronger parallax:
-        // - more travel (translate)
-        // - more zoom-out
         const isDesktop = window.innerWidth >= 900;
-
-// Mobile = current feel (unchanged)
-const maxTranslate = isDesktop ? 260 : 170;
-const maxScaleOut  = isDesktop ? 0.14 : 0.10;
-
-const translate = progress * maxTranslate;
-const scale = 1.14 - progress * maxScaleOut;
+        const maxTranslate = isDesktop ? 260 : 170;
+        const maxScaleOut  = isDesktop ? 0.14 : 0.10;
+        const translate = progress * maxTranslate;
+        const scale = 1.14 - progress * maxScaleOut;
 
         media.style.transform = `translate3d(0, ${translate}px, 0) scale(${scale})`;
       }
 
-      function onScroll(){
-        if(!ticking){
-          requestAnimationFrame(() => {
-            update();
-            ticking = false;
-          });
-          ticking = true;
-        }
+      function loop(){
+        update();
+        requestAnimationFrame(loop);
       }
-
-      window.addEventListener("scroll", onScroll, { passive: true });
-      window.addEventListener("resize", onScroll);
-      update();
+      requestAnimationFrame(loop);
     })();
 
-    // HERO CLICK → SCROLL TO GALLERY (SLOWER / SMOOTHER)
+    // Smooth scroll to gallery (used by hero click and hero scroll button)
+    function smoothScrollToGallery(){
+      const target = document.getElementById("masonry");
+      const banner = document.querySelector(".hero-banner");
+      if(!target) return;
+      const startY = window.scrollY;
+      const offset = banner ? banner.offsetHeight : 0;
+      const targetY = target.getBoundingClientRect().top + window.scrollY - offset;
+      const distance = targetY - startY;
+      const duration = 1400;
+      const startTime = performance.now();
+      function easeInOutCubic(t){ return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2; }
+      function step(now){
+        const elapsed = now - startTime;
+        const t = Math.min(elapsed / duration, 1);
+        window.scrollTo(0, startY + distance * easeInOutCubic(t));
+        if(t < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
     (function(){
       const hero = document.getElementById("hero");
+      const heroScrollBtn = document.getElementById("heroScrollBtn");
       const target = document.getElementById("masonry");
       if(!hero || !target) return;
-
       hero.style.cursor = "pointer";
+      hero.addEventListener("click", (e) => { if (e.target === hero || e.target.closest(".hero-media") || e.target.closest(".hero-caption")) smoothScrollToGallery(); });
+      if (heroScrollBtn) heroScrollBtn.addEventListener("click", (e) => { e.stopPropagation(); smoothScrollToGallery(); });
+    })();
 
-      hero.addEventListener("click", () => {
-        const startY = window.scrollY;
-        const targetY = target.getBoundingClientRect().top + window.scrollY;
-        const distance = targetY - startY;
+    // FOOTER ARROW CLICK → SCROLL TO TOP (mirrored behavior)
+(function(){
+  const btn = document.getElementById("footerScroll");
+  const target = document.getElementById("masonry");
+  const banner = document.querySelector(".hero-banner");
+  if(!btn || !target) return;
 
-        const duration = 1400; // ms (increase = slower)
+  btn.addEventListener("click", () => {
+    const startY = window.scrollY;
+    const offset = banner ? banner.offsetHeight : 0;
+    const targetY =
+      target.getBoundingClientRect().top + window.scrollY - offset;
+    const distance = targetY - startY;
+
+        const duration = 1400; // ms (matches hero)
         const startTime = performance.now();
 
         function easeInOutCubic(t){
