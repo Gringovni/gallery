@@ -249,7 +249,37 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   z-index: 50;
 }
 
-.lb.open{ display:flex; }
+.lb.open{
+  display: block;
+  overflow: hidden;
+}
+
+/* 3-panel infinite track */
+.lb-track{
+  display: flex;
+  width: 300%;
+  height: 100%;
+  transform: translate3d(-33.3333%, 0, 0);
+  will-change: transform;
+}
+
+.lb-slide-slot{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 33.3333%;
+  height: 100%;
+  flex: 0 0 33.3333%;
+}
+
+.lb-slide-slot.lb-slot-hidden{
+  visibility: hidden;
+}
+
+/* Utility class for the release animation */
+.lb-animating{
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
 
 /* Desktop layout: keep your intent (image left, prompt right) */
 .lb-content,
@@ -263,6 +293,19 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   align-items: center;
 
   min-height: 0;                    /* FIX: allow children to shrink */
+}
+
+/* .lb-content inside slots: constrained size, centered in slot */
+.lb-slide-slot .lb-content{
+  /* Restore the constrained size so it doesn't fill the whole slot */
+  width: min(1200px, 92vw);
+  height: min(86vh, 860px);
+
+  /* Ensure it stays centered within the flex slot */
+  margin: auto;
+
+  /* Keep the grid display for internal layout */
+  display: grid;
 }
 
 /* Image area */
@@ -527,6 +570,19 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
     margin: 0;
   }
 
+  /* Slot content: same full-viewport layout on mobile */
+  .lb-slide-slot .lb-content{
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow: hidden;
+    padding: 72px 16px 16px;
+  }
+
   /* Image block (bigger, centered) */
   .lb-media{
     flex: 0 0 auto;
@@ -630,6 +686,17 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
     overflow: hidden;
     padding: 72px 16px 16px;
     margin: 0;
+  }
+  .lb-slide-slot .lb-content{
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow: hidden;
+    padding: 72px 16px 16px;
   }
   .lb-media{
     flex: 0 0 auto;
