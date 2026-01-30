@@ -447,7 +447,7 @@
 
     load();
 
-    // HERO PARALLAX — stronger + overscan-safe
+    // HERO PARALLAX — RAF loop for smooth updates on mobile (iOS delays scroll events)
     (function(){
       const hero = document.getElementById("hero");
       const media = document.getElementById("heroMedia");
@@ -456,45 +456,25 @@
       const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if(reduceMotion) return;
 
-      let ticking = false;
-
       function update(){
         const rect = hero.getBoundingClientRect();
-
-        // Only compute while hero is visible
         if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
 
-        // Progress from 0 → 1 while scrolling through the hero
         const progress = Math.min(Math.max(-rect.top / rect.height, 0), 1);
-
-        // Stronger parallax:
-        // - more travel (translate)
-        // - more zoom-out
         const isDesktop = window.innerWidth >= 900;
-
-// Mobile = current feel (unchanged)
-const maxTranslate = isDesktop ? 260 : 170;
-const maxScaleOut  = isDesktop ? 0.14 : 0.10;
-
-const translate = progress * maxTranslate;
-const scale = 1.14 - progress * maxScaleOut;
+        const maxTranslate = isDesktop ? 260 : 170;
+        const maxScaleOut  = isDesktop ? 0.14 : 0.10;
+        const translate = progress * maxTranslate;
+        const scale = 1.14 - progress * maxScaleOut;
 
         media.style.transform = `translate3d(0, ${translate}px, 0) scale(${scale})`;
       }
 
-      function onScroll(){
-        if(!ticking){
-          requestAnimationFrame(() => {
-            update();
-            ticking = false;
-          });
-          ticking = true;
-        }
+      function loop(){
+        update();
+        requestAnimationFrame(loop);
       }
-
-      window.addEventListener("scroll", onScroll, { passive: true });
-      window.addEventListener("resize", onScroll);
-      update();
+      requestAnimationFrame(loop);
     })();
 
     // Smooth scroll to gallery (used by hero click and hero scroll button)
