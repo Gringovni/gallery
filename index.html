@@ -287,24 +287,213 @@
       if(e.key === "ArrowRight") next();
     });
 
-    // Mobile: swipe on image area to go prev/next (arrows hidden on mobile)
+    // Drag-to-swipe: whole slide (image + prompt + icons) moves together; pointer events (touch + trackpad)
     (function(){
-      const lbMedia = document.querySelector(".lb-media");
-      if (!lbMedia) return;
-      let touchStartX = 0;
-      const minSwipe = 50;
+      const lbContent = document.querySelector(".lb-content");
+      if (!lbContent || !lb) return;
 
-      lbMedia.addEventListener("touchstart", (e) => {
-        if (e.touches.length) touchStartX = e.touches[0].clientX;
-      }, { passive: true });
+      const DRAG_THRESHOLD_PX = 10;
+      const COMMIT_DISTANCE_RATIO = 0.22;
+      const RESISTANCE = 0.35;
+      const VELOCITY_THRESHOLD_PX = 120;
 
-      lbMedia.addEventListener("touchend", (e) => {
-        if (!lb.classList.contains("open") || !e.changedTouches.length) return;
-        const touchEndX = e.changedTouches[0].clientX;
-        const delta = touchEndX - touchStartX;
-        if (delta > minSwipe) prev();
-        else if (delta < -minSwipe) next();
-      }, { passive: true });
+      let startX = 0, startY = 0, pointerId = null;
+      let overlay = null, track = null, slideWidth = 0;
+      let direction = null; // "next" | "prev"
+      let hasNext = false, hasPrev = false;
+      let lastX = 0, lastMoveTime = 0;
+      let didDrag = false;
+
+      function buildSlideEl(item){
+        const slide = document.createElement("div");
+        slide.className = "lb-swipe-slide";
+        const media = document.createElement("div");
+        media.className = "lb-media";
+        const link = document.createElement("a");
+        link.className = "lb-media-link";
+        link.href = item.src;
+        link.setAttribute("aria-label", "Open image in new tab");
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        const img = document.createElement("img");
+        img.className = "lb-img";
+        img.src = item.src;
+        img.alt = item.title || "";
+        link.appendChild(img);
+        media.appendChild(link);
+        const side = document.createElement("aside");
+        side.className = "lb-side";
+        side.setAttribute("aria-label", "Prompt");
+        const wrap = document.createElement("div");
+        wrap.className = "lb-prompt-wrap";
+        const pre = document.createElement("pre");
+        pre.className = "lb-prompt";
+        pre.textContent = formatPrompt(item.prompt ?? item.caption ?? "");
+        wrap.appendChild(pre);
+        const actions = document.createElement("div");
+        actions.className = "lb-actions";
+        const moreBtn = document.createElement("button");
+        moreBtn.type = "button";
+        moreBtn.className = "lb-prompt-more";
+        moreBtn.setAttribute("aria-hidden", "true");
+        moreBtn.innerHTML = "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewBox=\"0 -960 960 960\" width=\"24\" fill=\"currentColor\"><path d=\"M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z\"/></svg>";
+        const copyBtn = document.createElement("button");
+        copyBtn.type = "button";
+        copyBtn.className = "lb-copy";
+        copyBtn.setAttribute("aria-hidden", "true");
+        copyBtn.innerHTML = "<span class=\"material-symbols-outlined lb-copy-icon\">content_copy</span>";
+        const openBtn = document.createElement("button");
+        openBtn.type = "button";
+        openBtn.className = "lb-open-new";
+        openBtn.setAttribute("aria-hidden", "true");
+        openBtn.innerHTML = "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewBox=\"0 -960 960 960\" width=\"24\" fill=\"currentColor\"><path d=\"M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z\"/></svg>";
+        actions.append(moreBtn, copyBtn, openBtn);
+        side.appendChild(wrap);
+        side.appendChild(actions);
+        slide.appendChild(media);
+        slide.appendChild(side);
+        return slide;
+      }
+
+      function removeOverlay(){
+        if (!overlay) return;
+        overlay.remove();
+        overlay = null;
+        track = null;
+        lb.classList.remove("lb-swiping");
+        lbContent.classList.remove("lb-content-swiping");
+      }
+
+      function setTrackX(px){
+        if (!track) return;
+        track.style.transform = "translateX(" + px + "px)";
+      }
+
+      function finishDrag(commitToNext, commitToPrev){
+        if (!track || !overlay) return;
+        track.classList.add("lb-swipe-snapping");
+        const targetX = commitToNext ? -slideWidth : (commitToPrev ? 0 : (direction === "prev" && hasPrev ? -slideWidth : 0));
+        setTrackX(targetX);
+        const onEnd = () => {
+          track.removeEventListener("transitionend", onEnd);
+          if (commitToNext) next();
+          else if (commitToPrev) prev();
+          removeOverlay();
+        };
+        track.addEventListener("transitionend", onEnd);
+      }
+
+      function onPointerDown(e){
+        if (!lb.classList.contains("open") || items.length === 0) return;
+        if (overlay) return;
+        startX = e.clientX;
+        startY = e.clientY;
+        pointerId = e.pointerId;
+        lastX = startX;
+        lastMoveTime = performance.now();
+        didDrag = false;
+        lbContent.setPointerCapture(pointerId);
+      }
+
+      function onPointerMove(e){
+        if (pointerId === null || e.pointerId !== pointerId) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+
+        if (!overlay) {
+          if (Math.abs(dx) <= DRAG_THRESHOLD_PX && Math.abs(dy) <= DRAG_THRESHOLD_PX) return;
+          if (Math.abs(dx) < Math.abs(dy)) return;
+          didDrag = true;
+          const rect = lbContent.getBoundingClientRect();
+          slideWidth = rect.width;
+          hasNext = currentIndex < items.length - 1;
+          hasPrev = currentIndex > 0;
+          direction = dx < 0 ? "next" : "prev";
+          overlay = document.createElement("div");
+          overlay.className = "lb-swipe-overlay";
+          overlay.style.position = "absolute";
+          overlay.style.top = "0";
+          overlay.style.left = "0";
+          overlay.style.right = "0";
+          overlay.style.bottom = "0";
+          overlay.style.width = "100%";
+          overlay.style.height = "100%";
+          overlay.style.overflow = "hidden";
+          overlay.style.background = "#fff";
+          overlay.style.zIndex = "1";
+          track = document.createElement("div");
+          track.className = "lb-swipe-track";
+          track.style.height = "100%";
+          track.style.minHeight = "100%";
+          if (direction === "next" && hasNext) {
+            track.appendChild(buildSlideEl(items[currentIndex]));
+            track.appendChild(buildSlideEl(items[currentIndex + 1]));
+            setTrackX(dx);
+          } else if (direction === "prev" && hasPrev) {
+            track.appendChild(buildSlideEl(items[currentIndex - 1]));
+            track.appendChild(buildSlideEl(items[currentIndex]));
+            setTrackX(-slideWidth + dx);
+          } else {
+            track.appendChild(buildSlideEl(items[currentIndex]));
+            setTrackX(0);
+          }
+          overlay.appendChild(track);
+          lbContent.insertBefore(overlay, lbContent.firstChild);
+          lbContent.classList.add("lb-content-swiping");
+          lb.classList.add("lb-swiping");
+        } else {
+          lastX = e.clientX;
+          lastMoveTime = performance.now();
+          let tx;
+          if (direction === "next" && hasNext) tx = dx;
+          else if (direction === "prev" && hasPrev) tx = -slideWidth + dx;
+          else tx = 0;
+          setTrackX(tx);
+        }
+      }
+
+      function onPointerUp(e){
+        if (pointerId === null || e.pointerId !== pointerId) return;
+        lbContent.releasePointerCapture(pointerId);
+        pointerId = null;
+
+        if (!overlay || !track) {
+          if (didDrag && lbImgLink) {
+            lbImgLink.addEventListener("click", function prevent(e){ e.preventDefault(); e.stopPropagation(); }, { once: true, capture: true });
+          }
+          return;
+        }
+
+        const dx = e.clientX - startX;
+        const velocity = Math.abs(e.clientX - lastX) / Math.max(0.001, (performance.now() - lastMoveTime) / 1000);
+        const commitDistance = COMMIT_DISTANCE_RATIO * slideWidth;
+        const committedNext = direction === "next" && hasNext && (dx <= -commitDistance || velocity >= VELOCITY_THRESHOLD_PX);
+        const committedPrev = direction === "prev" && hasPrev && (dx >= commitDistance || velocity >= VELOCITY_THRESHOLD_PX);
+
+        if (didDrag && lbImgLink) {
+          lbImgLink.addEventListener("click", function prevent(e){ e.preventDefault(); e.stopPropagation(); }, { once: true, capture: true });
+        }
+
+        if (committedNext) finishDrag(true, false);
+        else if (committedPrev) finishDrag(false, true);
+        else finishDrag(false, false);
+      }
+
+      function onPointerCancel(e){
+        if (e.pointerId !== pointerId) return;
+        pointerId = null;
+        if (overlay && track) {
+          track.classList.add("lb-swipe-snapping");
+          setTrackX(direction === "next" ? 0 : -slideWidth);
+          const onEnd = () => { track.removeEventListener("transitionend", onEnd); removeOverlay(); };
+          track.addEventListener("transitionend", onEnd);
+        } else removeOverlay();
+      }
+
+      lbContent.addEventListener("pointerdown", onPointerDown, { passive: true });
+      document.addEventListener("pointermove", onPointerMove, { passive: true });
+      document.addEventListener("pointerup", onPointerUp, { passive: false });
+      document.addEventListener("pointercancel", onPointerCancel, { passive: true });
     })();
 
     load();
@@ -425,5 +614,6 @@ const scale = 1.14 - progress * maxScaleOut;
       });
     })();
   </script>
+  <script src="script.js?v=20260129-1"></script>
 </body>
 </html>
