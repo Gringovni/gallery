@@ -613,6 +613,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   }
 }
 
+/* Mobile landscape (phone): stacked layout — image capped 50vh, prompt scrolls; same structure as mobile (width often >640 so above rule doesn’t match) */
 @media (max-width: 640px){
   .lb-prompt{
     font-size: 16px;
@@ -644,6 +645,14 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   white-space: nowrap;
 }
 
+/* Tablet portrait: larger caption to match desktop aspect ratio (default clamp is small at ~768px) */
+@media (min-width: 641px) and (max-width: 1024px) and (orientation: portrait){
+  .hero-caption{
+    font-size: clamp(52px, 6.8vw, 95px);
+    line-height: 1.14;
+  }
+}
+
 /* Mobile: same three lines as desktop, left-aligned */
 @media (max-width: 640px){
   .hero-caption{
@@ -658,6 +667,27 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   }
 }
 
+/* Mobile landscape: short viewport — smaller caption and lower position so all three lines fit (no top clip) */
+@media (max-width: 640px) and (orientation: landscape){
+  .hero-caption{
+    font-size: 24px;
+    line-height: 1.2;
+    bottom: 88px;      /* room for scroll arrow below; caption block fits in short hero */
+  }
+}
+
+/* Short viewport landscape (mobile horizontal when width > 640px): full caption visible, no right clip */
+@media (orientation: landscape) and (max-height: 500px){
+  .hero-caption{
+    left: 20px;
+    bottom: 88px;
+    max-width: calc(100% - 40px);   /* use full hero width so text isn’t clipped on the right */
+    font-size: 48px;
+    line-height: 1.2;
+    text-align: left;
+  }
+}
+
 /* === HERO — contained parallax hero (stronger) === */
 .hero{
   position: relative;
@@ -666,10 +696,16 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   background: #fff;
 }
 
-/* Mobile only: hero + banner fill viewport so banner bottom matches screen bottom on first visit */
-@media (max-width: 640px){
+/* Mobile + tablet: hero + banner fill viewport so banner bottom matches screen bottom on first visit */
+@media (max-width: 1024px){
   .hero{
-    height: calc(100dvh - 74px);  /* 74px = banner inner (72px) + divider (1.5px) */
+    height: calc(100dvh - 72px);  /* 72px = .hero-banner-inner height; hero + banner = 100dvh */
+  }
+}
+/* Mobile landscape: same flush hero+banner when viewport height is short (covers horizontal phone) */
+@media (orientation: landscape) and (max-height: 500px){
+  .hero{
+    height: calc(100dvh - 72px);
   }
 }
 
@@ -825,4 +861,59 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 
 @media (prefers-reduced-motion: reduce){
   .footer-scroll{ animation: none; }
+}
+
+/* Mobile landscape (phone): stacked layout — image capped, prompt scrolls; at end so it wins cascade */
+@media (orientation: landscape) and (max-width: 900px) and (hover: none) and (pointer: coarse){
+  .lb{
+    align-items: stretch;
+    justify-content: stretch;
+  }
+  .lb-content,
+  .lb-figure{
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow: hidden;
+    padding: 72px 16px 16px;
+    margin: 0;
+  }
+  .lb-media{
+    flex: 0 0 auto;
+    max-height: 22vh;
+    overflow: hidden;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -14px;
+  }
+  .lb-img{
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+  .lb-media-link{ pointer-events: none; }
+  .lb-side{
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+  }
+  .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt{
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+  }
+  .lb-prompt-more{
+    display: inline-flex;
+  }
+  .lb-nav{
+    display: none;
+  }
 }
