@@ -495,6 +495,13 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   position: relative;
   touch-action: pan-y;
 }
+/* Prevent scroll reset / scroll anchoring while swipe overlay is active */
+.lb.swiping{
+  overflow: hidden;
+}
+.lb-content.lb-content-swiping{
+  overflow-anchor: none;
+}
 /* Hide all real content when overlay is present (no ghosting) */
 .lb-content.lb-content-swiping > *:not(.lb-swipe-overlay){
   visibility: hidden;
@@ -512,6 +519,8 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   z-index: 1;
   pointer-events: auto;
   background: #fff;
+  display: flex;
+  align-items: stretch;
 }
 .lb-swipe-track{
   display: flex;
@@ -520,6 +529,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   min-height: 100%;
   flex-shrink: 0;
   transform: translateX(0);
+  pointer-events: none;
 }
 .lb-swipe-track.lb-swipe-snapping{
   transition: transform 0.25s ease-out;
@@ -529,12 +539,13 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   width: 50%;
   flex: 0 0 50%;
   height: 100%;
+  min-height: 100%;
   min-width: 0;
-  min-height: 0;
   display: grid;
   grid-template-columns: 1fr 460px;
   gap: 28px;
   align-items: center;
+  pointer-events: none;
 }
 .lb-swipe-slide .lb-media,
 .lb-swipe-slide .lb-side{
