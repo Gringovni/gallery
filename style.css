@@ -249,7 +249,34 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   z-index: 50;
 }
 
-.lb.open{ display:flex; }
+.lb.open{
+  display: block;
+  overflow: hidden;
+}
+
+/* 3-panel infinite track */
+.lb-track{
+  display: flex;
+  width: 300%;
+  height: 100%;
+  transform: translate3d(-33.3333%, 0, 0);
+  will-change: transform;
+}
+
+.lb-slide-slot{
+  width: 33.3333%;
+  height: 100%;
+  flex: 0 0 33.3333%;
+}
+
+.lb-slide-slot.lb-slot-hidden{
+  visibility: hidden;
+}
+
+/* Utility class for the release animation */
+.lb-animating{
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
 
 /* Desktop layout: keep your intent (image left, prompt right) */
 .lb-content,
@@ -263,6 +290,13 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   align-items: center;
 
   min-height: 0;                    /* FIX: allow children to shrink */
+}
+
+/* .lb-content inside slots: full width, no conflicting margins */
+.lb-slide-slot .lb-content{
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 /* Image area */
@@ -490,86 +524,6 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   opacity: 0.25;
 }
 
-/* Swipe overlay: only during drag; hide real content so layout stays */
-.lb-content{
-  position: relative;
-  touch-action: pan-y;
-}
-/* Prevent scroll reset / scroll anchoring while swipe overlay is active */
-.lb.swiping{
-  overflow: hidden;
-}
-.lb-content.lb-content-swiping{
-  overflow-anchor: none;
-}
-/* Hide all real content when overlay is present (no ghosting) */
-.lb-content.lb-content-swiping > *:not(.lb-swipe-overlay){
-  visibility: hidden;
-}
-.lb-swipe-overlay{
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  touch-action: pan-y;
-  z-index: 1;
-  pointer-events: auto;
-  background: #fff;
-  display: flex;
-  align-items: stretch;
-}
-.lb-swipe-track{
-  display: flex;
-  width: 200%;
-  height: 100%;
-  min-height: 100%;
-  flex-shrink: 0;
-  transform: translateX(0);
-  pointer-events: none;
-}
-.lb-swipe-track.lb-swipe-snapping{
-  transition: transform 0.25s ease-out;
-}
-.lb-swipe-slide{
-  margin: 0;
-  width: 50%;
-  flex: 0 0 50%;
-  height: 100%;
-  min-height: 100%;
-  min-width: 0;
-  display: grid;
-  grid-template-columns: 1fr 460px;
-  gap: 28px;
-  align-items: center;
-  pointer-events: none;
-}
-.lb-swipe-slide .lb-media,
-.lb-swipe-slide .lb-side{
-  min-width: 0;
-  min-height: 0;
-}
-.lb-swipe-slide .lb-img{
-  width: auto !important;
-  height: auto !important;
-  max-width: 100%;
-  max-height: 58dvh;
-  object-fit: contain;
-  display: block;
-  background: #fff;
-  padding: 8px;
-  border: 1px solid rgba(0,0,0,0.12);
-}
-.lb-swipe-slide .lb-media-link{
-  pointer-events: none;
-}
-.lb-swipe-slide .lb-prompt-more{
-  display: none;
-}
-
 @media (min-width: 900px){
   .lb-nav::before{
     width: 18px;
@@ -644,34 +598,10 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   .lb-nav{
     display: none;
   }
-
-  /* Swipe overlay: stacked layout on mobile */
-  .lb-swipe-slide{
-    display: flex;
-    flex-direction: column;
-    grid-template-columns: unset;
-    gap: 14px;
-    overflow: hidden;
-  }
-  .lb-swipe-slide .lb-media{
-    flex: 0 0 auto;
-    min-height: 0;
-  }
-  .lb-swipe-slide .lb-side{
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow: auto;
-  }
-  .lb-swipe-slide .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt{
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 4;
-    overflow: hidden;
-  }
 }
 
 /* Tablet 641–1024px: keep prompt visible (side‑by‑side like landscape); no .lb-prompt typography changes */
-@media (min-width: 641px) and (max-width: 1024px) and (min-height: 501px) {
+@media (min-width: 641px) and (max-width: 1024px){
   .lb{
     align-items: center;
     justify-content: center;
@@ -715,19 +645,55 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   .lb-nav{
     display: none;
   }
-
-  /* Swipe overlay: tablet grid */
-  .lb-swipe-slide{
-    display: grid;
-    grid-template-columns: 1fr min(300px, 38vw);
-    gap: 20px;
-    flex-direction: unset;
-  }
-  .lb-swipe-slide .lb-media{ flex: unset; }
-  .lb-swipe-slide .lb-side{ flex: unset; overflow: visible; }
 }
 
 /* Mobile landscape (phone): stacked layout — image capped 50vh, prompt scrolls; same structure as mobile (width often >640 so above rule doesn’t match) */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 900px){
+  .lb{
+    align-items: stretch;
+    justify-content: stretch;
+  }
+  .lb-content,
+  .lb-figure{
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow: hidden;
+    padding: 72px 16px 16px;
+    margin: 0;
+  }
+  .lb-media{
+    flex: 0 0 auto;
+    max-height: 38vh;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -14px;
+  }
+  .lb-media-link{ pointer-events: none; }
+  .lb-side{
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+  }
+  .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt{
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+  }
+  .lb-prompt-more{
+    display: inline-flex;
+  }
+  .lb-nav{
+    display: none;
+  }
+}
+
 @media (max-width: 640px){
   .lb-prompt{
     font-size: 16px;
@@ -760,7 +726,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 }
 
 /* Tablet portrait: larger caption to match desktop aspect ratio (default clamp is small at ~768px) */
-@media (min-width: 641px) and (max-width: 1024px) and (min-height: 501px) {
+@media (min-width: 641px) and (max-width: 1024px) and (orientation: portrait){
   .hero-caption{
     font-size: clamp(52px, 6.8vw, 95px);
     line-height: 1.14;
@@ -975,94 +941,4 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 
 @media (prefers-reduced-motion: reduce){
   .footer-scroll{ animation: none; }
-}
-
-/* Mobile landscape: Safari/iOS flex intrinsic min-height fix — break image wrapper shrink refusal */
-@media (orientation: landscape) and (max-height: 500px) {
-
-  .lb {
-    min-height: 0;
-  }
-
-  .lb-content,
-  .lb-figure {
-    display: flex !important;
-    flex-direction: column;
-    width: 100vw;
-    height: 100dvh;
-    max-height: 100dvh;
-    min-height: 0;
-    overflow: hidden;
-    padding: 10px 16px 16px;
-    gap: 10px;
-    margin: 0;
-  }
-
-  /* Critical: min-height: 0 breaks intrinsic link; strict flex-basis + height caps image area */
-  .lb-media {
-    flex: 0 0 50dvh;
-    height: 50dvh;
-    min-height: 0;
-    max-height: 50dvh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-  }
-
-  /* Override global .lb-img { height: auto } — force fill container so wrapper can enforce cap */
-  .lb-img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain;
-  }
-
-  /* Text area: min-height: 0 so it can shrink; overflow-y: auto so it scrolls, not pushed off */
-  .lb-side {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-top: 10px;
-    border-top: 1px solid #eee;
-  }
-
-  .lb-prompt {
-    font-size: 15px;
-    white-space: pre-wrap;
-  }
-
-  .lb-nav {
-    display: none;
-  }
-
-  .lb-close {
-    top: 4px;
-    right: 12px;
-    font-size: 28px;
-  }
-
-  /* Swipe overlay: landscape stacked */
-  .lb-swipe-slide{
-    display: flex;
-    flex-direction: column;
-    grid-template-columns: unset;
-    gap: 10px;
-  }
-  .lb-swipe-slide .lb-media{
-    flex: 0 0 50dvh;
-    height: 50dvh;
-    min-height: 0;
-    max-height: 50dvh;
-  }
-  .lb-swipe-slide .lb-img{
-    max-height: 100%;
-    width: 100% !important;
-    height: 100% !important;
-  }
-  .lb-swipe-slide .lb-side{
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-  }
 }
