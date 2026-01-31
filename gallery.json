@@ -2,153 +2,151 @@
   {
     "src": "https://picsum.photos/id/1033/1200/1600",
     "title": "01",
-    "prompt": "PROMPT:\nclose-up cinematic high-fashion portrait shot on Mamiya 7 II with 80mm f/4 lens using Kodak Portra 800 film a model with glowing caramel skin and bold emerald green eyeliner that extends into graphic wing shapes, wearing a matte beige lip and a sculptural golden neckpiece with intricate texture, set against a soft teal backdrop with golden highlights lighting setup includes a diffused beauty dish for radiant skin illumination, paired with subtle warm backlighting to highlight the golden accessories color palette emphasizes teal, emerald, and caramel tones, creating a luxurious visual balance preprocessing involves analog-inspired tone mapping in Capture One, film grain emulation for rich textures, and selective sharpening to enhance details\nMODEL: FLUX.2 Klein"
+    "prompt": "PROMPT:\nEditorial close-up portrait with a cinematic fashion sensibility, photographed as if on medium-format film with a soft, organic color response. The subject is framed tightly to emphasize facial structure, skin texture, and quiet confidence rather than gesture. Makeup is graphic but restrained, introducing deep green tones around the eyes to create contrast against warm, natural skin. Jewelry is sculptural and metallic, catching highlights subtly without overpowering the composition. The background is minimal and tonal, designed to support the subject rather than compete with it. Lighting is soft and directional, shaping the face gently while preserving shadow detail. The overall image feels tactile, intentional, and editorial, with restrained contrast and a calm cinematic mood.\nMODEL: FLUX.2 Klein"
   },
   {
     "src": "https://picsum.photos/id/1019/1200/1600",
     "title": "02",
-    "prompt": "PROMPT:\nCinematic portrait, natural light falloff, filmic mood.\nMODEL: FLUX.2 Max"
+    "prompt": "PROMPT:\nExtended editorial portrait exploring presence, texture, and controlled expression through a calm, deliberate photographic approach. The subject is rendered with attention placed on the interaction between light and skin rather than dramatic pose or gesture. Graphic makeup functions as a compositional element, adding structure and visual rhythm. Accessories are minimal yet architectural, providing visual weight without distraction. The background remains softly graded and unobtrusive. Lighting is diffused and even, prioritizing natural skin response, gentle highlight roll-off, and tonal continuity. The image reads as a fashion editorial still that feels timeless, composed, and visually confident.\nMODEL: FLUX.2 Klein"
   },
   {
     "src": "https://picsum.photos/id/1025/1200/1600",
     "title": "03",
-    "prompt": "PROMPT:\nExpressive character study, organic texture, visual storytelling.\nMODEL: FLUX Kontext"
+    "prompt": "PROMPT:\nCinematic fashion portrait rendered with a medium-format aesthetic and subtle filmic softness. Framing encourages intimacy without intrusion, allowing expression and posture to communicate mood naturally. Skin tones are warm and realistic, with fine texture preserved. Graphic makeup introduces contrast and structure, balanced carefully against minimal styling choices. The background remains understated and calm. Lighting is directional yet forgiving, shaping the face while avoiding harsh transitions. The final image feels polished, editorial, and deliberately restrained, favoring mood and material presence over spectacle.\nMODEL: FLUX.2 Klein"
   },
   {
     "src": "https://picsum.photos/id/1028/1600/1200",
     "title": "04",
-    "prompt": "PROMPT:\nConceptual scene, symbolic composition, restrained palette.\nMODEL: FLUX.2 Max"
+    "prompt": "PROMPT:\nConceptual editorial scene composed around spatial balance, negative space, and quiet visual tension. The subject is positioned deliberately within the frame, existing more as a presence than an action. Visual elements are limited, allowing form, color, and placement to carry meaning. The palette remains muted and controlled, encouraging slow observation. Lighting is soft and directional, guiding the eye subtly without dramatization. The image reads as contemplative and art-forward, open to interpretation rather than immediate narrative clarity.\nMODEL: FLUX.2 Max"
   },
   {
     "src": "https://picsum.photos/id/1041/1600/900",
     "title": "05",
-    "prompt": "PROMPT:\nMinimalist visual study, balance of space and form.\nMODEL: FLUX Kontext"
+    "prompt": "PROMPT:\nMinimalist visual study focused on proportion, geometry, and the quiet relationship between subject and environment. The composition avoids unnecessary detail, relying on spacing, alignment, and tonal balance to create interest. Light is even and naturalistic, revealing form without emphasis. The scene feels architectural and calm, with an editorial sensibility that prioritizes clarity, restraint, and visual confidence.\nMODEL: FLUX Kontext"
   },
   {
     "src": "https://picsum.photos/id/1076/1200/1200",
     "title": "06",
-    "prompt": "PROMPT:\nSquare art photograph, abstract textures, gallery-ready.\nMODEL: FLUX.2 Klein"
+    "prompt": "PROMPT:\nSquare-format art image exploring surface texture, subtle tonal variation, and visual stillness. The composition is deliberately balanced, allowing small details to emerge through sustained viewing rather than immediate impact. Light interacts gently with material surfaces, emphasizing tactility without harsh contrast. The overall effect is quiet, controlled, and gallery-oriented.\nMODEL: FLUX.2 Klein"
   },
   {
     "src": "https://picsum.photos/id/1008/1000/1600",
     "title": "07",
-    "prompt": "PROMPT:\nVertical fine-art portrait, soft contrast, poetic tone.\nMODEL: FLUX.2 Klein"
+    "prompt": "PROMPT:\nExtended vertical portrait emphasizing emotional restraint and atmospheric calm. The subject is framed to encourage intimacy while maintaining visual distance, creating a sense of quiet observation. Lighting remains soft and directional, shaping features subtly without overpowering the frame. Color is cohesive and restrained, reinforcing a fine-art editorial tone that values mood and material presence over narrative clarity.\nMODEL: FLUX.2 Klein"
   },
   {
     "src": "https://picsum.photos/id/1036/1800/1000",
     "title": "08",
-    "prompt": "PROMPT:\nWide cinematic frame, atmospheric depth, visual tension.\nMODEL: FLUX.2 Max"
+    "prompt": "PROMPT:\nWide cinematic composition designed to convey space, scale, and visual calm through layered depth cues. The frame uses negative space and measured spacing to suggest environment without explicit storytelling. Light falls naturally across the scene, creating gentle separation between planes. The image feels suspended and observational, inviting the viewer to linger rather than react.\nMODEL: FLUX.2 Max"
   },
   {
     "src": "https://picsum.photos/id/1047/1400/900",
     "title": "09",
-    "prompt": "PROMPT:\nSurreal landscape, dreamlike light, painterly horizon.\nMODEL: FLUX Kontext"
+    "prompt": "PROMPT:\nSurreal landscape composition with softened edges and dreamlike lighting. Natural forms are arranged with subtle abstraction, creating familiarity that feels slightly altered. Color transitions are smooth and atmospheric, contributing to a contemplative mood. The image avoids dramatic contrast, favoring emotional ambiguity and visual poetry.\nMODEL: FLUX Kontext"
   },
   {
     "src": "https://picsum.photos/id/1081/900/1400",
     "title": "10",
-    "prompt": "PROMPT:\nIllustrative portrait framing, graphic silhouette, mood-first.\nMODEL: FLUX.2 Max"
+    "prompt": "PROMPT:\nExtended illustrative portrait with graphic framing and simplified visual forms. The subject is rendered with clarity and intention, using silhouette and shape to establish presence. Contrast is controlled and purposeful, avoiding extremes. The composition reads as editorial and art-driven, emphasizing structure and tone over realism.\nMODEL: FLUX.2 Max"
   },
-
   {
     "src": "https://picsum.photos/id/1018/2000/900",
     "title": "11",
-    "prompt": "PROMPT:\nPanoramic cinematic still, narrative scale, calm pacing.\nMODEL: FLUX Kontext"
+    "prompt": "PROMPT:\nPanoramic cinematic still emphasizing horizontal movement and spatial rhythm. The wide aspect ratio allows the environment to unfold gradually, encouraging visual exploration. Elements are positioned with care, creating balance without symmetry. Lighting is natural and subdued, reinforcing a calm, observational tone that feels grounded and intentional.\nMODEL: FLUX Kontext"
   },
   {
     "src": "https://picsum.photos/id/1021/900/2000",
     "title": "12",
-    "prompt": "PROMPT:\nTall editorial composition, negative space as design.\nMODEL: FLUX.2 Klein"
+    "prompt": "PROMPT:\nTall editorial composition built around negative space and vertical flow. The subject is placed deliberately, allowing emptiness to function as an active design element. Color and light remain restrained, producing a confident, modern image that values proportion and stillness over complexity.\nMODEL: FLUX.2 Klein"
   },
   {
     "src": "https://picsum.photos/id/1039/1500/1500",
     "title": "13",
-    "prompt": "PROMPT:\nSquare conceptual image, centered subject, art-forward.\nMODEL: FLUX.2 Max"
+    "prompt": "PROMPT:\nSquare-format conceptual image emphasizing balance, repetition, and restrained symbolism. The frame feels self-contained and deliberate, encouraging interpretation through form rather than narrative detail. Texture and color are controlled, supporting a thoughtful, gallery-oriented presentation.\nMODEL: FLUX.2 Max"
   },
   {
     "src": "https://picsum.photos/id/1052/1200/1600",
     "title": "14",
-    "prompt": "PROMPT:\nTextural portrait, tactile surfaces, fine-art sensibility.\nMODEL: FLUX Kontext"
+    "prompt": "PROMPT:\nTextural portrait emphasizing tactile surfaces and material realism. Skin, fabric, and environment are rendered with sensitivity, creating an intimate fine-art sensibility. Lighting enhances texture without exaggeration, maintaining softness and tonal continuity throughout the frame.\nMODEL: FLUX Kontext"
   },
   {
     "src": "https://picsum.photos/id/1069/1600/1200",
     "title": "15",
-    "prompt": "PROMPT:\nEnvironmental art photograph, scale and geometry.\nMODEL: FLUX.2 Max"
+    "prompt": "PROMPT:\nEnvironmental art photograph exploring scale, geometry, and spatial relationships. The subject interacts quietly with the surrounding space, creating a sense of place without overt narrative. The mood is observational and calm, with careful attention to proportion and visual rhythm.\nMODEL: FLUX.2 Max"
   },
   {
     "src": "https://picsum.photos/id/1020/1200/1200",
     "title": "16",
-    "prompt": "PROMPT:\nAbstract visual composition, shape-driven narrative.\nMODEL: FLUX.2 Klein"
+    "prompt": "PROMPT:\nAbstract visual composition driven by shape, repetition, and spatial balance. The image avoids literal storytelling, instead inviting interpretation through structure and alignment. Color and contrast remain subtle and cohesive, reinforcing a controlled editorial tone.\nMODEL: FLUX.2 Klein"
   },
   {
     "src": "https://picsum.photos/id/1003/1000/1600",
     "title": "17",
-    "prompt": "PROMPT:\nSurreal portrait, uncanny calm, illustrative mood.\nMODEL: FLUX Kontext"
+    "prompt": "PROMPT:\nSurreal portrait with an uncanny sense of stillness. The subject appears grounded yet slightly detached from reality, with softened realism that borders on illustration. The mood is introspective and restrained, emphasizing quiet emotional presence.\nMODEL: FLUX Kontext"
   },
   {
     "src": "https://picsum.photos/id/1032/1800/1000",
     "title": "18",
-    "prompt": "PROMPT:\nWide conceptual frame, symbolic spacing, minimal action.\nMODEL: FLUX.2 Max"
+    "prompt": "PROMPT:\nWide conceptual frame built around symbolic spacing and visual restraint. Distance and scale carry meaning, with minimal elements arranged intentionally. The composition invites contemplation rather than immediate interpretation.\nMODEL: FLUX.2 Max"
   },
   {
     "src": "https://picsum.photos/id/1040/1400/900",
     "title": "19",
-    "prompt": "PROMPT:\nCinematic environment study, layered depth cues.\nMODEL: FLUX Kontext"
+    "prompt": "PROMPT:\nCinematic environmental study with layered depth cues and atmospheric tonal shifts. The image feels immersive without being overwhelming, using light and space to suggest mood rather than narrative.\nMODEL: FLUX Kontext"
   },
   {
     "src": "https://picsum.photos/id/1082/900/1400",
     "title": "20",
-    "prompt": "PROMPT:\nVertical art portrait, elegant restraint, gallery tone.\nMODEL: FLUX.2 Klein"
+    "prompt": "PROMPT:\nVertical art portrait defined by understated elegance and editorial restraint. The subject is presented simply, allowing expression, posture, and texture to communicate quietly and confidently.\nMODEL: FLUX.2 Klein"
   },
-
   {
     "src": "https://picsum.photos/id/1057/2000/900",
     "title": "21",
-    "prompt": "PROMPT:\nUltra-wide cinematic still, slow narrative energy.\nMODEL: FLUX Kontext"
+    "prompt": "PROMPT:\nUltra-wide cinematic still with slow narrative energy and expansive framing. The scene unfolds horizontally, encouraging the viewer to scan gradually. The mood is spacious, calm, and contemplative.\nMODEL: FLUX Kontext"
   },
   {
     "src": "https://picsum.photos/id/1024/1200/1600",
     "title": "22",
-    "prompt": "PROMPT:\nEditorial art portrait, controlled chaos, expressive pose.\nMODEL: FLUX.2 Max"
+    "prompt": "PROMPT:\nExtended vertical portrait emphasizing emotional restraint and atmospheric calm. The subject is framed to encourage intimacy while maintaining visual distance, creating a sense of quiet observation. Lighting remains soft and directional, shaping features subtly without overpowering the frame. Color is cohesive and restrained, reinforcing a fine-art editorial tone that values mood and material presence over narrative clarity.\nMODEL: FLUX.2 Klein"
   },
   {
     "src": "https://picsum.photos/id/1012/1200/1200",
     "title": "23",
-    "prompt": "PROMPT:\nConceptual square image, symbolic abstraction.\nMODEL: FLUX.2 Klein"
+    "prompt": "PROMPT:\nConceptual square image built on abstraction and simplified visual language. The frame feels intentional and self-contained, encouraging interpretation through form rather than explicit narrative cues.\nMODEL: FLUX.2 Klein"
   },
   {
     "src": "https://picsum.photos/id/1060/1600/900",
     "title": "24",
-    "prompt": "PROMPT:\nSurreal visual landscape, dream logic composition.\nMODEL: FLUX Kontext"
+    "prompt": "PROMPT:\nCinematic fashion portrait rendered with a medium-format aesthetic and subtle filmic softness. Framing encourages intimacy without intrusion, allowing expression and posture to communicate mood naturally. Skin tones are warm and realistic, with fine texture preserved. Graphic makeup introduces contrast and structure, balanced carefully against minimal styling choices. The background remains understated and calm. Lighting is directional yet forgiving, shaping the face while avoiding harsh transitions. The final image feels polished, editorial, and deliberately restrained, favoring mood and material presence over spectacle.\nMODEL: FLUX.2 Klein"
   },
   {
     "src": "https://picsum.photos/id/1074/1800/1000",
     "title": "25",
-    "prompt": "PROMPT:\nCinematic wide shot, strong graphic separation.\nMODEL: FLUX.2 Max"
+    "prompt": "PROMPT:\nCinematic wide shot with graphic separation between foreground and background. Contrast and spacing create clarity while maintaining an editorial, restrained tone.\nMODEL: FLUX.2 Max"
   },
   {
     "src": "https://picsum.photos/id/1005/1200/1600",
     "title": "26",
-    "prompt": "PROMPT:\nClean editorial portrait, fashion-meets-art.\nMODEL: FLUX.2 Klein"
+    "prompt": "PROMPT:\nWide cinematic composition designed to convey space, scale, and visual calm through layered depth cues. The frame uses negative space and measured spacing to suggest environment without explicit storytelling. Light falls naturally across the scene, creating gentle separation between planes. The image feels suspended and observational, inviting the viewer to linger rather than react.\nMODEL: FLUX.2 Max"
   },
   {
     "src": "https://picsum.photos/id/1031/1400/900",
     "title": "27",
-    "prompt": "PROMPT:\nNarrative still frame, cinematic realism.\nMODEL: FLUX Kontext"
+    "prompt": "PROMPT:\nNarrative still frame with cinematic realism and implied story. The moment feels paused, suggesting context without revealing it. Lighting and composition remain naturalistic and controlled.\nMODEL: FLUX Kontext"
   },
   {
     "src": "https://picsum.photos/id/1043/1600/1200",
     "title": "28",
-    "prompt": "PROMPT:\nArt landscape, tonal harmony, visual calm.\nMODEL: FLUX.2 Max"
+    "prompt": "PROMPT:\nArt-focused landscape emphasizing tonal harmony and visual calm. Gentle gradients and balanced forms encourage slow viewing and contemplation.\nMODEL: FLUX.2 Max"
   },
   {
     "src": "https://picsum.photos/id/1084/1400/900",
     "title": "29",
-    "prompt": "PROMPT:\nMuted editorial composition, understated elegance.\nMODEL: FLUX Kontext"
+    "prompt": "PROMPT:\nMuted editorial composition defined by understated elegance. Color, light, and form are carefully restrained, allowing subtle details to emerge without visual noise.\nMODEL: FLUX Kontext"
   },
   {
     "src": "https://picsum.photos/id/1011/1200/1600",
     "title": "30",
-    "prompt": "PROMPT:\nOrganic portrait, natural textures, fine-art mood.\nMODEL: FLUX.2 Klein"
+    "prompt": "PROMPT:\nSurreal landscape composition with softened edges and dreamlike lighting. Natural forms are arranged with subtle abstraction, creating familiarity that feels slightly altered. Color transitions are smooth and atmospheric, contributing to a contemplative mood. The image avoids dramatic contrast, favoring emotional ambiguity and visual poetry.\nMODEL: FLUX Kontext"
   }
 ]
