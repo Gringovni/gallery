@@ -299,29 +299,35 @@
     lbPrev.addEventListener("click", prev);
     lbNext.addEventListener("click", next);
 
-    // MAIN LIGHTBOX CLICK HANDLER
+    // MAIN LIGHTBOX CLICK HANDLER (Handles Nav, Toggles, Actions)
     lb.addEventListener("click", (e) => {
+      // 1. Identify which slide slot was clicked
       const slot = e.target.closest(".lb-slide-slot");
-      if (!slot) return;
+      if (!slot) return; // Click was on the background/track, handled by other listeners
 
+      // 2. Identify interactive elements
       const openNewBtn = e.target.closest(".lb-open-new");
-      const promptMoreBtn = e.target.closest(".lb-prompt-more");
-      const promptWrap = e.target.closest(".lb-prompt-wrap"); // Detect text click
+      const promptMoreBtn = e.target.closest(".lb-prompt-more"); // The (...) button
+      const promptWrap = e.target.closest(".lb-prompt-wrap");    // <--- NEW: The text body
       const copyBtn = e.target.closest(".lb-copy");
 
-      // 1. Open New Tab
+      // --- ACTION: Open Original Image ---
       if (openNewBtn) {
         const link = slot.querySelector(".lb-media-link");
         if (link && link.href) window.open(link.href, "_blank", "noopener,noreferrer");
         return;
       }
 
-      // 2. Expand/Collapse (Triggered by Button OR Text Wrapper)
+      // --- ACTION: Expand/Collapse Text (Clicking Button OR Text Body) ---
       if (promptMoreBtn || promptWrap) {
         const wrap = slot.querySelector(".lb-prompt-wrap");
-        const btn = slot.querySelector(".lb-prompt-more");
+        const btn = slot.querySelector(".lb-prompt-more"); // Get button to sync icon state
+
         if (wrap) {
+          // Toggle the expanded class
           const expanded = wrap.classList.toggle("lb-prompt-expanded");
+          
+          // Sync the button's icon/state (even if we clicked the text)
           if (btn) {
             btn.setAttribute("aria-expanded", expanded);
             btn.setAttribute("aria-label", expanded ? "Show less prompt" : "Show more prompt");
@@ -330,17 +336,20 @@
         return;
       }
 
-      // 3. Copy Text
+      // --- ACTION: Copy Prompt ---
       if (copyBtn) {
         const promptEl = slot.querySelector(".lb-prompt");
         let text = (promptEl && promptEl.textContent || "").trim();
         if (!text) return;
+        
+        // Strip the "PROMPT:" prefix if present
         text = text.replace(/^\s*PROMPT\s*:\s*\n?/i, "").trim();
+        
         navigator.clipboard.writeText(text).then(() => {
           const icon = copyBtn.querySelector(".lb-copy-icon");
           if (icon) {
             const orig = icon.textContent;
-            icon.textContent = "done";
+            icon.textContent = "done"; // Visual feedback
             setTimeout(() => { icon.textContent = orig; }, 1500);
           }
         });
