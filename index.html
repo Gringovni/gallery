@@ -22,7 +22,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@1,300&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=2026-01-31-1">
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -83,7 +83,7 @@
           </div>
           <aside class="lb-side" aria-label="Prompt">
             <div class="lb-prompt-wrap">
-              <pre class="lb-prompt"></pre>
+              <pre class="lb-prompt"><span class="lb-prompt-label">PROMPT:</span><span class="lb-prompt-text"></span></pre>
             </div>
             <div class="lb-actions">
               <button type="button" class="lb-prompt-more" aria-label="Show more prompt" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></button>
@@ -102,7 +102,7 @@
           </div>
           <aside class="lb-side" aria-label="Prompt">
             <div class="lb-prompt-wrap">
-              <pre class="lb-prompt"></pre>
+              <pre class="lb-prompt"><span class="lb-prompt-label">PROMPT:</span><span class="lb-prompt-text"></span></pre>
             </div>
             <div class="lb-actions">
               <button type="button" class="lb-prompt-more" aria-label="Show more prompt" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></button>
@@ -121,7 +121,7 @@
           </div>
           <aside class="lb-side" aria-label="Prompt">
             <div class="lb-prompt-wrap">
-              <pre class="lb-prompt"></pre>
+              <pre class="lb-prompt"><span class="lb-prompt-label">PROMPT:</span><span class="lb-prompt-text"></span></pre>
             </div>
             <div class="lb-actions">
               <button type="button" class="lb-prompt-more" aria-label="Show more prompt" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></button>
@@ -171,17 +171,25 @@
       return `PROMPT:\n${noModel}`;
     }
 
+    function parsePrompt(formatted) {
+      if (!formatted || !formatted.trim()) return { label: "", text: "" };
+      const cleaned = formatted.trim().replace(/^\s*PROMPT\s*:\s*\n?/i, "");
+      return { label: "PROMPT:", text: cleaned };
+    }
+
     function populateSlot(slot, index) {
       const img = slot.querySelector(".lb-img");
       const link = slot.querySelector(".lb-media-link");
-      const promptEl = slot.querySelector(".lb-prompt");
+      const labelEl = slot.querySelector(".lb-prompt-label");
+      const textEl = slot.querySelector(".lb-prompt-text");
       const wrap = slot.querySelector(".lb-prompt-wrap");
       const moreBtn = slot.querySelector(".lb-prompt-more");
       if (index < 0 || index >= items.length) {
         slot.classList.add("lb-slot-hidden");
         if (img) { img.src = ""; img.alt = ""; }
         if (link) link.removeAttribute("href");
-        if (promptEl) promptEl.textContent = "";
+        if (labelEl) labelEl.textContent = "";
+        if (textEl) textEl.textContent = "";
         if (wrap) wrap.classList.remove("lb-prompt-expanded");
         if (moreBtn) moreBtn.setAttribute("aria-expanded", "false");
         return;
@@ -190,7 +198,9 @@
       const item = items[index];
       if (img) { img.src = item.src; img.alt = item.title || ""; }
       if (link) link.href = item.src;
-      if (promptEl) promptEl.textContent = formatPrompt(item.prompt ?? item.caption ?? "");
+      const { label, text } = parsePrompt(formatPrompt(item.prompt ?? item.caption ?? ""));
+      if (labelEl) labelEl.textContent = label;
+      if (textEl) textEl.textContent = text;
       if (wrap) wrap.classList.remove("lb-prompt-expanded");
       if (moreBtn) moreBtn.setAttribute("aria-expanded", "false");
     }
@@ -338,12 +348,9 @@
 
       // --- ACTION: Copy Prompt ---
       if (copyBtn) {
-        const promptEl = slot.querySelector(".lb-prompt");
-        let text = (promptEl && promptEl.textContent || "").trim();
+        const textEl = slot.querySelector(".lb-prompt-text");
+        const text = (textEl && textEl.textContent || "").trim();
         if (!text) return;
-        
-        // Strip the "PROMPT:" prefix if present
-        text = text.replace(/^\s*PROMPT\s*:\s*\n?/i, "").trim();
         
         navigator.clipboard.writeText(text).then(() => {
           const icon = copyBtn.querySelector(".lb-copy-icon");
