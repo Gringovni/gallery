@@ -327,19 +327,14 @@ body {
 }
 
 /* Prompt panel */
-.lb-side {
-  align-self: center; 
-  justify-self: stretch; 
+.lb-side{
+  align-self: center;
+  justify-self: stretch;
   min-width: 0;
-  
-  /* SAFETY NET: Allow scrolling for long text */
-  max-height: 100%; 
-  overflow-y: auto; 
-  
-  /* Keep existing styling */
+  min-height: 0;                    /* FIX: required for overflow scrolling */
   color: var(--muted);
-  letter-spacing: .02em; 
-  line-height: 1.5; 
+  letter-spacing: .02em;
+  line-height: 1.5;
   padding-right: 6px;
 }
 
