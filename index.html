@@ -19,9 +19,6 @@
   <!-- Source Serif 4 (Prompt content) -->
   <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@1,300&display=swap" rel="stylesheet">
 
-  <!-- Material Symbols (copy icon) -->
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
-
   <!-- Your site styles -->
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="assets/01-fast-forward.png">
@@ -55,13 +52,9 @@
     <section id="masonry" class="masonry" aria-label="Gallery"></section>
   </main>
 
+  <div class="footer-divider"></div>
+
   <footer class="site-footer">
-    <!-- Footer divider line (restored; must be first visually) -->
-    <div class="footer-divider"></div>
-
-    <!-- Footer scroll-to-top arrow (NEW) -->
-    <button class="footer-scroll" id="footerScroll" type="button" aria-label="Scroll to top"></button>
-
     <div class="footer-line footer-main">
       © 2026 Latent Illumination |
       <a
@@ -275,47 +268,10 @@ const scale = 1.14 - progress * maxScaleOut;
 
       hero.addEventListener("click", () => {
         const startY = window.scrollY;
-        const banner = document.querySelector(".hero-banner");
-        const offset = banner ? banner.offsetHeight : 0;
-        const targetY = target.getBoundingClientRect().top + window.scrollY - offset;
+        const targetY = target.getBoundingClientRect().top + window.scrollY;
         const distance = targetY - startY;
 
         const duration = 1400; // ms (increase = slower)
-        const startTime = performance.now();
-
-        function easeInOutCubic(t){
-          return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
-        }
-
-        function step(now){
-          const elapsed = now - startTime;
-          const t = Math.min(elapsed / duration, 1);
-          const eased = easeInOutCubic(t);
-
-          window.scrollTo(0, startY + distance * eased);
-
-          if(t < 1) requestAnimationFrame(step);
-        }
-
-        requestAnimationFrame(step);
-      });
-    })();
-
-    // FOOTER ARROW CLICK → SCROLL TO TOP (mirrored behavior)
-(function(){
-  const btn = document.getElementById("footerScroll");
-  const target = document.getElementById("masonry");
-  const banner = document.querySelector(".hero-banner");
-  if(!btn || !target) return;
-
-  btn.addEventListener("click", () => {
-    const startY = window.scrollY;
-    const offset = banner ? banner.offsetHeight : 0;
-    const targetY =
-      target.getBoundingClientRect().top + window.scrollY - offset;
-    const distance = targetY - startY;
-
-        const duration = 1400; // ms (matches hero)
         const startTime = performance.now();
 
         function easeInOutCubic(t){
