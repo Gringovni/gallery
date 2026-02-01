@@ -132,13 +132,6 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   filter: contrast(1.02);
 }
 
-/* === THIN PHOTO FRAME (GALLERY THUMBNAILS) === */
-.card-img{
-  background: #fff;                 /* ensures “paper” edge reads clean */
-  border: 1px solid rgba(17,17,17,0.10);  /* thin, elegant, not too dark */
-  box-shadow: 0 1px 0 rgba(0,0,0,0.03);   /* barely-there lift */
-}
-
 /* Footer */
 .site-footer{
   font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -151,10 +144,6 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   font-size: 13px;
   letter-spacing: .02em;
   line-height: 1.4;
-
-  display: flex;                 /* CHG: enable CSS-only reordering */
-  flex-direction: column;        /* CHG: vertical stack */
-  align-items: stretch;          /* CHG: keep footer lines full width */
 }
 
 .footer-line{
@@ -182,32 +171,22 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 /* === FOOTER DIVIDER (matches header line) === */
 .footer-divider{
   max-width: var(--container);
-  width: 100%;
-  margin: 20px auto 0;
-  padding: 0;                 /* keep aligned with gallery edges */
-  order: 1;                   /* Divider → Arrow → Text */
+  margin: 20px auto 0;   /* spacing between gallery and footer */
+  padding: 0 var(--pad);
 }
 
 .footer-divider::before{
   content: "";
   display: block;
-  width: 100%;
-  height: 1px;
-  background: var(--line);
-
-  position: relative;         /* REQUIRED */
-  top: -20px;                 /* move ONLY the line upward */
+  height: 1px;        /* same thickness as top-divider */
+  background: #e9e9e9;   /* exact line color */
 }
 
-/* =========================================================
-   LIGHTBOX (PHASE 1 FIX — mobile-safe, no collisions, solid bg)
-   ========================================================= */
-
-/* Overlay */
+/* Lightbox (UPDATED — only section changed) */
 .lb{
   position: fixed;
   inset: 0;
-  background: #ffffff;              /* FIX: solid (no transparency) */
+  background: rgba(255,255,255,0.96);
   display: none;
   align-items: center;
   justify-content: center;
@@ -216,18 +195,22 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
 
 .lb.open{ display:flex; }
 
-/* Desktop layout: keep your intent (image left, prompt right) */
+/* New “balanced” lightbox layout:
+   - desktop: image left, prompt right
+   - mobile: prompt below
+   Supports both:
+   - your older structure (.lb-figure, .lb-caption)
+   - the newer structure (.lb-content, .lb-media, .lb-side, .lb-prompt)
+*/
 .lb-content,
 .lb-figure{
   margin: 0;
   width: min(1200px, 92vw);
   height: min(86vh, 860px);
   display: grid;
-  grid-template-columns: 1fr 460px;
+  grid-template-columns: 1fr 320px;
   gap: 28px;
   align-items: center;
-
-  min-height: 0;                    /* FIX: allow children to shrink */
 }
 
 /* Image area */
@@ -239,61 +222,35 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   min-height: 0;
 }
 
-/* === LIGHTBOX IMAGE (single authoritative rule) === */
+/* Image sizing (prevents oversizing / keeps centered) */
 .lb-img{
-  width: 100%;
   max-width: 100%;
-  max-height: 58dvh;           /* keep your tuned size */
+  max-height: 86vh;
   object-fit: contain;
   display: block;
-
-  /* Subtle photographic frame */
-  background: #fff;
-  padding: 8px;                       /* thicker frame */
-  border: 1px solid rgba(0,0,0,0.12); /* slightly darker */
-  
-  /* Depth, very restrained */
-  box-shadow: none; /* shadow OFF (non-destructive) */
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
 }
 
-/* === LIGHTBOX FRAME CONSISTENCY FIX (safe override) === */
-.lb-media{
-  /* keep your frame styling here; this just guarantees consistent geometry */
-  align-items: center;
-  justify-content: center;
-}
-
-/* Override any earlier width:100% rules that stretch certain aspect ratios */
-.lb-img{
-  width: auto !important;
-  height: auto !important;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  display: block;
-}
-
-/* Prompt panel */
+/* Prompt panel (right on desktop) */
 .lb-side{
   align-self: center;
   justify-self: stretch;
   min-width: 0;
-  min-height: 0;                    /* FIX: required for overflow scrolling */
   color: var(--muted);
   letter-spacing: .02em;
   line-height: 1.5;
   padding-right: 6px;
 }
 
-/* Prompt text */
+/* Prompt text (label + content styling) */
 .lb-prompt{
   margin: 0;
   white-space: pre-wrap;
   font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
   font-style: italic;
   font-weight: 300;
-  font-size: 18px;
-  line-height: 1.38;
+  font-size: 18px;     /* down from 20px */
+  line-height: 1.38;  /* tighter but readable */
   color: #444;
   padding-top: 6px;
 }
@@ -307,11 +264,39 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   color: #222;
   letter-spacing: 0.08em;
   line-height: 1.25;
+  /* remove padding-top */
 }
 
-/* Close button: always tappable (mobile + desktop) */
+/* Mobile: stack prompt below image, keep centered */
+@media (max-width: 900px){
+  .lb-content,
+  .lb-figure{
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    height: auto;
+    max-height: 92vh;
+    overflow: auto;
+    padding: 18px 0;
+  }
+  
+  @media (max-width: 640px){
+  .lb-prompt{
+    font-size: 16px;
+    line-height: 1.5;
+  }
+}
+  .lb-img{
+    max-height: 70vh;
+  }
+
+  .lb-side{
+    padding: 14px 16px 0;
+    text-align: left;
+  }
+}
+
 .lb-close{
-  position: fixed;                  /* FIX: not absolute */
+  position: absolute;
   top: 16px;
   right: 18px;
   border: none;
@@ -321,11 +306,9 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   cursor: pointer;
   color: #111;
   opacity: .65;
-  z-index: 60;                      /* FIX: stays above image/prompt */
 }
 .lb-close:hover{ opacity: 1; }
 
-/* Nav buttons */
 .lb-nav{
   position: absolute;
   top: 50%;
@@ -334,106 +317,16 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   background: transparent;
   font-size: 44px;
   cursor: pointer;
+  color: #111;
   padding: 14px 18px;
   opacity: .55;
   user-select: none;
-
-  color: transparent;               /* keep glyph hidden (you draw chevrons) */
-  text-shadow: none;
 }
 .lb-nav:hover{ opacity: 1; }
 
 .lb-prev{ left: 14px; }
 .lb-next{ right: 14px; }
 .lb-nav:disabled{ cursor: default; }
-
-/* Chevron shape (matches hero cue language) */
-.lb-nav::before{
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 16px;
-  height: 16px;
-  border-right: 3px solid rgba(17,17,17,0.9);
-  border-bottom: 3px solid rgba(17,17,17,0.9);
-  transform: translate(-50%, -50%) rotate(135deg);
-}
-.lb-next::before{
-  transform: translate(-50%, -50%) rotate(-45deg);
-}
-.lb-nav:disabled::before{
-  opacity: 0.25;
-}
-
-@media (min-width: 900px){
-  .lb-nav::before{
-    width: 18px;
-    height: 18px;
-  }
-}
-
-/* MOBILE: viewport-safe layout (no overlay collisions)
-   - top row: image (fits)
-   - bottom row: prompt (scrolls)
-*/
-/* MOBILE: strict stack, no overlap, bigger image */
-@media (max-width: 900px){
-  /* Make overlay truly viewport-sized (removes “centered card” feeling) */
-  .lb{
-    align-items: stretch;
-    justify-content: stretch;
-  }
-
-  /* Force a vertical stack instead of grid (prevents overlap bugs) */
-  .lb-content,
-  .lb-figure{
-    width: 100vw;
-    height: 100dvh;
-    max-height: 100dvh;
-
-    display: flex;
-    flex-direction: column;
-
-    gap: 14px;
-    overflow: hidden;
-
-    /* Reserve space for the fixed X */
-    padding: 72px 16px 16px;
-    margin: 0;
-  }
-
-  /* Image block (bigger, centered) */
-  .lb-media{
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 0;
-    margin-top: -14px;   /* tweak: try -8px to -20px */
-  }
-
-  /* Prompt block (scrolls independently) */
-  .lb-side{
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 0;
-  }
-
-  /* Keep nav arrows usable on mobile (optional tweak) */
-  .lb-nav{
-    top: 45%;
-  }
-}
-
-@media (max-width: 640px){
-  .lb-prompt{
-    font-size: 16px;
-    line-height: 1.5;
-  }
-}
 
 /* === HERO CAPTION (bottom-left editorial text) === */
 .hero-caption{
@@ -459,7 +352,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   .hero-caption{
     left: 10px;
     right: 20px;
-    bottom: 50px;          /* extra clearance from arrow */
+    bottom: 24px;          /* extra clearance from arrow */
     max-width: none;
 
     font-size: 24px;
@@ -570,7 +463,7 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   position: absolute;
   inset: -8px;      /* slightly bigger halo */
   border-radius: 999px;
-  background: none;
+  background: radial-gradient(circle, rgba(0,0,0,0.22), rgba(0,0,0,0) 60%);
 }
 
 .hero-scroll:hover{ opacity: 1; }
@@ -591,53 +484,42 @@ body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ar
   .hero-scroll{ animation: none; }
 }
 
-/* === FOOTER SCROLL CUE (arrow) — matches HERO cue style, points upward === */
-.footer-scroll{
-  width: 58px;
-  height: 58px;
-  border: 0;
-  padding: 0;
-  background: transparent;
-  cursor: pointer;
-  z-index: 2;
-  opacity: .9;
+/* === LIGHTBOX NAV ARROWS — chevron shape (match HERO cue style) === */
 
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-  animation: heroScrollFloat 1.35s ease-in-out infinite;
-
-  margin: 0 0 12px;
-  order: 2;
+/* Hide the ‹ › characters but keep them accessible */
+.lb-nav{
+  color: transparent;          /* hides the glyph */
+  text-shadow: none;
+  position: absolute;          /* already is, but keep explicit */
 }
 
-.footer-main{ order: 3; }
-.footer-powered{ order: 4; }
-
-/* Draw the chevron using borders — rotated to point UP */
-.footer-scroll::before{
-  content:"";
+/* Draw chevrons with borders (same visual language as .hero-scroll) */
+.lb-nav::before{
+  content: "";
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 22px;
-  height: 22px;
-  border-right: 3px solid rgba(17, 17, 17, 0.5);
-  border-bottom: 3px solid rgba(17, 17, 17, 0.5);
-  transform: translate(-50%, -50%) rotate(-135deg);
+  width: 16px;                 /* tweak size */
+  height: 16px;                /* tweak size */
+  border-right: 3px solid rgba(17,17,17,0.9);
+  border-bottom: 3px solid rgba(17,17,17,0.9);
+  transform: translate(-50%, -50%) rotate(135deg); /* default: LEFT */
 }
 
-.footer-scroll::after{
-  content: none;
+/* Right chevron */
+.lb-next::before{
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
-.footer-scroll:hover{ opacity: 1; }
-
-.footer-scroll:focus-visible{
-  outline: 2px solid rgba(17, 17, 17, 0.5);
-  outline-offset: 3px;
+/* Optional: make disabled state feel consistent */
+.lb-nav:disabled::before{
+  opacity: 0.25;
 }
 
-@media (prefers-reduced-motion: reduce){
-  .footer-scroll{ animation: none; }
+/* Optional: slightly bigger on large screens (feel free to remove) */
+@media (min-width: 900px){
+  .lb-nav::before{
+    width: 18px;
+    height: 18px;
+  }
 }
