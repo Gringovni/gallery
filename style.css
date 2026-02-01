@@ -373,7 +373,7 @@ body {
   min-width: 0;
 }
 
-/* "More" button: mobile only, toggles prompt expand */
+/* "More" button */
 .lb-prompt-more{
   display: none;
   margin: 0;
@@ -387,7 +387,10 @@ body {
   border-radius: 0;
   cursor: pointer;
 }
-.lb-prompt-more:hover{ background: transparent; opacity: 1; color: #222; }
+/* FIX: Only allow hover on mouse devices */
+@media (hover: hover) {
+  .lb-prompt-more:hover{ background: transparent; opacity: 1; color: #222; }
+}
 .lb-prompt-more:focus-visible{ outline: 2px solid #444; outline-offset: 2px; }
 .lb-prompt-more svg{ display: block; width: 20px; height: 20px; }
 
@@ -413,7 +416,10 @@ body {
   border-radius: 0;
   cursor: pointer;
 }
-.lb-copy:hover{ background: transparent; opacity: 1; color: #222; }
+/* FIX: Only allow hover on mouse devices */
+@media (hover: hover) {
+  .lb-copy:hover{ background: transparent; opacity: 1; color: #222; }
+}
 .lb-copy:focus-visible{ outline: 2px solid #444; outline-offset: 2px; }
 .lb-copy-icon{
   font-family: "Material Symbols Outlined", sans-serif;
@@ -436,7 +442,10 @@ body {
   border-radius: 0;
   cursor: pointer;
 }
-.lb-open-new:hover{ background: transparent; opacity: 1; color: #222; }
+/* FIX: Only allow hover on mouse devices */
+@media (hover: hover) {
+  .lb-open-new:hover{ background: transparent; opacity: 1; color: #222; }
+}
 .lb-open-new:focus-visible{ outline: 2px solid #444; outline-offset: 2px; }
 .lb-open-new svg{ display: block; width: 20px; height: 20px; }
 
@@ -646,10 +655,10 @@ body {
   }
 }
 
-/* Extended tablet / iPad landscape: hide arrows (viewports 1025–1280px exceed tablet query) */
-@media (min-width: 1025px) and (max-width: 1280px){
+/* Universal Tablet Rule: Hide arrows on any touch-primary device (iPad Pro, Surface, etc.) */
+@media (pointer: coarse) {
   .lb-nav{
-    display: none;
+    display: none !important;
   }
 }
 
@@ -816,31 +825,21 @@ body {
 .hero{
   position: relative;
   
-  /* FIX: Changed 92vh to 92svh.
-     'vh' resizes when the mobile address bar retracts, causing the "snap".
-     'svh' is static and stable. */
-  height: 92svh; 
+  /* FIX: Apply exact math globally so banner is flush on iPad Pro & Desktop too */
+  height: calc(100svh - 72px); 
+  min-height: 500px; /* Safety: don't let it get too short on resizing */
 
   overflow: hidden;
   background: #fff;
 }
-
-/* Mobile + tablet: hero + banner fill viewport so banner bottom matches screen bottom on first visit */
-/* Mobile + tablet: hero + banner fill viewport
-   FIX: Changed 100dvh to 100svh (Small Viewport Height).
-   'dvh' resizes when the address bar moves, causing the page to jump/snap.
-   'svh' is static and stable.
-*/
-@media (max-width: 1024px){
-  .hero{
-    height: calc(100svh - 72px);  /* svh is stable */
-    min-height: 500px; /* Safety min-height */
-  }
-}
 /* Mobile landscape: same flush hero+banner when viewport height is short (covers horizontal phone) */
 @media (orientation: landscape) and (max-height: 500px){
   .hero{
+    /* Calculate exact fit for short screens */
     height: calc(100dvh - 72px);
+    
+    /* FIX: Override the global 500px limit so it fits on short landscape screens */
+    min-height: 0; 
   }
 }
 
