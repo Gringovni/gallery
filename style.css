@@ -332,10 +332,11 @@ body {
   justify-self: stretch; 
   min-width: 0;
   
-  /* SAFETY NET: Ensures long text scrolls instead of being cut off */
+  /* SAFETY NET: Allow scrolling for long text */
   max-height: 100%; 
   overflow-y: auto; 
   
+  /* Keep existing styling */
   color: var(--muted);
   letter-spacing: .02em; 
   line-height: 1.5; 
