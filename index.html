@@ -385,10 +385,58 @@
 
     document.addEventListener("keydown", (e) => {
       if (!lbContainer.classList.contains("open")) return;
-      if(e.key === "Escape") closeLB();
-      if(e.key === "ArrowLeft") prev();
-      if(e.key === "ArrowRight") next();
+      
+      // Navigation
+      if (e.key === "Escape") closeLB();
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+
+      // Power User: 'C' to Copy Prompt
+      if (e.key.toLowerCase() === "c") {
+        // Find the button in the CENTER slot (currently visible)
+        const slots = lb.querySelectorAll(".lb-slide-slot");
+        if (slots[1]) { // Slot 1 is always the active/center slide
+          const copyBtn = slots[1].querySelector(".lb-copy");
+          if (copyBtn) copyBtn.click(); // Trigger native click + animation
+        }
+      }
+
+      // Power User: 'O' to Open Original
+      if (e.key.toLowerCase() === "o") {
+        const slots = lb.querySelectorAll(".lb-slide-slot");
+        if (slots[1]) {
+          const openBtn = slots[1].querySelector(".lb-open-new");
+          if (openBtn) openBtn.click();
+        }
+      }
     });
+
+    // MOUSE WHEEL NAV (Desktop) — Scroll to change slides
+    (function(){
+      let wheelCooldown = false;
+      
+      lb.addEventListener("wheel", (e) => {
+        // 1. SAFETY: If mouse is over the text panel, allow normal text scrolling.
+        // Don't switch images while user is trying to read.
+        if (e.target.closest(".lb-side")) return;
+
+        // 2. Prevent page background from scrolling
+        e.preventDefault();
+
+        // 3. Cooldown: Prevent one scroll "flick" from skipping multiple images
+        if (wheelCooldown) return;
+        
+        // Threshold: ignore tiny trackpad jitters
+        if (Math.abs(e.deltaY) < 15) return;
+
+        wheelCooldown = true;
+        setTimeout(() => { wheelCooldown = false; }, 250); // 250ms delay between slides
+
+        // 4. Navigate
+        if (e.deltaY > 0) next();      // Scroll Down -> Next
+        else if (e.deltaY < 0) prev(); // Scroll Up -> Prev
+      }, { passive: false });
+    })();
 
     // Mobile: Live drag on 3-panel track; swipe-back fixed via better intent detection
     (function(){
