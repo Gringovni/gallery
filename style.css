@@ -850,9 +850,9 @@ body {
 .hero{
   position: relative;
   
-  /* FIX: Apply exact math globally so banner is flush on iPad Pro & Desktop too */
+  /* FIX: Use 100svh (Stable Height) to prevent jumping on Mobile Vertical & Tablets */
   height: calc(100svh - 72px); 
-  min-height: 500px; /* Safety: don't let it get too short on resizing */
+  min-height: 500px; /* Safety: Keep this for Desktop/Tablets */
 
   overflow: hidden;
   background: #fff;
