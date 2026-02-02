@@ -529,59 +529,6 @@
       });
     })();
 
-    // SWIPE DOWN TO CLOSE (Native "Pull to Dismiss")
-    (function(){
-      const track = document.querySelector(".lb-track");
-      if (!track) return;
-
-      let startY = 0;
-      let startX = 0;
-      let isValidSwipe = false;
-
-      // 1. Touch Start: Only track if touching the IMAGE (not text)
-      track.addEventListener("touchstart", (e) => {
-        if (!e.target.closest(".lb-media")) return;
-        
-        startY = e.touches[0].clientY;
-        startX = e.touches[0].clientX;
-        isValidSwipe = false;
-      }, { passive: true });
-
-      // 2. Touch Move: Check intent
-      track.addEventListener("touchmove", (e) => {
-        if (!startY) return;
-        const y = e.touches[0].clientY;
-        const x = e.touches[0].clientX;
-        
-        const deltaY = y - startY;
-        const deltaX = x - startX;
-
-        // If moving DOWN significantly more than sideways, mark as valid
-        if (deltaY > 30 && deltaY > Math.abs(deltaX)) {
-          isValidSwipe = true;
-        } else {
-          isValidSwipe = false;
-        }
-      }, { passive: true });
-
-      // 3. Touch End: Execute Close if pulled down far enough
-      track.addEventListener("touchend", (e) => {
-        if (!startY) return;
-        
-        const endY = e.changedTouches[0].clientY;
-        const dist = endY - startY;
-
-        // Threshold: Must pull down at least 100px to trigger close
-        if (isValidSwipe && dist > 100) {
-          closeLB();
-        }
-        
-        // Reset
-        startY = 0;
-        isValidSwipe = false;
-      });
-    })();
-
     load();
 
     // HERO PARALLAX — RAF loop for smooth updates on mobile (iOS delays scroll events)
