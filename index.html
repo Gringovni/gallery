@@ -225,6 +225,10 @@
       renderCarousel(currentIndex);
       lbContainer.classList.add("open");
       lbContainer.setAttribute("aria-hidden", "false");
+      
+      // FIX: Lock the background page scroll
+      document.body.style.overflow = "hidden";
+      
       updateNavState();
       lbClose.focus();
     }
@@ -232,6 +236,10 @@
     function closeLB() {
       lbContainer.classList.remove("open");
       lbContainer.setAttribute("aria-hidden", "true");
+      
+      // FIX: Restore background page scroll
+      document.body.style.overflow = "";
+      
       currentIndex = -1;
       if (lastFocusBeforeLB && lastFocusBeforeLB.focus) lastFocusBeforeLB.focus();
     }
