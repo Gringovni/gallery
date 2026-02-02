@@ -540,7 +540,6 @@
 
       // 1. Touch Start: Only track if touching the IMAGE (not text)
       track.addEventListener("touchstart", (e) => {
-        // Check if the touch is within the media area (image)
         if (!e.target.closest(".lb-media")) return;
         
         startY = e.touches[0].clientY;
@@ -557,10 +556,8 @@
         const deltaY = y - startY;
         const deltaX = x - startX;
 
-        // IMPROVED LOGIC: 
-        // We use a factor of 1.5 to ensure it's definitely a vertical pull, not a diagonal scroll.
-        // This prevents accidental closing when trying to swipe sideways.
-        if (deltaY > 30 && deltaY > Math.abs(deltaX) * 1.5) {
+        // If moving DOWN significantly more than sideways, mark as valid
+        if (deltaY > 30 && deltaY > Math.abs(deltaX)) {
           isValidSwipe = true;
         } else {
           isValidSwipe = false;
