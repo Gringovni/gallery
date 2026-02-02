@@ -24,6 +24,11 @@ html, body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
+
+  /* REMOVE MOBILE TAP HIGHLIGHT:
+     Eliminates the blue/grey flash on Android/iOS when tapping images or buttons.
+     Keeps the interaction clean and editorial. */
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -873,7 +878,10 @@ body {
   background-size: cover;
   background-position: center;
   transform: translate3d(0, 0, 0) scale(1.14);
+
+  /* FIX: Force GPU rendering on Mobile AND Tablet */
   will-change: transform;
+  backface-visibility: hidden;
 }
 
 /* === WHITE BANNER BELOW HERO (NOW STICKY HEADER) === */
@@ -883,6 +891,10 @@ body {
   background: rgba(255,255,255,0.92);
   backdrop-filter: blur(8px);
   z-index: 10;
+
+  /* FIX: Force hardware acceleration so the blur doesn't snap on first scroll */
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .hero-banner-inner{
