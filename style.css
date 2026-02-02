@@ -687,74 +687,92 @@ body {
   }
 }
 
-/* Mobile landscape (phone): stacked layout — image capped 50vh, prompt scrolls; same structure as mobile (width often >640 so above rule doesn’t match) */
-@media (orientation: landscape) and (max-height: 600px) and (max-width: 900px){
-  .lb{
-    align-items: stretch;
-    justify-content: stretch;
-    min-height: 0;
+/* === MOBILE LANDSCAPE SPECIFIC LAYOUT (FINAL FRAME FIX) === */
+/* Target: Wide but short screens (phones turned sideways) */
+@media (orientation: landscape) and (max-height: 600px) {
+
+  /* 1. MAIN CONTAINER: Keep the Grid Layout */
+  .lb-content {
+    display: grid !important;
+    grid-template-columns: 1fr 45vw !important;
+    grid-template-rows: 100% !important;
+    
+    width: 100vw !important;
+    height: 100svh !important;
+    max-height: 100svh !important;
+    
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+    overflow: hidden !important;
   }
-  .lb-content,
-  .lb-figure{
-    width: 100vw;
-    height: 100dvh;
-    max-height: 100dvh;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    overflow: hidden;
-    padding: 72px 16px 16px;
-    margin: 0;
+
+  /* 2. IMAGE SLOT: Explicit height to prevent collapse */
+  .lb-media {
+    grid-column: 1 / 2;
+    grid-row: 1 / 1;
+    height: 100% !important; /* Key: Holds the space open */
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 12px !important;
+    
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
   }
-  .lb-slide-slot .lb-content{
-    width: 100vw;
-    height: 100dvh;
-    max-height: 100dvh;
-    min-height: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    overflow: hidden;
-    padding: 72px 16px 16px;
-  }
-  .lb-media{
-    flex: 0 0 auto;
-    max-height: 42vh;
-    min-height: 0;
+
+  /* Wrapper: Fills the slot, centers the image */
+  .lb-media-link {
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: -14px;
   }
-  .lb-media-link{ pointer-events: auto; }
-  .lb-side{
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow: auto;
+
+  /* 3. THE IMAGE: FRAME FIX */
+  /* switched to 'auto' so the border hugs the image pixels exactly */
+  .lb-img {
+    width: auto !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    display: block !important;
+  }
+
+  /* 4. TEXT SLOT: Keep existing "Prompt Fix" */
+  .lb-side {
+    grid-column: 2 / 3;
+    grid-row: 1 / 1;
+    height: 100% !important;
+    overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
+    
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    padding: 50px 32px 24px 0 !important;
   }
-  .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt-text{
-    display: -webkit-box;
+
+  /* 5. UI ELEMENTS */
+  .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt-text {
+    display: -webkit-box !important;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
     line-clamp: 3;
-    overflow: hidden;
+    overflow: hidden !important;
   }
-  .lb-prompt-more{
-    display: inline-flex;
-  }
-  .lb-nav{
-    display: none;
-  }
+  
+  .lb-prompt-more { display: inline-flex !important; }
+  .lb-nav { display: none !important; }
+  
   .lb-close {
-    top: 10px !important;
-    right: 12px !important;
-    min-width: 48px !important;
-    min-height: 48px !important;
-    background: rgba(255, 255, 255, 0.95) !important;
-    font-size: 26px;
+    position: absolute !important;
+    top: 8px !important;
+    right: 8px !important;
+    z-index: 100;
   }
 }
 
