@@ -145,7 +145,10 @@ body {
   font-weight: 400;
   max-width: var(--container);
   margin: 0 auto;
-  padding: 8px calc(var(--footer-pad) * 0.9) 15px;
+
+  /* FIX: Increased bottom padding from 15px to 40px for more breathing room */
+  padding: 8px calc(var(--footer-pad) * 0.9) 40px;
+
   text-align: center;
   color: #b0b0b0;
   font-size: 13px;
@@ -182,7 +185,10 @@ body {
   .site-footer{
     --footer-pad: 28px;
     font-size: 11px;
-    padding: 8px 18px 17px 18px;
+
+    /* FIX: Dialed back bottom padding from 40px to 28px (a happier medium) */
+    padding: 8px 18px 28px 18px;
+
     transform: translateY(-5%);
   }
   /* Footer line: match gallery edge exactly (12px from viewport = wrap --pad) */
@@ -571,7 +577,7 @@ body {
     display: flex;
     flex-direction: column;
 
-    gap: 14px;
+    gap: 24px; /* FIX: Increased from 14px to 24px for better separation */
     overflow: hidden;
 
     /* Reserve space for the fixed X */
@@ -587,7 +593,7 @@ body {
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 24px; /* FIX: Increased from 14px to 24px */
     overflow: hidden;
     padding: 72px 16px 16px;
   }
@@ -996,8 +1002,8 @@ body {
   .hero-scroll{ animation: none; }
 }
 
-/* === FOOTER SCROLL CUE (arrow) — matches HERO cue style, points upward === */
-.footer-scroll{
+/* === FOOTER SCROLL CUE (arrow) === */
+.footer-scroll {
   width: 58px;
   height: 58px;
   border: 0;
@@ -1005,38 +1011,53 @@ body {
   background: transparent;
   cursor: pointer;
   z-index: 2;
-  opacity: .9;
 
   position: relative;
   left: 50%;
   transform: translateX(-50%);
   animation: heroScrollFloat 1.35s ease-in-out infinite;
 
-  margin: -20px 0 2px;   /* negative top pulls arrow + text up as a group */
+  /* Keep the bottom margin at 14px to maintain the text gap we added */
+  margin: -20px 0 14px;
+
   order: 2;
+
+  /* FIX: Lowered opacity from 0.4 to 0.3 for a very subtle, ghost-like appearance */
+  opacity: 0.3;
+  transition: opacity 0.2s ease;
+}
+
+/* DESKTOP ONLY: Brighten to 1.0 on hover */
+@media (hover: hover) {
+  .footer-scroll:hover {
+    opacity: 1;
+  }
 }
 
 .footer-main{ order: 3; }
 .footer-powered{ order: 4; }
 
 /* Draw the chevron using borders — rotated to point UP */
-.footer-scroll::before{
-  content:"";
+.footer-scroll::before {
+  content: "";
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 22px;
-  height: 22px;
-  border-right: 3px solid rgba(17, 17, 17, 0.5);
-  border-bottom: 3px solid rgba(17, 17, 17, 0.5);
+
+  /* MATCH LIGHTBOX: Size 16px */
+  width: 16px;
+  height: 16px;
+
+  /* FIX: Use var(--accent) instead of gray, matching the exact hue of the lightbox */
+  border-right: 3px solid var(--accent);
+  border-bottom: 3px solid var(--accent);
+
   transform: translate(-50%, -50%) rotate(-135deg);
 }
 
 .footer-scroll::after{
   content: none;
 }
-
-.footer-scroll:hover{ opacity: 1; }
 
 .footer-scroll:focus-visible{
   outline: 2px solid rgba(17, 17, 17, 0.5);
