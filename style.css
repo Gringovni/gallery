@@ -24,11 +24,6 @@ html, body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  
-  /* REMOVE MOBILE TAP HIGHLIGHT:
-     Eliminates the blue/grey flash on Android/iOS when tapping images or buttons.
-     Keeps the interaction clean and editorial. */
-  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -205,33 +200,17 @@ body {
    LIGHTBOX — close button is sibling of .lb (outside track) for reliable mobile taps
    ========================================================= */
 
-/* LIGHTBOX CONTAINER — Transitions & Layout */
 .lb-container {
   position: fixed;
   inset: 0;
   z-index: 50;
-
-  /* 1. Base State: Hidden but "layout-ready" */
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none; /* Prevents clicking invisible buttons */
-
-  /* 2. The Transition: Smooth fade for Opacity & Visibility */
-  transition: opacity 0.18s ease, visibility 0.18s ease;
+  display: none;
+  pointer-events: none;
 }
 
 .lb-container.open {
-  /* 3. Active State: Visible & Interactive */
-  visibility: visible;
-  opacity: 1;
+  display: block;
   pointer-events: auto;
-}
-
-/* ACCESSIBILITY: Instant snap for reduced motion users */
-@media (prefers-reduced-motion: reduce) {
-  .lb-container {
-    transition: none;
-  }
 }
 
 /* Overlay: viewport clips track; nav buttons float above */
