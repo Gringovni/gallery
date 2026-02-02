@@ -842,12 +842,14 @@ body {
 }
 
 /* === HERO — contained parallax hero (stronger) === */
+/* === HERO — contained parallax hero (stronger) === */
 .hero{
   position: relative;
   
-  /* FIX: Apply exact math globally so banner is flush on iPad Pro & Desktop too */
-  height: calc(100svh - 72px); 
-  min-height: 500px; /* Safety: don't let it get too short on resizing */
+  /* FIX: Changed 92vh to 92svh.
+     'vh' resizes when the mobile address bar retracts, causing the "snap".
+     'svh' is static and stable. */
+  height: 92svh; 
 
   overflow: hidden;
   background: #fff;
