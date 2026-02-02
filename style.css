@@ -24,6 +24,11 @@ html, body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
+  
+  /* REMOVE MOBILE TAP HIGHLIGHT:
+     Eliminates the blue/grey flash on Android/iOS when tapping images or buttons.
+     Keeps the interaction clean and editorial. */
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
