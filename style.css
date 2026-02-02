@@ -24,11 +24,6 @@ html, body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  
-  /* REMOVE MOBILE TAP HIGHLIGHT:
-     Eliminates the blue/grey flash on Android/iOS when tapping images or buttons.
-     Keeps the interaction clean and editorial. */
-  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -850,9 +845,9 @@ body {
 .hero{
   position: relative;
   
-  /* FIX: Use 100svh (Stable Height) to prevent jumping on Mobile Vertical & Tablets */
+  /* FIX: Apply exact math globally so banner is flush on iPad Pro & Desktop too */
   height: calc(100svh - 72px); 
-  min-height: 500px; /* Safety: Keep this for Desktop/Tablets */
+  min-height: 500px; /* Safety: don't let it get too short on resizing */
 
   overflow: hidden;
   background: #fff;
@@ -860,10 +855,10 @@ body {
 /* Mobile landscape: same flush hero+banner when viewport height is short (covers horizontal phone) */
 @media (orientation: landscape) and (max-height: 500px){
   .hero{
-    /* FIX: Use svh here too so horizontal scrolling is rock solid */
-    height: calc(100svh - 72px);
+    /* Calculate exact fit for short screens */
+    height: calc(100dvh - 72px);
     
-    /* Override the global 500px limit so it fits on short landscape screens */
+    /* FIX: Override the global 500px limit so it fits on short landscape screens */
     min-height: 0; 
   }
 }
