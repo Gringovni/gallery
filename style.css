@@ -1,1039 +1,585 @@
-/* style.css — Latent Illumination */
-
-:root {
-  --bg: #ffffff;
-  --text: #111;
-  --muted: #777;
-  --line: #e9e9e9;
-  --accent: rgba(17, 17, 17, 0.9);
-  --error: #a44;
-
-  --container: 1585px;
-  --pad: 12px;
-  --footer-pad: clamp(24px, 6vw, 48px);
-  --gap: 6px;
-
-  --transition-fast: 0.15s ease;
-  --transition-smooth: 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-* { box-sizing: border-box; }
-
-html, body {
-  margin: 0;
-  padding: 0;
-  background: var(--bg);
-  color: var(--text);
-
-  /* REMOVE MOBILE TAP HIGHLIGHT:
-     Eliminates the blue/grey flash on Android/iOS when tapping images or buttons.
-     Keeps the interaction clean and editorial. */
-  -webkit-tap-highlight-color: transparent;
-}
-
-body {
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-}
-
-/* Skip link (accessibility) */
-.skip-link{
-  position: absolute;
-  left: -9999px;
-  z-index: 100;
-  padding: 12px 20px;
-  background: var(--text);
-  color: var(--bg);
-  font-size: 14px;
-  text-decoration: none;
-  border-radius: 4px;
-}
-.skip-link:focus{
-  left: 16px;
-  top: 16px;
-}
-
-.hidden{ display: none !important; }
-
-/* Gallery loading / error states (span full width above columns) */
-.masonry-loading,
-.masonry-error{
-  margin: 0;
-  padding: 24px var(--pad);
-  text-align: center;
-  color: var(--muted);
-  font-size: 15px;
-  column-span: all;
-}
-.masonry-error { color: var(--error); }
-
-/* === BANNER TITLE === */
-.hero-banner-title{
-  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-weight: 300;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-@media (max-width: 640px) {
-  .hero-banner-title {
-    font-weight: 400;
-    letter-spacing: 0.12em;
-  }
-}
-
-/* === LAYOUT ===
-   IMPORTANT:
-   padding-top: 0; so the line touches the first row of images
-*/
-.wrap{
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: 0 var(--pad) 40px;
-}
-
-/* Masonry */
-.masonry{
-  column-count: 3;
-  column-gap: var(--gap);
-  margin: 0;
-  padding-top: 0;
-}
-
-@media (max-width: 1100px){
-  .masonry{ column-count: 2; }
-}
-
-@media (max-width: 640px) {
-  .masonry { column-count: 2; }
-}
-
-/* Card */
-.card {
-  break-inside: avoid;
-  margin: 0 0 var(--gap);
-  cursor: pointer;
-  outline: none;
-}
-
-.card-img {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 0;
-  background: #fff;
-  transition: transform var(--transition-fast), filter var(--transition-fast);
-}
-
-.card:focus-visible {
-  outline: 2px solid var(--text);
-  outline-offset: 3px;
-}
-.card-img {
-  background: #fff;
-  transition: transform var(--transition-fast), filter var(--transition-fast);
-}
-.card:hover .card-img,
-.card:focus .card-img {
-  transform: translateY(-2px);
-  filter: contrast(1.03);
-}
-
-
-/* Footer — centered two-line layout on all devices */
-.site-footer{
-  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-weight: 400;
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: 8px calc(var(--footer-pad) * 0.9) 15px;
-  text-align: center;
-  color: #b0b0b0;
-  font-size: 13px;
-  letter-spacing: .02em;
-  line-height: 1.4;
-
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.footer-line{
-  font-size: inherit;
-  letter-spacing: inherit;
-}
-
-.footer-main{
-  margin-bottom: 4px;
-  white-space: nowrap;   /* line 1: copyright | email on one line */
-}
-
-
-.site-footer a{
-  color: inherit;
-  text-decoration: none;
-}
-
-.site-footer a:hover{
-  color: #111;
-}
-
-/* Mobile: smaller footer font + more padding so line 1 fits and isn’t cut off */
-@media (max-width: 640px){
-  .site-footer{
-    --footer-pad: 28px;
-    font-size: 11px;
-    padding: 8px 18px 17px 18px;
-    transform: translateY(-5%);
-  }
-  /* Footer line: match gallery edge exactly (12px from viewport = wrap --pad) */
-  .site-footer .footer-divider{
-    width: calc(100% + 12px);
-    margin: 20px -6px 0;
-  }
-  /* Footer arrow: push up 18% (was 13%, +5%) */
-  .footer-scroll{
-    transform: translateX(-50%) translateY(-18%);
-  }
-}
-
-/* === FOOTER DIVIDER — hidden (gray line removed) === */
-.footer-divider{
-  display: none;
-}
-
-/* =========================================================
-   LIGHTBOX — close button is sibling of .lb (outside track) for reliable mobile taps
-   ========================================================= */
-
-/* LIGHTBOX CONTAINER — Transitions & Layout */
-.lb-container {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-
-  /* 1. Base State: Hidden but "layout-ready" */
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none; /* Prevents clicking invisible buttons */
-
-  /* 2. The Transition: Smooth fade for Opacity & Visibility */
-  transition: opacity 0.18s ease, visibility 0.18s ease;
-}
-
-.lb-container.open {
-  /* 3. Active State: Visible & Interactive */
-  visibility: visible;
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* ACCESSIBILITY: Instant snap for reduced motion users */
-@media (prefers-reduced-motion: reduce) {
-  .lb-container {
-    transition: none;
-  }
-}
-
-/* Overlay: viewport clips track; nav buttons float above */
-.lb {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  min-height: 0;
-}
-
-/* Clipping viewport: ensures only one slot visible; prevents prev/next bleed */
-.lb-viewport {
-  flex: 1;
-  min-width: 0;
-  min-height: 0;
-  overflow: hidden;
-  display: flex;
-  justify-content: flex-start; /* track left-aligned for predictable slide position */
-  position: relative;
-  z-index: 0; /* stacking context below nav buttons so prev/next receive clicks */
-}
-
-/* 3-panel infinite track */
-.lb-track{
-  display: flex;
-  width: 300%;
-  height: 100%;
-  flex-shrink: 0;
-  transform: translate3d(-33.3333%, 0, 0);
-  will-change: transform;
-  z-index: 0;
-}
-
-.lb-slide-slot{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 33.3333%;
-  height: 100%;
-  flex: 0 0 33.3333%;
-  overflow: hidden; /* prevent previous/next prompt from bleeding into view (desktop/tablet) */
-}
-
-.lb-slide-slot.lb-slot-hidden{
-  visibility: hidden;
-}
-
-.lb-animating {
-  transition: transform var(--transition-smooth);
-}
-
-/* Desktop layout: keep your intent (image left, prompt right) */
-.lb-content,
-.lb-figure{
-  margin: 0;
-  width: min(1200px, 92vw);
-  height: min(86vh, 860px);
-  display: grid;
-  grid-template-columns: 1fr 460px;
-  gap: 28px;
-  align-items: center;
-
-  min-height: 0;                    /* FIX: allow children to shrink */
-}
-
-/* .lb-content inside slots: constrained size, centered in slot */
-.lb-slide-slot .lb-content{
-  /* Restore the constrained size so it doesn't fill the whole slot */
-  width: min(1200px, 92vw);
-  height: min(86vh, 860px);
-
-  /* Ensure it stays centered within the flex slot */
-  margin: auto;
-
-  /* Keep the grid display for internal layout */
-  display: grid;
-}
-
-/* Image area */
-.lb-media{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 0;
-  min-height: 0;
-}
-
-/* Image link: click opens in new tab on desktop only */
-.lb-media-link{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 0;
-  min-height: 0;
-  color: inherit;
-  text-decoration: none;
-}
-
-.lb-img {
-  width: auto !important;
-  height: auto !important;
-  max-width: 100%;
-  
-  /* FIX: Match the container's cap (860px) minus safety padding.
-     This prevents the image from outgrowing the box on tall screens. */
-  max-height: min(82vh, 820px);
-  
-  object-fit: contain;
-  display: block;
-  background: #fff;
-  padding: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-}
-
-/* Prompt panel */
-.lb-side {
-  align-self: center; 
-  justify-self: stretch; 
-  min-width: 0;
-  
-  /* SAFETY NET: Allow scrolling for long text */
-  max-height: 100%; 
-  overflow-y: auto; 
-  
-  /* Keep existing styling */
-  color: var(--muted);
-  letter-spacing: .02em; 
-  line-height: 1.5; 
-  padding-right: 6px;
-}
-
-/* Prompt text */
-.lb-prompt{
-  margin: 0;
-  white-space: pre-wrap;
-  font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
-  font-style: italic;
-  font-weight: 300;
-  font-size: 18px;
-  line-height: 1.38;
-  color: #444;
-  padding-top: 6px;
-}
-
-/* PROMPT: label (real DOM element; robust with -webkit-line-clamp) */
-.lb-prompt-label{
-  display: block;
-  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-style: italic;
-  font-weight: 300;
-  font-size: 12px;
-  color: #222;
-  letter-spacing: 0.08em;
-  line-height: 1.25;
-}
-
-/* Prompt wrapper (for mobile collapse) */
-.lb-prompt-wrap{
-  min-width: 0;
-}
-
-/* "More" button */
-.lb-prompt-more{
-  display: none;
-  margin: 0;
-  padding: 4px;
-  align-items: center;
-  justify-content: center;
-  color: #444;
-  opacity: 0.6;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  cursor: pointer;
-}
-/* FIX: Only allow hover on mouse devices */
-@media (hover: hover) {
-  .lb-prompt-more:hover{ background: transparent; opacity: 1; color: #222; }
-}
-.lb-prompt-more:focus-visible{ outline: 2px solid #444; outline-offset: 2px; }
-.lb-prompt-more svg{ display: block; width: 20px; height: 20px; }
-
-/* Lightbox prompt actions (copy + open in new tab) */
-.lb-actions{
-  margin-top: 12px;
-  display: flex;
-  gap: 2px;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-/* Copy prompt button (icon only) */
-.lb-copy{
-  padding: 4px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #444;
-  opacity: 0.6;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  cursor: pointer;
-}
-/* FIX: Only allow hover on mouse devices */
-@media (hover: hover) {
-  .lb-copy:hover{ background: transparent; opacity: 1; color: #222; }
-}
-.lb-copy:focus-visible{ outline: 2px solid #444; outline-offset: 2px; }
-.lb-copy-icon{
-  font-family: "Material Symbols Outlined", sans-serif;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 1;
-  letter-spacing: 0;
-}
-
-/* Open image in new tab button */
-.lb-open-new{
-  padding: 4px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #444;
-  opacity: 0.6;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  cursor: pointer;
-}
-/* FIX: Only allow hover on mouse devices */
-@media (hover: hover) {
-  .lb-open-new:hover{ background: transparent; opacity: 1; color: #222; }
-}
-.lb-open-new:focus-visible{ outline: 2px solid #444; outline-offset: 2px; }
-.lb-open-new svg{ display: block; width: 20px; height: 20px; }
-
-/* Close button: match nav arrow size, weight, color, opacity, hover */
-.lb-close{
-  position: fixed;
-  top: 8px;
-  right: 18px;
-  border: none;
-  background: transparent;
-  font-size: 36px;
-  line-height: 1;
-  cursor: pointer;
-  color: var(--accent);
-  opacity: .55;
-  user-select: none;
-  z-index: 9999;
-  transition: opacity 0.2s ease;
-  outline: none;
-  /* Promote to own layer so touches register on iOS */
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  touch-action: manipulation;
-}
-.lb-close:hover{ opacity: 1; }
-
-/* Nav buttons: must sit above viewport so prev/next receive clicks on desktop */
-.lb-nav{
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
-  background: transparent;
-  font-size: 44px;
-  cursor: pointer;
-  padding: 14px 18px;
-  user-select: none;
-  z-index: 50;
-
-  color: transparent;               /* keep glyph hidden (you draw chevrons) */
-  text-shadow: none;
-}
-
-.lb-prev{ left: 14px; }
-.lb-next{ right: 14px; }
-.lb-nav:disabled{ cursor: default; }
-
-/* Chevron shape: opacity and hover on ::before so hover effect is visible */
-.lb-nav::before{
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 16px;
-  height: 16px;
-  border-right: 3px solid var(--accent);
-  border-bottom: 3px solid var(--accent);
-  transform: translate(-50%, -50%) rotate(135deg);
-  opacity: 0.55;
-  transition: opacity 0.2s ease;
-}
-.lb-nav:hover::before{
-  opacity: 1;
-}
-.lb-next::before{
-  transform: translate(-50%, -50%) rotate(-45deg);
-}
-.lb-nav:disabled::before{
-  opacity: 0.25;
-}
-
-@media (min-width: 900px){
-  .lb-nav::before{
-    width: 18px;
-    height: 18px;
-  }
-}
-
-/* MOBILE: viewport-safe layout (no overlay collisions)
-   - top row: image (fits)
-   - bottom row: prompt (scrolls)
-*/
-/* MOBILE: strict stack, no overlap, bigger image (phones only; tablet uses 641–1024px side‑by‑side) */
-@media (max-width: 640px){
-  /* Make overlay truly viewport-sized (removes “centered card” feeling) */
-  .lb{
-    align-items: stretch;
-    justify-content: stretch;
-  }
-
-  /* Force a vertical stack instead of grid (prevents overlap bugs) */
-  .lb-content,
-  .lb-figure{
-    width: 100vw;
-    height: 100dvh;
-    max-height: 100dvh;
-
-    display: flex;
-    flex-direction: column;
-
-    gap: 14px;
-    overflow: hidden;
-
-    /* Reserve space for the fixed X */
-    padding: 72px 16px 16px;
-    margin: 0;
-  }
-
-  /* Slot content: same full-viewport layout on mobile */
-  .lb-slide-slot .lb-content{
-    width: 100vw;
-    height: 100dvh;
-    max-height: 100dvh;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    overflow: hidden;
-    padding: 72px 16px 16px;
-  }
-
-  /* Image block (bigger, centered) */
-  .lb-media{
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 0;
-    margin-top: -14px;   /* tweak: try -8px to -20px */
-  }
-
-  /* Disable image link on mobile so tap doesn’t open new tab */
-  .lb-media-link{ pointer-events: auto; }
-
-  /* Prompt block (scrolls independently) */
-  .lb-side{
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 0;
-  }
-
-  /* Mobile: label + first 3 lines of body (4 total); "more" button reveals rest */
-  .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt-text{
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    overflow: hidden;
-  }
-  .lb-prompt-more{
-    display: inline-flex;
-  }
-
-  /* Hide prev/next arrows on mobile; use swipe instead */
-  .lb-nav{
-    display: none;
-  }
-}
-
-/* Tablet 641–1024px: keep prompt visible (side‑by‑side like landscape); no .lb-prompt typography changes */
-@media (min-width: 641px) and (max-width: 1024px){
-  .lb{
-    align-items: center;
-    justify-content: center;
-  }
-  .lb-content,
-  .lb-figure{
-    width: min(96vw, 900px);
-    height: min(86vh, 860px);
-    max-height: none;
-    display: grid;
-    grid-template-columns: 1fr min(300px, 38vw);
-    gap: 20px;
-    flex-direction: unset;
-    overflow: visible;
-    padding: 0;
-    margin: 0;
-  }
-  .lb-media{
-    flex: unset;
-    margin-top: 0;
-  }
-  .lb-media-link{
-    pointer-events: auto;
-  }
-  .lb-side{
-    flex: unset;
-    overflow: visible;
-    -webkit-overflow-scrolling: unset;
-    padding-right: 6px;
-  }
-  .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt-text{
-    display: block;
-    line-clamp: none;
-    -webkit-line-clamp: unset;
-    -webkit-box-orient: unset;
-    overflow: visible;
-  }
-  .lb-prompt-more{
-    display: none;
-  }
-  /* Tablet: hide < > arrows; use swipe on image to go prev/next */
-  .lb-nav{
-    display: none;
-  }
-}
-
-/* Universal Tablet Rule: Hide arrows on any touch-primary device (iPad Pro, Surface, etc.) */
-@media (pointer: coarse) {
-  .lb-nav{
-    display: none !important;
-  }
-}
-
-/* Mobile landscape (phone): stacked layout — image capped 50vh, prompt scrolls; same structure as mobile (width often >640 so above rule doesn’t match) */
-@media (orientation: landscape) and (max-height: 600px) and (max-width: 900px){
-  .lb{
-    align-items: stretch;
-    justify-content: stretch;
-    min-height: 0;
-  }
-  .lb-content,
-  .lb-figure{
-    width: 100vw;
-    height: 100dvh;
-    max-height: 100dvh;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    overflow: hidden;
-    padding: 72px 16px 16px;
-    margin: 0;
-  }
-  .lb-slide-slot .lb-content{
-    width: 100vw;
-    height: 100dvh;
-    max-height: 100dvh;
-    min-height: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    overflow: hidden;
-    padding: 72px 16px 16px;
-  }
-  .lb-media{
-    flex: 0 0 auto;
-    max-height: 42vh;
-    min-height: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: -14px;
-  }
-  .lb-media-link{ pointer-events: auto; }
-  .lb-side{
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt-text{
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    overflow: hidden;
-  }
-  .lb-prompt-more{
-    display: inline-flex;
-  }
-  .lb-nav{
-    display: none;
-  }
-  .lb-close {
-    top: 10px !important;
-    right: 12px !important;
-    min-width: 48px !important;
-    min-height: 48px !important;
-    background: rgba(255, 255, 255, 0.95) !important;
-    font-size: 26px;
-  }
-}
-
-/* Tablet + mobile: close button touch-friendly */
-@media (max-width: 1024px) {
-  .lb-close {
-    min-width: 48px;
-    min-height: 48px;
-    padding: 12px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 50%;
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
-    touch-action: manipulation;
-  }
-}
-
-@media (max-width: 640px){
-  .lb-prompt{
-    font-size: 16px;
-    line-height: 1.5;
-  }
-}
-
-/* === HERO CAPTION (bottom-left editorial text) === */
-.hero-caption{
-  position: absolute;
-  left: 40px;
-  bottom: 198px;      /* pushed down 20% from 248px */
-  max-width: 720px;
-
-  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
-  font-weight: 600;
-
-  font-size: clamp(43px, 5.9vw, 103px);
-  line-height: 1.14;
-  letter-spacing: 0; /* important for Playfair */
-
-  color: rgba(255,255,255,0.92);
-  z-index: 2;
-  pointer-events: none;
-}
-
-.hero-caption-line{
-  display: block;
-  white-space: nowrap;
-}
-
-/* Tablet portrait: larger caption to match desktop aspect ratio (default clamp is small at ~768px) */
-@media (min-width: 641px) and (max-width: 1024px) and (orientation: portrait){
-  .hero-caption{
-    font-size: clamp(52px, 6.8vw, 95px);
-    line-height: 1.14;
-  }
-}
-
-/* Mobile: same three lines as desktop, left-aligned */
-@media (max-width: 640px){
-  .hero-caption{
-    left: 20px;
-    bottom: 182px;     /* pushed down 20% from 227px */
-    max-width: none;
-    transform: none;
-    text-align: left;
-
-    font-size: 32px;
-    line-height: 1.2;
-  }
-}
-
-/* Mobile landscape: short viewport — smaller caption and lower position so all three lines fit (no top clip) */
-@media (max-width: 640px) and (orientation: landscape){
-  .hero-caption{
-    font-size: 24px;
-    line-height: 1.2;
-    bottom: 88px;      /* room for scroll arrow below; caption block fits in short hero */
-  }
-}
-
-/* Short viewport landscape (mobile horizontal when width > 640px): full caption visible, no right clip */
-@media (orientation: landscape) and (max-height: 500px){
-  .hero-caption{
-    left: 20px;
-    bottom: 88px;
-    max-width: calc(100% - 40px);   /* use full hero width so text isn’t clipped on the right */
-    font-size: 48px;
-    line-height: 1.2;
-    text-align: left;
-  }
-}
-
-/* === HERO — contained parallax hero (stronger) === */
-.hero{
-  position: relative;
-  
-  /* FIX: Apply exact math globally so banner is flush on iPad Pro & Desktop too */
-  height: calc(100svh - 72px); 
-  min-height: 500px; /* Safety: don't let it get too short on resizing */
-
-  overflow: hidden;
-  background: #fff;
-}
-/* Mobile landscape: same flush hero+banner when viewport height is short (covers horizontal phone) */
-@media (orientation: landscape) and (max-height: 500px){
-  .hero{
-    /* FIX: Use svh (Stable Viewport Height) so it doesn't jump when address bar moves */
-    height: calc(100svh - 72px);
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Latent Illumination — AI Art Gallery</title>
+
+  <meta name="description" content="Latent Illumination — where creative intent becomes visual clarity. A gallery of AI-generated imagery with prompts." />
+  <meta name="theme-color" content="#ffffff" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Latent Illumination" />
+  <meta property="og:description" content="Where creative intent becomes visual clarity. A gallery of AI-generated imagery with prompts." />
+  <meta property="og:image" content="https://images.pexels.com/photos/20398189/pexels-photo-20398189.jpeg?auto=compress&cs=tinysrgb&w=1200" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <a href="#masonry" class="skip-link">Skip to gallery</a>
+
+  <!-- HERO -->
+<section class="hero" id="hero" aria-label="Hero" data-scroll-target="#masonry">
+  <div class="hero-media" id="heroMedia">
+  <style>
+    /* Default (Mobile): Load lighter 800px image */
+    #heroMedia { background-image: url('https://images.pexels.com/photos/20398189/pexels-photo-20398189.jpeg?auto=compress&cs=tinysrgb&w=800'); }
     
-    /* Override the global 500px limit so it fits on short landscape screens */
-    min-height: 0; 
-  }
-}
+    /* Desktop: Load full resolution 2400px image */
+    @media (min-width: 800px) {
+      #heroMedia { background-image: url('https://images.pexels.com/photos/20398189/pexels-photo-20398189.jpeg?auto=compress&cs=tinysrgb&w=2400'); }
+    }
+  </style>
+</div>
 
-/* Overscan: make the image taller than the hero so it can move */
-.hero-media{
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: -10%;
-  bottom: -10%;
-  background-size: cover;
-  background-position: center;
-  transform: translate3d(0, 0, 0) scale(1.14);
+    <!-- Hero editorial text -->
+<div class="hero-caption">
+  <span class="hero-caption-line">Where creative</span>
+  <span class="hero-caption-line">intent becomes</span>
+  <span class="hero-caption-line">visual clarity</span>
+</div>
 
-  /* FIX: Force GPU rendering on Mobile AND Tablet */
-  will-change: transform;
-  backface-visibility: hidden;
-}
+  <!-- Scroll cue arrow -->
+  <button class="hero-scroll" type="button" aria-label="Scroll to gallery" id="heroScrollBtn"></button>
+</section>
 
-/* === WHITE BANNER BELOW HERO (NOW STICKY HEADER) === */
-.hero-banner{
-  position: sticky;
-  top: 0;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(8px);
-  z-index: 10;
+  <header class="hero-banner" role="banner" aria-label="Site header">
+    <div class="hero-banner-inner">
+      <div class="hero-banner-title">LATENT ILLUMINATION</div>
+    </div>
+    <div class="hero-banner-divider"></div>
+  </header>
 
-  /* FIX: Force hardware acceleration so the blur doesn't snap on first scroll */
-  transform: translateZ(0);
-  will-change: transform;
-}
+  <main class="wrap">
+    <section id="masonry" class="masonry" aria-label="Gallery" aria-busy="false" aria-live="polite">
+      <p class="masonry-loading" id="masonryLoading">Loading gallery…</p>
+      <p class="masonry-error hidden" id="masonryError" role="alert"></p>
+    </section>
+  </main>
 
-.hero-banner-inner{
-  height: 72px;
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: 0 var(--pad);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  <footer class="site-footer" role="contentinfo">
+    <!-- Footer divider line (restored; must be first visually) -->
+    <div class="footer-divider"></div>
 
-.hero-banner-title{
-  font-size: 16px;
-  letter-spacing: .10em;
-  text-transform: uppercase;
-  color: #111;
-  opacity: .9;
-}
+    <!-- Footer scroll-to-top arrow (NEW) -->
+    <button class="footer-scroll" id="footerScroll" type="button" aria-label="Scroll to gallery"></button>
 
-.hero-banner-divider{
-  display: none;   /* gray line below LATENT ILLUMINATION banner removed */
-}
+    <div class="footer-line footer-main">© 2026 Latent Illumination | <a class="footer-email" href="mailto:contact@latentillumination.com" title="Email Latent Illumination">contact@latentillumination.com</a></div>
+    <div class="footer-line footer-powered">Powered by <a class="footer-github" href="https://github.com/" target="_blank" rel="noopener noreferrer">GitHub</a></div>
+  </footer>
 
-/* === HERO SCROLL CUE (arrow) — smooth, continuous float === */
-.hero-scroll{
-  position: absolute;
-  left: 50%;
-  bottom: 36px;
-  transform: translateX(-50%);
-  width: 58px;     /* bigger */
-  height: 58px;    /* bigger */
-  border: 0;
-  padding: 0;
-  background: transparent;
-  cursor: pointer;
-  z-index: 2;
-  opacity: .9;
+  <!-- Lightbox: close button outside .lb so touches always register on mobile -->
+  <div class="lb-container" id="lbContainer" aria-hidden="true">
+    <div class="lb" id="lb" role="dialog" aria-label="Image viewer">
+      <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">‹</button>
+      <div class="lb-viewport">
+      <div class="lb-track">
+      <div class="lb-slide-slot">
+        <div class="lb-content" role="document">
+          <div class="lb-media">
+            <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
+              <img class="lb-img" alt="" />
+            </a>
+          </div>
+          <aside class="lb-side" aria-label="Prompt">
+            <div class="lb-prompt-wrap">
+              <pre class="lb-prompt"><span class="lb-prompt-label">PROMPT:</span><span class="lb-prompt-text"></span></pre>
+            </div>
+            <div class="lb-actions">
+              <button type="button" class="lb-prompt-more" aria-label="Show more prompt" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></button>
+              <button type="button" class="lb-copy" aria-label="Copy prompt to clipboard"><span class="material-symbols-outlined lb-copy-icon" aria-hidden="true">content_copy</span></button>
+              <button type="button" class="lb-open-new" aria-label="Open image in new tab"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg></button>
+            </div>
+          </aside>
+        </div>
+      </div>
+      <div class="lb-slide-slot">
+        <div class="lb-content" role="document">
+          <div class="lb-media">
+            <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
+              <img class="lb-img" alt="" />
+            </a>
+          </div>
+          <aside class="lb-side" aria-label="Prompt">
+            <div class="lb-prompt-wrap">
+              <pre class="lb-prompt"><span class="lb-prompt-label">PROMPT:</span><span class="lb-prompt-text"></span></pre>
+            </div>
+            <div class="lb-actions">
+              <button type="button" class="lb-prompt-more" aria-label="Show more prompt" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></button>
+              <button type="button" class="lb-copy" aria-label="Copy prompt to clipboard"><span class="material-symbols-outlined lb-copy-icon" aria-hidden="true">content_copy</span></button>
+              <button type="button" class="lb-open-new" aria-label="Open image in new tab"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg></button>
+            </div>
+          </aside>
+        </div>
+      </div>
+      <div class="lb-slide-slot">
+        <div class="lb-content" role="document">
+          <div class="lb-media">
+            <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
+              <img class="lb-img" alt="" />
+            </a>
+          </div>
+          <aside class="lb-side" aria-label="Prompt">
+            <div class="lb-prompt-wrap">
+              <pre class="lb-prompt"><span class="lb-prompt-label">PROMPT:</span><span class="lb-prompt-text"></span></pre>
+            </div>
+            <div class="lb-actions">
+              <button type="button" class="lb-prompt-more" aria-label="Show more prompt" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></button>
+              <button type="button" class="lb-copy" aria-label="Copy prompt to clipboard"><span class="material-symbols-outlined lb-copy-icon" aria-hidden="true">content_copy</span></button>
+              <button type="button" class="lb-open-new" aria-label="Open image in new tab"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg></button>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+      </div>
+      <button class="lb-nav lb-next" id="lbNext" aria-label="Next">›</button>
+    </div>
+    <button class="lb-close" id="lbClose" aria-label="Close">×</button>
+  </div>
 
-  /* Smooth continuous scroll cue */
-  animation: heroScrollFloat 1.35s ease-in-out infinite;
-}
+  <script>
+    const masonry = document.getElementById("masonry");
 
-/* Draw the chevron using borders */
-.hero-scroll::before{
-  content:"";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 22px;          /* MATCH lightbox arrow scale */
-  height: 22px;         /* MATCH lightbox arrow scale */
-  border-right: 3px solid rgba(255,255,255,0.9);
-  border-bottom: 3px solid rgba(255,255,255,0.9);
-  transform: translate(-50%, -50%) rotate(45deg);
-}
+    const lbContainer = document.getElementById("lbContainer");
+    const lb = document.getElementById("lb");
+    const lbClose = document.getElementById("lbClose");
+    const lbPrev = document.getElementById("lbPrev");
+    const lbNext = document.getElementById("lbNext");
+    const masonryLoading = document.getElementById("masonryLoading");
+    const masonryError = document.getElementById("masonryError");
 
-/* Smooth, continuous vertical motion */
-.hero-scroll::after{
-  content:"";
-  position: absolute;
-  inset: -8px;      /* slightly bigger halo */
-  border-radius: 999px;
-  background: none;
-}
+    let items = [];
+    let currentIndex = -1;
+    let lastFocusBeforeLB = null;
 
-.hero-scroll:hover{ opacity: 1; }
+    function formatPrompt(raw){
+      const text = (raw || "").toString();
 
-.hero-scroll:focus-visible{
-  outline: 2px solid rgba(255,255,255,0.85);
-  outline-offset: 3px;
-}
+      // Remove any MODEL line(s)
+      const noModel = text
+        .split(/\r?\n/)
+        .filter(line => !/^\s*MODEL\s*:/i.test(line.trim()))
+        .join("\n")
+        .trim();
 
-/* Smooth, continuous vertical motion */
-@keyframes heroScrollFloat{
-  0%   { transform: translateX(-50%) translateY(0); }
-  50%  { transform: translateX(-50%) translateY(10px); }
-  100% { transform: translateX(-50%) translateY(0); }
-}
+      // If the remaining text already starts with PROMPT:, keep it.
+      if (/^\s*PROMPT\s*:/i.test(noModel)) return noModel.trim();
 
-@media (prefers-reduced-motion: reduce){
-  .hero-scroll{ animation: none; }
-}
+      // Otherwise, wrap it as PROMPT:
+      if (!noModel) return "";
+      return `PROMPT:\n${noModel}`;
+    }
 
-/* === FOOTER SCROLL CUE (arrow) — matches HERO cue style, points upward === */
-.footer-scroll{
-  width: 58px;
-  height: 58px;
-  border: 0;
-  padding: 0;
-  background: transparent;
-  cursor: pointer;
-  z-index: 2;
-  opacity: .9;
+    function parsePrompt(formatted) {
+      if (!formatted || !formatted.trim()) return { label: "", text: "" };
+      const cleaned = formatted.trim().replace(/^\s*PROMPT\s*:\s*\n?/i, "");
+      return { label: "PROMPT:", text: cleaned };
+    }
 
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-  animation: heroScrollFloat 1.35s ease-in-out infinite;
+    function populateSlot(slot, index) {
+      const img = slot.querySelector(".lb-img");
+      const link = slot.querySelector(".lb-media-link");
+      const labelEl = slot.querySelector(".lb-prompt-label");
+      const textEl = slot.querySelector(".lb-prompt-text");
+      const wrap = slot.querySelector(".lb-prompt-wrap");
+      const moreBtn = slot.querySelector(".lb-prompt-more");
+      if (index < 0 || index >= items.length) {
+        slot.classList.add("lb-slot-hidden");
+        if (img) { img.src = ""; img.alt = ""; }
+        if (link) link.removeAttribute("href");
+        if (labelEl) labelEl.textContent = "";
+        if (textEl) textEl.textContent = "";
+        if (wrap) wrap.classList.remove("lb-prompt-expanded");
+        if (moreBtn) moreBtn.setAttribute("aria-expanded", "false");
+        return;
+      }
+      slot.classList.remove("lb-slot-hidden");
+      const item = items[index];
+      if (img) { img.src = item.src; img.alt = item.title || ""; }
+      if (link) link.href = item.src;
+      const { label, text } = parsePrompt(formatPrompt(item.prompt ?? item.caption ?? ""));
+      if (labelEl) labelEl.textContent = label;
+      if (textEl) textEl.textContent = text;
+      if (wrap) wrap.classList.remove("lb-prompt-expanded");
+      if (moreBtn) moreBtn.setAttribute("aria-expanded", "false");
+    }
 
-  margin: -20px 0 2px;   /* negative top pulls arrow + text up as a group */
-  order: 2;
-}
+    function renderCarousel(centerIndex) {
+      const track = lb.querySelector(".lb-track");
+      const slots = lb.querySelectorAll(".lb-slide-slot");
+      if (!track || slots.length !== 3) return;
+      const idxPrev = centerIndex - 1;
+      const idxCur = centerIndex;
+      const idxNext = centerIndex + 1;
+      populateSlot(slots[0], idxPrev);
+      populateSlot(slots[1], idxCur);
+      populateSlot(slots[2], idxNext);
+      track.classList.remove("lb-animating");
+      track.style.transform = "translate3d(-33.3333%, 0, 0)";
+    }
 
-.footer-main{ order: 3; }
-.footer-powered{ order: 4; }
+    function openLB(index) {
+      currentIndex = index;
+      lastFocusBeforeLB = document.activeElement;
+      renderCarousel(currentIndex);
+      lbContainer.classList.add("open");
+      lbContainer.setAttribute("aria-hidden", "false");
+      updateNavState();
+      lbClose.focus();
+    }
 
-/* Draw the chevron using borders — rotated to point UP */
-.footer-scroll::before{
-  content:"";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 22px;
-  height: 22px;
-  border-right: 3px solid rgba(17, 17, 17, 0.5);
-  border-bottom: 3px solid rgba(17, 17, 17, 0.5);
-  transform: translate(-50%, -50%) rotate(-135deg);
-}
+    function closeLB() {
+      lbContainer.classList.remove("open");
+      lbContainer.setAttribute("aria-hidden", "true");
+      currentIndex = -1;
+      if (lastFocusBeforeLB && lastFocusBeforeLB.focus) lastFocusBeforeLB.focus();
+    }
 
-.footer-scroll::after{
-  content: none;
-}
+    function updateNavState(){
+      const hasPrev = currentIndex > 0;
+      const hasNext = currentIndex < items.length - 1;
+      lbPrev.disabled = !hasPrev;
+      lbNext.disabled = !hasNext;
+      lbPrev.style.opacity = hasPrev ? "1" : "0.25";
+      lbNext.style.opacity = hasNext ? "1" : "0.25";
+    }
 
-.footer-scroll:hover{ opacity: 1; }
+    function prev() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderCarousel(currentIndex);
+      }
+    }
+    function next() {
+      if (currentIndex < items.length - 1) {
+        currentIndex++;
+        renderCarousel(currentIndex);
+      }
+    }
 
-.footer-scroll:focus-visible{
-  outline: 2px solid rgba(17, 17, 17, 0.5);
-  outline-offset: 3px;
-}
+    async function load(){
+      masonry.setAttribute("aria-busy", "true");
+      masonryLoading.classList.remove("hidden");
+      masonryError.classList.add("hidden");
+      masonryError.textContent = "";
 
-@media (prefers-reduced-motion: reduce){
-  .footer-scroll{ animation: none; }
-}
+      try {
+        const res = await fetch("gallery.json?v=" + Date.now(), { cache: "no-store" });
+        if (!res.ok) throw new Error("Failed to load gallery");
+        items = await res.json();
+      } catch (err) {
+        masonryError.textContent = "Could not load gallery. Please try again later.";
+        masonryError.classList.remove("hidden");
+        masonryLoading.classList.add("hidden");
+        masonry.setAttribute("aria-busy", "false");
+        return;
+      }
 
-/* MOBILE ONLY: move close button right (+12px) and up slightly */
-@media (max-width: 640px),
-       (orientation: landscape) and (max-height: 600px) and (max-width: 900px) {
-  button.lb-close {
-    transform: translateX(16px) translateY(-12px) translateZ(0);
-    -webkit-transform: translateX(16px) translateY(-12px) translateZ(0);
-  }
-}
+      masonryLoading.classList.add("hidden");
+      masonryError.classList.add("hidden");
+      masonry.setAttribute("aria-busy", "false");
+
+      const existingCards = masonry.querySelectorAll(".card");
+      existingCards.forEach((el) => el.remove());
+
+      items.forEach((item, i) => {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        card.setAttribute("aria-label", `View image ${i + 1}: ${item.title || "Untitled"}`);
+
+        const img = document.createElement("img");
+        img.loading = "lazy";
+        img.src = item.thumb || item.src;
+        img.alt = item.title || "";
+        img.className = "card-img";
+
+        const openImage = () => openLB(i);
+        card.addEventListener("click", openImage);
+        card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openImage(); } });
+
+        card.appendChild(img);
+        masonry.appendChild(card);
+      });
+    }
+
+    lbClose.addEventListener("click", closeLB);
+    lbPrev.addEventListener("click", prev);
+    lbNext.addEventListener("click", next);
+
+    // MAIN LIGHTBOX CLICK HANDLER (Handles Nav, Toggles, Actions)
+    lb.addEventListener("click", (e) => {
+      // 1. Identify which slide slot was clicked
+      const slot = e.target.closest(".lb-slide-slot");
+      if (!slot) return; // Click was on the background/track, handled by other listeners
+
+      // 2. Identify interactive elements
+      const openNewBtn = e.target.closest(".lb-open-new");
+      const promptMoreBtn = e.target.closest(".lb-prompt-more"); // The (...) button
+      const promptWrap = e.target.closest(".lb-prompt-wrap");    // <--- NEW: The text body
+      const copyBtn = e.target.closest(".lb-copy");
+
+      // --- ACTION: Open Original Image ---
+      if (openNewBtn) {
+        const link = slot.querySelector(".lb-media-link");
+        if (link && link.href) window.open(link.href, "_blank", "noopener,noreferrer");
+        return;
+      }
+
+      // --- ACTION: Expand/Collapse Text (Clicking Button OR Text Body) ---
+      if (promptMoreBtn || promptWrap) {
+        const wrap = slot.querySelector(".lb-prompt-wrap");
+        const btn = slot.querySelector(".lb-prompt-more"); // Get button to sync icon state
+
+        if (wrap) {
+          // Toggle the expanded class
+          const expanded = wrap.classList.toggle("lb-prompt-expanded");
+          
+          // Sync the button's icon/state (even if we clicked the text)
+          if (btn) {
+            btn.setAttribute("aria-expanded", expanded);
+            btn.setAttribute("aria-label", expanded ? "Show less prompt" : "Show more prompt");
+          }
+        }
+        return;
+      }
+
+      // --- ACTION: Copy Prompt ---
+      if (copyBtn) {
+        const textEl = slot.querySelector(".lb-prompt-text");
+        const text = (textEl && textEl.textContent || "").trim();
+        if (!text) return;
+        
+        navigator.clipboard.writeText(text).then(() => {
+          const icon = copyBtn.querySelector(".lb-copy-icon");
+          if (icon) {
+            const orig = icon.textContent;
+            icon.textContent = "done"; // Visual feedback
+            setTimeout(() => { icon.textContent = orig; }, 1500);
+          }
+        });
+      }
+    });
+
+    lb.addEventListener("click", (e) => {
+      if (e.target === lb) closeLB();
+    });
+
+    /* Mobile: touchend fallback so close works even when click is blocked */
+    lbClose.addEventListener("touchend", (e) => {
+      e.preventDefault();
+      closeLB();
+    }, { passive: false });
+
+    lbContainer.addEventListener("keydown", (e) => {
+      if (!lbContainer.classList.contains("open")) return;
+      if (e.key === "Tab") {
+        const focusables = Array.from(lbContainer.querySelectorAll("button:not([disabled])"));
+        const first = focusables[0], last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (!lbContainer.classList.contains("open")) return;
+      if(e.key === "Escape") closeLB();
+      if(e.key === "ArrowLeft") prev();
+      if(e.key === "ArrowRight") next();
+    });
+
+    // Mobile: Live drag on 3-panel track; swipe-back fixed via better intent detection
+    (function(){
+      const track = document.querySelector(".lb-track");
+      if (!track) return;
+
+      let startX = 0, startY = 0;
+      let currentDeltaX = 0;
+      let isDragging = false;
+      let isScrolling = false;
+      let isIntentDetermined = false;
+      const thresholdPercent = 0.2;
+      const intentThresholdPx = 12;  /* don't decide scroll vs swipe until we've moved this far */
+      const scrollRatio = 1.5;       /* require vertical to be 1.5× horizontal to treat as scroll */
+
+      function setTrackTransform(offsetPx) {
+        track.style.transform = `translate3d(calc(-33.3333% + ${offsetPx}px), 0, 0)`;
+      }
+
+      track.addEventListener("touchstart", (e) => {
+        if (e.touches.length > 1) return;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        currentDeltaX = 0;
+        isDragging = true;
+        isScrolling = false;
+        isIntentDetermined = false;
+        track.classList.remove("lb-animating");
+      }, { passive: true });
+
+      track.addEventListener("touchmove", (e) => {
+        if (!isDragging) return;
+        const x = e.touches[0].clientX;
+        const y = e.touches[0].clientY;
+        const deltaX = x - startX;
+        const deltaY = y - startY;
+        const absX = Math.abs(deltaX);
+        const absY = Math.abs(deltaY);
+
+        if (!isIntentDetermined) {
+          const total = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+          if (total < intentThresholdPx) return; /* wait for meaningful movement */
+          if (absY > scrollRatio * absX) {
+            isScrolling = true;
+            isDragging = false;
+            return;
+          }
+          isIntentDetermined = true;
+        }
+        if (isScrolling) return;
+        currentDeltaX = deltaX;
+        setTrackTransform(deltaX);
+      }, { passive: true });
+
+      track.addEventListener("touchend", (e) => {
+        if (!isDragging || isScrolling) return;
+        isDragging = false;
+        track.classList.add("lb-animating");
+        const thresholdPx = lb.offsetWidth * thresholdPercent;
+        const goPrev = currentDeltaX > thresholdPx && currentIndex > 0;
+        const goNext = currentDeltaX < -thresholdPx && currentIndex < items.length - 1;
+
+        if (goNext) {
+          track.style.transform = "translate3d(-66.6666%, 0, 0)";
+          track.addEventListener("transitionend", function onEnd() {
+            track.removeEventListener("transitionend", onEnd);
+            currentIndex++;
+            renderCarousel(currentIndex);
+            updateNavState();
+          }, { once: true });
+        } else if (goPrev) {
+          track.style.transform = "translate3d(0%, 0, 0)";
+          track.addEventListener("transitionend", function onEnd() {
+            track.removeEventListener("transitionend", onEnd);
+            currentIndex--;
+            renderCarousel(currentIndex);
+            updateNavState();
+          }, { once: true });
+        } else {
+          track.style.transform = "translate3d(-33.3333%, 0, 0)";
+        }
+      });
+    })();
+
+    load();
+
+    // HERO PARALLAX — RAF loop for smooth updates on mobile (iOS delays scroll events)
+    (function(){
+      const hero = document.getElementById("hero");
+      const media = document.getElementById("heroMedia");
+      if(!hero || !media) return;
+
+      const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if(reduceMotion) return;
+
+      function update(){
+        const rect = hero.getBoundingClientRect();
+        if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
+
+        const progress = Math.min(Math.max(-rect.top / rect.height, 0), 1);
+        const isDesktop = window.innerWidth >= 900;
+        const maxTranslate = isDesktop ? 260 : 170;
+        const maxScaleOut  = isDesktop ? 0.14 : 0.10;
+        const translate = progress * maxTranslate;
+        const scale = 1.14 - progress * maxScaleOut;
+
+        media.style.transform = `translate3d(0, ${translate}px, 0) scale(${scale})`;
+      }
+
+      function loop(){
+        update();
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+    })();
+
+    // Smooth scroll to gallery (used by hero click and hero scroll button)
+    function smoothScrollToGallery(){
+      const target = document.getElementById("masonry");
+      const banner = document.querySelector(".hero-banner");
+      if(!target) return;
+      const startY = window.scrollY;
+      const offset = banner ? banner.offsetHeight : 0;
+      const targetY = target.getBoundingClientRect().top + window.scrollY - offset;
+      const distance = targetY - startY;
+      const duration = 1400;
+      const startTime = performance.now();
+      function easeInOutCubic(t){ return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2; }
+      function step(now){
+        const elapsed = now - startTime;
+        const t = Math.min(elapsed / duration, 1);
+        window.scrollTo(0, startY + distance * easeInOutCubic(t));
+        if(t < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    (function(){
+      const hero = document.getElementById("hero");
+      const heroScrollBtn = document.getElementById("heroScrollBtn");
+      const target = document.getElementById("masonry");
+      if(!hero || !target) return;
+      hero.style.cursor = "pointer";
+      hero.addEventListener("click", (e) => { if (e.target === hero || e.target.closest(".hero-media") || e.target.closest(".hero-caption")) smoothScrollToGallery(); });
+      if (heroScrollBtn) heroScrollBtn.addEventListener("click", (e) => { e.stopPropagation(); smoothScrollToGallery(); });
+    })();
+
+    // FOOTER ARROW CLICK → SCROLL TO TOP (mirrored behavior)
+(function(){
+  const btn = document.getElementById("footerScroll");
+  const target = document.getElementById("masonry");
+  const banner = document.querySelector(".hero-banner");
+  if(!btn || !target) return;
+
+  btn.addEventListener("click", () => {
+    const startY = window.scrollY;
+    const offset = banner ? banner.offsetHeight : 0;
+    const targetY =
+      target.getBoundingClientRect().top + window.scrollY - offset;
+    const distance = targetY - startY;
+
+        const duration = 1400; // ms (matches hero)
+        const startTime = performance.now();
+
+        function easeInOutCubic(t){
+          return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+        }
+
+        function step(now){
+          const elapsed = now - startTime;
+          const t = Math.min(elapsed / duration, 1);
+          const eased = easeInOutCubic(t);
+
+          window.scrollTo(0, startY + distance * eased);
+
+          if(t < 1) requestAnimationFrame(step);
+        }
+
+        requestAnimationFrame(step);
+      });
+    })();
+  </script>
+</body>
+</html>
