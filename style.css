@@ -17,6 +17,18 @@
   --transition-smooth: 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
+/* === CUSTOM SELECTION HIGHLIGHT === */
+::selection {
+  background: rgba(17, 17, 17, 0.15); /* Faint editorial grey */
+  color: #111; /* Keep text sharp black */
+}
+
+/* Webkit fallback for older browsers */
+::-moz-selection {
+  background: rgba(17, 17, 17, 0.15);
+  color: #111;
+}
+
 * { box-sizing: border-box; }
 
 html, body {
