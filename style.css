@@ -1030,7 +1030,7 @@ body {
   animation: heroScrollFloat 1.35s ease-in-out infinite;
 
   /* Keep the bottom margin at 14px to maintain the text gap we added */
-  margin: -20px 0 14px;
+  margin: -80px 0 14px;
 
   order: 2;
 
@@ -1087,4 +1087,70 @@ body {
     transform: translateX(16px) translateY(-12px) translateZ(0);
     -webkit-transform: translateX(16px) translateY(-12px) translateZ(0);
   }
+}
+
+/* =========================================
+   EDITORIAL LAYOUT (Context & Execution)
+   ========================================= */
+
+.editorial-layout {
+  /* Center the reading column */
+  max-width: 680px; 
+  margin: 100px auto 96px; /* Slight pause after gallery; flow to footer */
+  padding: 0 12px;
+}
+
+/* Block Spacing */
+.editorial-block {
+  margin-bottom: 64px; /* Tighter: Context and Execution Layer feel related */
+}
+.editorial-block:last-child {
+  margin-bottom: 0;
+}
+
+/* Typography: Headers (Inter) */
+.editorial-label {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted); /* #777 */
+  margin: 0 0 32px 0;
+  opacity: 0.8;
+}
+
+/* Typography: Body (Source Serif 4) */
+.editorial-prose {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-weight: 300;
+  font-style: normal; /* Enforce Roman style */
+  font-size: 18px;
+  line-height: 1.6;
+  color: #111;
+  -webkit-font-smoothing: antialiased;
+}
+
+.editorial-prose p {
+  margin-bottom: 24px;
+}
+.editorial-prose p:last-child {
+  margin-bottom: 0;
+}
+
+/* VARIANT: Execution Layer (Quieter, Technical) */
+.execution-layer .editorial-prose {
+  font-size: 14px; /* Step down size */
+  line-height: 1.65;
+  color: #555; /* Reduce contrast to push it into secondary hierarchy */
+}
+
+/* Mobile Adjustments */
+@media (max-width: 640px) {
+  .editorial-layout {
+    margin: 72px auto 72px;
+    max-width: 100%;
+  }
+  .editorial-prose { font-size: 18px; }
+  .execution-layer .editorial-prose { font-size: 14px; }
 }
