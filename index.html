@@ -4,6 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Latent Illumination — AI Art Gallery</title>
+  <link rel="icon" type="image/png" href="fast-forward.png">
+  <link rel="apple-touch-icon" href="fast-forward.png">
 
   <meta name="description" content="Latent Illumination — where creative intent becomes visual clarity. A gallery of AI-generated imagery with prompts." />
   <meta name="theme-color" content="#ffffff" />
@@ -338,14 +340,23 @@
 
       // --- ACTION: Expand/Collapse Text (Clicking Button OR Text Body) ---
       if (promptMoreBtn || promptWrap) {
+
+        // 1. Check if the user specifically clicked the BUTTON (or icon inside it)
+        const isClickingButton = promptMoreBtn && (e.target === promptMoreBtn || promptMoreBtn.contains(e.target));
+
+        // 2. LOGIC GUARD:
+        // If they clicked the TEXT (not the button) AND they have text selected -> STOP.
+        // This prevents the box from closing when someone is just trying to copy text.
+        if (!isClickingButton && window.getSelection().toString().length > 0) return;
+
+        // 3. Proceed with Toggle
         const wrap = slot.querySelector(".lb-prompt-wrap");
         const btn = slot.querySelector(".lb-prompt-more"); // Get button to sync icon state
 
         if (wrap) {
-          // Toggle the expanded class
           const expanded = wrap.classList.toggle("lb-prompt-expanded");
-          
-          // Sync the button's icon/state (even if we clicked the text)
+
+          // Sync the button's icon/state
           if (btn) {
             btn.setAttribute("aria-expanded", expanded);
             btn.setAttribute("aria-label", expanded ? "Show less prompt" : "Show more prompt");
