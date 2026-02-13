@@ -31,6 +31,11 @@
 
 * { box-sizing: border-box; }
 
+html {
+  /* FIX: Reserve scrollbar space to prevent layout shifts on modal open/close (Windows/Edge) */
+  scrollbar-gutter: stable;
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -1136,9 +1141,9 @@ body {
   .lb-prompt-more { display: inline-flex !important; }
   .lb-nav { display: none !important; }
 
-  /* FIX: Lock font size to 16px (matches Portrait) for better use of vertical space */
+  /* Match tablet: 18px (was 16px) */
   .lb-prompt {
-    font-size: 16px;
+    font-size: 18px;
     line-height: 1.5;
   }
 
@@ -1175,7 +1180,7 @@ body {
 
 @media (max-width: 640px){
   .lb-prompt{
-    font-size: 16px;
+    font-size: 18px;
     line-height: 1.5;
   }
 }
