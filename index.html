@@ -214,6 +214,15 @@
       const textEl = slot.querySelector(".lb-prompt-text");
       const wrap = slot.querySelector(".lb-prompt-wrap");
       const moreBtn = slot.querySelector(".lb-prompt-more");
+
+      // === NEW: Reset Scroll State on Slide Change ===
+      const side = slot.querySelector(".lb-side");
+      if (side) {
+        side.scrollTop = 0; // Jump to top
+        side.classList.remove("scrolled"); // Hide top fade
+      }
+      // ===============================================
+
       if (index < 0 || index >= items.length) {
         slot.classList.add("lb-slot-hidden");
         if (img) { img.src = ""; img.alt = ""; }
@@ -239,12 +248,19 @@
       const track = lb.querySelector(".lb-track");
       const slots = lb.querySelectorAll(".lb-slide-slot");
       if (!track || slots.length !== 3) return;
-      const idxPrev = centerIndex - 1;
+      
+      const len = items.length;
+      if (len === 0) return;
+
+      // Infinite Loop Logic: Wrap indices
+      const idxPrev = (centerIndex - 1 + len) % len;
       const idxCur = centerIndex;
-      const idxNext = centerIndex + 1;
+      const idxNext = (centerIndex + 1) % len;
+
       populateSlot(slots[0], idxPrev);
       populateSlot(slots[1], idxCur);
       populateSlot(slots[2], idxNext);
+      
       track.classList.remove("lb-animating");
       track.style.transform = "translate3d(-33.3333%, 0, 0)";
     }
@@ -275,25 +291,37 @@
     }
 
     function updateNavState(){
-      const hasPrev = currentIndex > 0;
-      const hasNext = currentIndex < items.length - 1;
-      lbPrev.disabled = !hasPrev;
-      lbNext.disabled = !hasNext;
-      lbPrev.style.opacity = hasPrev ? "1" : "0.25";
-      lbNext.style.opacity = hasNext ? "1" : "0.25";
+      // Always enable buttons if we have more than 1 item
+      const hasMultiple = items.length > 1;
+      lbPrev.disabled = !hasMultiple;
+      lbNext.disabled = !hasMultiple;
+      lbPrev.style.opacity = hasMultiple ? "1" : "0.25";
+      lbNext.style.opacity = hasMultiple ? "1" : "0.25";
+    }
+
+    function updateLbOverflow(side) {
+      if (!side) return;
+      const isMobileLandscape = window.matchMedia("(orientation: landscape) and (max-height: 600px)").matches;
+      if (!isMobileLandscape) {
+        side.classList.remove("lb-overflow");
+        return;
+      }
+      const isOverflowing = side.scrollHeight > side.clientHeight + 1;
+      side.classList.toggle("lb-overflow", isOverflowing);
     }
 
     function prev() {
-      if (currentIndex > 0) {
-        currentIndex--;
-        renderCarousel(currentIndex);
-      }
+      if (items.length < 2) return;
+      // Wrap: If at 0, go to last
+      currentIndex = (currentIndex - 1 + items.length) % items.length;
+      renderCarousel(currentIndex);
     }
+
     function next() {
-      if (currentIndex < items.length - 1) {
-        currentIndex++;
-        renderCarousel(currentIndex);
-      }
+      if (items.length < 2) return;
+      // Wrap: If at last, go to 0
+      currentIndex = (currentIndex + 1) % items.length;
+      renderCarousel(currentIndex);
     }
 
     async function load(){
@@ -334,9 +362,24 @@
         img.alt = item.title || "";
         img.className = "card-img";
 
-        const openImage = () => openLB(i);
-        card.addEventListener("click", openImage);
-        card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openImage(); } });
+        // Add click event to each card
+        card.addEventListener("click", (e) => {
+          e.preventDefault();
+
+          // 1. FREEZE: Keep the lift active instantly
+          card.classList.add("lb-hold");
+
+          // 2. OPEN LIGHTBOX
+          openLB(i);
+
+          // 3. CLEANUP (Behind the scenes)
+          // Wait for the lightbox fade-in (approx 350ms)
+          setTimeout(() => {
+            card.classList.remove("lb-hold"); // Unfreeze the lift
+            card.blur(); // CRITICAL: Remove browser focus so the card is "fresh" when you return
+          }, 350);
+        });
+        card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLB(i); } });
 
         card.appendChild(img);
         masonry.appendChild(card);
@@ -389,6 +432,15 @@
             btn.setAttribute("aria-expanded", expanded);
             btn.setAttribute("aria-label", expanded ? "Show less prompt" : "Show more prompt");
           }
+
+          // === FIX: Reset Scroll & Fade State on Toggle ===
+          // This ensures every expand is a "fresh reading session" (no persisted top fade)
+          const side = slot.querySelector(".lb-side");
+          if (side) {
+            side.scrollTop = 0;
+            side.classList.remove("scrolled");
+            updateLbOverflow(side);
+          }
         }
         return;
       }
@@ -412,6 +464,10 @@
 
     lb.addEventListener("click", (e) => {
       if (e.target === lb) closeLB();
+    });
+
+    window.addEventListener("resize", () => {
+      document.querySelectorAll(".lb-side").forEach(updateLbOverflow);
     });
 
     /* Mobile: touchend fallback so close works even when click is blocked */
@@ -543,14 +599,16 @@
         isDragging = false;
         track.classList.add("lb-animating");
         const thresholdPx = lb.offsetWidth * thresholdPercent;
-        const goPrev = currentDeltaX > thresholdPx && currentIndex > 0;
-        const goNext = currentDeltaX < -thresholdPx && currentIndex < items.length - 1;
+        // Allow swipe wrapping
+        const goPrev = currentDeltaX > thresholdPx && items.length > 1;
+        const goNext = currentDeltaX < -thresholdPx && items.length > 1;
 
         if (goNext) {
           track.style.transform = "translate3d(-66.6666%, 0, 0)";
           track.addEventListener("transitionend", function onEnd() {
             track.removeEventListener("transitionend", onEnd);
-            currentIndex++;
+            // Wrap Next
+            currentIndex = (currentIndex + 1) % items.length;
             renderCarousel(currentIndex);
             updateNavState();
           }, { once: true });
@@ -558,7 +616,8 @@
           track.style.transform = "translate3d(0%, 0, 0)";
           track.addEventListener("transitionend", function onEnd() {
             track.removeEventListener("transitionend", onEnd);
-            currentIndex--;
+            // Wrap Prev
+            currentIndex = (currentIndex - 1 + items.length) % items.length;
             renderCarousel(currentIndex);
             updateNavState();
           }, { once: true });
@@ -663,6 +722,18 @@
         }
 
         requestAnimationFrame(step);
+      });
+    })();
+
+    // TABLET TOP FADE LOGIC — Tracks scroll position to toggle header fade
+    (function(){
+      const sides = document.querySelectorAll(".lb-side");
+      sides.forEach(side => {
+        side.addEventListener("scroll", () => {
+          // If scrolled down more than 10px, add class to show top fade
+          if (side.scrollTop > 10) side.classList.add("scrolled");
+          else side.classList.remove("scrolled");
+        }, { passive: true });
       });
     })();
   </script>
