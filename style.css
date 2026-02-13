@@ -103,6 +103,30 @@ body {
   padding: 0 var(--pad) 40px;
 }
 
+/* === MOBILE & TABLET GALLERY NORMALIZATION === */
+/* Reduces outer padding to 6px (matching the internal --gap) for a unified grid. */
+/* Applies to Tablets (iPad Mini/Air/Pro Portrait) and Mobile. */
+@media (max-width: 1024px) {
+  .wrap {
+    /* Match the 6px gutter exactly */
+    /* max() ensures we never go below the device safe-area (notch/dynamic island) */
+    padding-left: max(var(--gap), env(safe-area-inset-left));
+    padding-right: max(var(--gap), env(safe-area-inset-right));
+  }
+}
+
+/* === IPAD PRO 12.9" LANDSCAPE GALLERY FIX === */
+/* Forces large touch devices (which normally get desktop styles) to use tight 6px spacing. */
+/* Ensures the outer padding matches the internal gutters, just like on smaller tablets. */
+@media (min-width: 1025px) and (max-width: 1366px) and (orientation: landscape) and (pointer: coarse) {
+  .wrap {
+    /* Override desktop padding (12px) with gutter size (6px) */
+    /* safe-area-inset ensures we don't hug the bezel too tight if there's a notch/handle */
+    padding-left: max(var(--gap), env(safe-area-inset-left)) !important;
+    padding-right: max(var(--gap), env(safe-area-inset-right)) !important;
+  }
+}
+
 /* Masonry */
 .masonry{
   column-count: 3;
@@ -144,10 +168,24 @@ body {
   background: #fff;
   transition: transform var(--transition-fast), filter var(--transition-fast);
 }
-.card:hover .card-img,
-.card:focus .card-img {
-  transform: translateY(-2px);
-  filter: contrast(1.03);
+/* DESKTOP ONLY: Hover interactions (Lift + Contrast) */
+@media (hover: hover) and (pointer: fine) {
+
+  /* 1. Standard Hover: Applies lift.
+     Note: We REMOVED .card:focus from here.
+     This ensures that if a card just has focus (after closing lightbox), it sits flat.
+     But since :hover works on focused elements, it will still lift when you mouse over. */
+  .card:hover .card-img {
+    transform: translateY(-2px);
+    filter: contrast(1.03);
+  }
+
+  /* 2. The "Freeze" State:
+     Forced by JS during the open transition so the card doesn't snap down visibly. */
+  .card.lb-hold .card-img {
+    transform: translateY(-2px) !important;
+    filter: contrast(1.03) !important;
+  }
 }
 
 
@@ -158,8 +196,8 @@ body {
   max-width: var(--container);
   margin: 0 auto;
 
-  /* FIX: Increased bottom padding from 15px to 40px for more breathing room */
-  padding: 8px calc(var(--footer-pad) * 0.9) 40px;
+  /* Footer vertical padding reduced by 12px on desktop (0 top, 28px bottom) */
+  padding: 0 calc(var(--footer-pad) * 0.9) 28px;
 
   text-align: center;
   color: #b0b0b0;
@@ -198,8 +236,8 @@ body {
     --footer-pad: 28px;
     font-size: 11px;
 
-    /* FIX: Dialed back bottom padding from 40px to 28px (a happier medium) */
-    padding: 8px 18px 28px 18px;
+    /* Footer vertical padding reduced by 8px (0 top, 20px bottom) */
+    padding: 0 18px 20px 18px;
 
     transform: translateY(-5%);
   }
@@ -383,7 +421,9 @@ body {
   color: var(--muted);
   letter-spacing: .02em; 
   line-height: 1.5; 
-  padding-right: 6px;
+  
+  /* CHANGED: Increased from 6px to 24px to separate text from desktop scrollbar */
+  padding-right: 24px;
 }
 
 /* Prompt text */
@@ -406,9 +446,10 @@ body {
   font-style: italic;
   font-weight: 300;
   font-size: 12px;
-  color: #222;
+  color: #444;         /* CHANGED: Match description color (#444) */
   letter-spacing: 0.08em;
   line-height: 1.25;
+  margin-bottom: 8px; /* Space between label and description */
 }
 
 /* Prompt wrapper (for mobile collapse) */
@@ -444,6 +485,14 @@ body {
   gap: 2px;
   align-items: center;
   justify-content: flex-end;
+}
+
+/* --- UI POLISH: PROMPT LABEL --- */
+/* Reduce visual weight to make it a subtle context cue */
+.lb-prompt-label {
+  opacity: 0.85 !important;      /* Slight reduction (Clean & subtle) */
+  font-weight: 500 !important;   /* Ensure it's not too bold */
+  letter-spacing: 0.05em;        /* Slight tracking for readability at lower contrast */
 }
 
 /* Copy prompt button (icon only) */
@@ -597,17 +646,27 @@ body {
     margin: 0;
   }
 
+  /* 1. Enable positioning context for bottom gradient */
+  .lb-content {
+    position: relative !important;
+  }
+
   /* Slot content: same full-viewport layout on mobile */
-  .lb-slide-slot .lb-content{
+  .lb-slide-slot .lb-content {
     width: 100vw;
     height: 100dvh;
     max-height: 100dvh;
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 24px; /* FIX: Increased from 14px to 24px */
+    
+    /* UPDATED: Reduced from 24px to 20px for a slightly tighter look */
+    gap: 20px;
+    
     overflow: hidden;
-    padding: 72px 16px 16px;
+    
+    /* UPDATED: Removed bottom padding (was 16px) -> 0 */
+    padding: 72px 16px 0;
   }
 
   /* Image block (bigger, centered) */
@@ -620,24 +679,68 @@ body {
     margin-top: -14px;   /* tweak: try -8px to -20px */
   }
 
+  /* Mobile portrait only: nudge image up a tiny bit more */
+  @media (orientation: portrait) {
+    .lb-media { margin-top: -16px !important; }
+  }
+
   /* Disable image link on mobile so tap doesn’t open new tab */
   .lb-media-link{ pointer-events: auto; }
 
-  /* Prompt block (scrolls independently) */
-  .lb-side{
+  .lb-side {
     flex: 1 1 auto;
     min-height: 0;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
+
+    /* FIX: Force Top to 0 (locks gradient), Set Bottom to 24px (perfect landing) */
     padding: 0;
+    padding-bottom: 24px !important;
   }
 
-  /* Mobile: label + first 3 lines of body (4 total); "more" button reveals rest */
+  /* 3. TOP GRADIENT (Sticky) - Hidden initially to show "PROMPT:" label */
+  .lb-side::before {
+    content: "";
+    display: block;
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    margin-bottom: -40px;
+    background: linear-gradient(to bottom, var(--bg) 15%, transparent);
+    z-index: 10;
+    pointer-events: none;
+
+    /* FIX: Hide by default so label is crisp */
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  /* SHOW TOP GRADIENT ONLY ON SCROLL */
+  .lb-side.scrolled::before {
+    opacity: 1;
+  }
+
+  /* 4. BOTTOM GRADIENT (Fixed to bottom edge) - Always visible */
+  .lb-content::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: linear-gradient(to top, var(--bg) 15%, transparent);
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  /* Mobile: label + first 4 lines of body (5 total); "more" button reveals rest */
   .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt-text{
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
     overflow: hidden;
   }
   .lb-prompt-more{
@@ -647,6 +750,14 @@ body {
   /* Hide prev/next arrows on mobile; use swipe instead */
   .lb-nav{
     display: none;
+  }
+
+  /* Lift icons away from the screen edge */
+  .lb-actions {
+    /* CHANGED: Final adjustment to 14px */
+    padding-bottom: 14px;
+    
+    margin-right: 4px;
   }
 }
 
@@ -682,19 +793,187 @@ body {
     -webkit-overflow-scrolling: unset;
     padding-right: 6px;
   }
+  /* UPDATED: Editorial Preview (8 lines) */
   .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt-text{
-    display: block;
-    line-clamp: none;
-    -webkit-line-clamp: unset;
-    -webkit-box-orient: unset;
-    overflow: visible;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 8; /* Generous preview (8 lines) */
+    line-clamp: 8;
+    overflow: hidden;
   }
   .lb-prompt-more{
-    display: none;
+    display: inline-flex; /* Show the (...) button */
   }
   /* Tablet: hide < > arrows; use swipe on image to go prev/next */
   .lb-nav{
     display: none;
+  }
+
+  /* Move X icon slightly up and right for tablets (vertical: 5px up, 3px right) */
+  .lb-close {
+    top: -5px !important;
+    right: 5px !important;
+  }
+}
+
+/* TABLET PORTRAIT — increase spaciousness, keep X fixed */
+@media (min-width: 641px) and (max-width: 1024px) and (orientation: portrait){
+
+  /* Do NOT touch .lb-close global behavior, just positioning below */
+
+  /* Main lightbox content container */
+  .lb-content,
+  .lb-figure,
+  .lb-slide-slot .lb-content{
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin: 0;
+
+    /* Frame Spacing: Keeps text away from screen edge */
+    padding-top: 85px;
+    padding-left: 72px;
+    padding-right: 72px;
+    padding-bottom: 65px !important;
+
+    /* UPDATED: Increased gap from 48px to 64px for better vertical breathing room */
+    gap: 64px;
+
+    position: relative !important;
+  }
+
+  /* Image block */
+  .lb-media{
+    flex: 0 0 auto;
+    min-height: 0;
+  }
+
+  .lb-img{
+    max-height: min(48vh, 620px);
+  }
+
+  /* Text column */
+  .lb-side{
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0;
+
+    /* Scroll Clearance: Matches the bottom gradient height so icons can escape */
+    padding-bottom: 40px !important;
+  }
+
+  /* === TOP FADE: Sticky & Scroll-Triggered === */
+  /* Sits at the top of the scroll container, hidden by default */
+  .lb-side::before {
+    content: "";
+    display: block;
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    /* Match the bottom fade height for symmetry */
+    height: 40px;
+    /* Negative margin pulls the text up so it sits UNDER the fade */
+    margin-bottom: -40px;
+
+    /* White to Transparent (Top Down) */
+    background: linear-gradient(to bottom, var(--bg) 12%, transparent);
+    z-index: 10;
+    pointer-events: none;
+
+    /* Default: Invisible (when at top) */
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  /* ACTIVATE TOP FADE: Only when scrolled (.scrolled) AND expanded */
+  .lb-side.scrolled:has(.lb-prompt-expanded)::before {
+    opacity: 1;
+  }
+
+  /* === BOTTOM FADE: Expanded Text Only === */
+  .lb-content:has(.lb-prompt-expanded)::after {
+    content: "";
+    position: absolute;
+    z-index: 10;
+    pointer-events: none;
+
+    /* Anchor to the Frame Spacing */
+    bottom: 65px;
+    left: 0;
+    right: 0;
+
+    /* Height matches Scroll Clearance */
+    height: 40px;
+
+    /* Soft Fade (Transparent to White) */
+    background: linear-gradient(to top, var(--bg) 12%, transparent);
+    width: 100%;
+  }
+
+  /* NEW: Move X icon inward for Tablet Portrait (Re-balanced) */
+  /* 1px top (1px nudge down), 10px right */
+  .lb-close {
+    top: 1px !important;
+    right: 10px !important;
+  }
+
+  /* Hide nav arrows in stacked portrait mode */
+  .lb-nav{
+    display: none;
+  }
+}
+
+/* === IPAD PRO 12.9" PORTRAIT SPECIFIC (1024px Width) === */
+/* Increases breathing room for large canvas + Re-aligns Bottom Gradient */
+@media (min-width: 1000px) and (max-width: 1024px) and (orientation: portrait) {
+
+  /* 1. EXPAND THE FRAME (More breathing room) */
+  .lb-content,
+  .lb-figure,
+  .lb-slide-slot .lb-content {
+    padding-top: 105px !important;    /* UPDATED: 105px */
+    padding-left: 100px !important;   /* Large side gutters */
+    padding-right: 100px !important;
+    padding-bottom: 90px !important;  /* Bottom clearance */
+  }
+
+  /* 2. RE-ALIGN BOTTOM GRADIENT (Calculated) */
+  /* The gradient must sit exactly at the new bottom padding line (90px) */
+  .lb-content:has(.lb-prompt-expanded)::after {
+    bottom: 90px !important;
+  }
+}
+
+/* Tablet landscape only (tall viewport): move X icon. min-height: 601px excludes phone landscape. */
+@media (min-width: 641px) and (max-width: 1024px) and (orientation: landscape) and (min-height: 601px) {
+  .lb-close {
+    top: -4px !important;
+    right: 3px !important;
+  }
+}
+
+/* TABLET LANDSCAPE (iPad Mini & Air) - EXCLUDES MOBILE */
+/* Added (min-height: 600px) to ensure we don't catch phones in landscape */
+@media (min-width: 641px) and (max-width: 1024px) and (orientation: landscape) and (min-height: 600px) {
+
+  .lb-content {
+    flex-direction: row; /* Ensure side-by-side */
+
+    /* FIX: center + fixed gap to mimic the tight Desktop look */
+    justify-content: center !important;
+    gap: 48px !important;
+
+    padding: 0 40px;
+    width: 100%;
+    height: 100%;
   }
 }
 
@@ -706,41 +985,48 @@ body {
 }
 
 /* === MOBILE LANDSCAPE SPECIFIC LAYOUT (FINAL FRAME FIX) === */
-/* Target: Wide but short screens (phones turned sideways) */
+/* Target: Short landscape = phones (max-height: 600px). No width limit so 844px-wide phones match. */
 @media (orientation: landscape) and (max-height: 600px) {
 
-  /* 1. MAIN CONTAINER: Keep the Grid Layout */
+  /* 1. CONTAINER: Enable positioning for gradients */
   .lb-content {
     display: grid !important;
-    grid-template-columns: 1fr 45vw !important;
+    grid-template-columns: 1fr 50vw !important;
     grid-template-rows: 100% !important;
-    
+
     width: 100vw !important;
     height: 100svh !important;
     max-height: 100svh !important;
-    
+
     padding: 0 !important;
     margin: 0 !important;
-    gap: 0 !important;
+    gap: 0px !important;
     overflow: hidden !important;
+    position: relative !important;
   }
 
-  /* 2. IMAGE SLOT: Explicit height to prevent collapse */
+  /* Shift image + text group right without shrinking image (wider width + translate) */
+  .lb-slide-slot .lb-content {
+    width: calc(100vw + 20px) !important;
+    transform: translateX(10px) !important;
+  }
+
+  /* 2. IMAGE SLOT: Balanced frame */
   .lb-media {
     grid-column: 1 / 2;
     grid-row: 1 / 1;
-    height: 100% !important; /* Key: Holds the space open */
+    height: 100% !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 12px !important;
-    
+
+    padding: 24px !important;
+
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     overflow: hidden !important;
   }
 
-  /* Wrapper: Fills the slot, centers the image */
   .lb-media-link {
     width: 100%;
     height: 100%;
@@ -749,8 +1035,7 @@ body {
     justify-content: center;
   }
 
-  /* 3. THE IMAGE: FRAME FIX */
-  /* switched to 'auto' so the border hugs the image pixels exactly */
+  /* 3. THE IMAGE: Hugs the border exactly */
   .lb-img {
     width: auto !important;
     height: auto !important;
@@ -760,36 +1045,107 @@ body {
     display: block !important;
   }
 
-  /* 4. TEXT SLOT: Keep existing "Prompt Fix" */
+  /* 2. TEXT COLUMN: Increased right padding to clear X icon */
   .lb-side {
     grid-column: 2 / 3;
     grid-row: 1 / 1;
     height: 100% !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
-    
+
     display: flex !important;
     flex-direction: column !important;
-    justify-content: flex-start !important;
-    padding: 50px 32px 24px 0 !important;
+
+    /* DEFAULT: Center vertically */
+    justify-content: center !important;
+
+    /* PADDING UPDATE:
+       Top: 32px (nudge text down); Right: 64px (clears X icon); Bottom: 24px (gradient landing) */
+    padding: 32px 64px 24px 0 !important;
   }
 
-  /* 5. UI ELEMENTS */
+  /* 3. EXPANDED STATE: Snap to Top (only when content overflows; JS toggles .lb-overflow) */
+  .lb-side.lb-overflow:has(.lb-prompt-expanded) {
+    justify-content: flex-start !important;
+
+    /* Add clearance for the top gradient */
+    padding-top: 24px !important;
+  }
+
+  /* 4. TOP GRADIENT (Flush to Screen Top) */
+  /* Positioned absolutely on the parent to guarantee it touches the edge */
+  .lb-content::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50vw; /* Covers the text column half */
+    height: 24px;
+    background: linear-gradient(to bottom, var(--bg) 15%, transparent);
+    z-index: 10;
+    pointer-events: none;
+
+    /* Hidden by default, visible when the text column is scrolled */
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  /* Trigger Top Gradient: Check if child (.lb-side) has .scrolled class */
+  .lb-content:has(.lb-side.scrolled)::before {
+    opacity: 1;
+  }
+
+  /* 5. BOTTOM GRADIENT (Flush to Screen Bottom) */
+  .lb-content::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 50vw; /* Covers the text column half */
+    height: 24px;
+    background: linear-gradient(to top, var(--bg) 15%, transparent);
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  /* 6. SAFETY NET: No extra right gap from inner elements */
+  .lb-prompt-wrap,
+  .lb-prompt-text {
+    margin-right: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* 7. CLAMPING: Only when collapsed */
   .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt-text {
     display: -webkit-box !important;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
     overflow: hidden !important;
   }
-  
+
+  /* 8. EXPANDED: Full text visible */
+  .lb-prompt-wrap.lb-prompt-expanded .lb-prompt-text {
+    display: block !important;
+    line-clamp: none !important;
+    -webkit-line-clamp: none !important;
+    overflow: visible !important;
+  }
+
+  /* 9. UI ELEMENTS */
   .lb-prompt-more { display: inline-flex !important; }
   .lb-nav { display: none !important; }
-  
+
+  /* FIX: Lock font size to 16px (matches Portrait) for better use of vertical space */
+  .lb-prompt {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
   .lb-close {
     position: absolute !important;
-    top: 8px !important;
-    right: 8px !important;
+    top: 5px !important;
+    right: 18px !important;
     z-index: 100;
   }
 }
@@ -805,6 +1161,15 @@ body {
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
     touch-action: manipulation;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .lb-side {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+  }
+  .lb-side::-webkit-scrollbar {
+    display: none;             /* Chrome, Safari, Opera */
   }
 }
 
@@ -1089,6 +1454,14 @@ body {
   }
 }
 
+/* Mobile portrait: nudge X icon up a tiny bit more */
+@media (max-width: 640px) and (orientation: portrait) {
+  button.lb-close {
+    transform: translateX(16px) translateY(-14px) translateZ(0);
+    -webkit-transform: translateX(16px) translateY(-14px) translateZ(0);
+  }
+}
+
 /* =========================================
    EDITORIAL LAYOUT (Context & Execution)
    ========================================= */
@@ -1153,4 +1526,371 @@ body {
   }
   .editorial-prose { font-size: 18px; }
   .execution-layer .editorial-prose { font-size: 14px; }
+}
+
+/* === TOUCH DEVICES (ALL TABLETS) === */
+/* Hide scrollbar UI on any touch device (iPad Pro, Tablets, etc.) */
+@media (pointer: coarse) {
+  .lb-side {
+    -ms-overflow-style: none !important;  /* IE and Edge */
+    scrollbar-width: none !important;     /* Firefox */
+  }
+  
+  .lb-side::-webkit-scrollbar {
+    display: none !important;             /* Chrome, Safari, Opera */
+  }
+}
+
+/* === CUSTOM DESKTOP SCROLLBAR & FADES === */
+/* Target only the text panel on non-touch devices */
+@media (min-width: 1025px) {
+
+  /* === DESKTOP LAYOUT ENHANCEMENTS (Balanced) === */
+  /* 1. EXPANDED STAGE: Medium increase */
+  .lb-content,
+  .lb-figure {
+    /* Moderate width (was 1600px -> now 1400px) */
+    width: min(1400px, 94vw) !important;
+
+    /* Moderate height (was 92vh -> now 90vh) */
+    height: min(90vh, 900px) !important;
+
+    /* Moderate gap (was 48px -> now 42px) */
+    gap: 42px !important;
+
+    /* EXPERIMENT: Slightly wider text column (460 → 480px) for longer lines / one extra word per line. Desktop only; revert by removing this line. */
+    grid-template-columns: 1fr 480px !important;
+  }
+
+  /* Allow the image to fill the new container height */
+  .lb-img {
+    max-height: min(86vh, 860px) !important;
+  }
+
+  /* 1. DESKTOP PROMPT TRUNCATION */
+  /* Enable the (...) button and 10-line preview on desktop */
+  .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt-text {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 10;
+    line-clamp: 10;
+    overflow: hidden;
+  }
+
+  .lb-prompt-more {
+    display: inline-flex !important;
+  }
+
+  /* 2. HIDE SCROLLBAR & POSITIONING (Subtle) */
+  .lb-side {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+
+    /* MICRO ADJUSTMENT:
+       Reduced from 136px to 124px.
+       This is just a tiny nudge down from the 120px baseline. */
+    margin-top: 124px;
+
+    /* SAFETY: 112px is still plenty of clearance */
+    padding-bottom: 112px !important;
+
+    /* LATERAL: Keep the left-shift */
+    padding-right: 64px !important;
+  }
+
+  .lb-side::-webkit-scrollbar {
+    display: none !important; /* Chrome/Safari */
+  }
+
+  /* 3. TOP FADE: Sticky & Scroll-Triggered */
+  /* Sits inside the column, sticks to the top, hidden by default */
+  .lb-side::before {
+    content: "";
+    display: block;
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    margin-bottom: -40px; /* Pull text up so it starts flush */
+
+    /* Matches Tablet Gradient */
+    background: linear-gradient(to bottom, var(--bg) 15%, transparent);
+    z-index: 10;
+    pointer-events: none;
+
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  /* Show top fade only when scrolled (.scrolled) AND expanded */
+  .lb-side.scrolled:has(.lb-prompt-expanded)::before {
+    opacity: 1;
+  }
+
+  /* 4. BOTTOM FADE: Expanded Text Only */
+  /* Anchored to the container, positioned over the text column */
+  .lb-content {
+    position: relative !important;
+  }
+
+  .lb-content:has(.lb-prompt-expanded)::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;      /* Align to the right column */
+    width: 480px;  /* Match the fixed text column width (experiment: 460 → 480) */
+    height: 40px;
+
+    background: linear-gradient(to top, var(--bg) 15%, transparent);
+    z-index: 10;
+    pointer-events: none;
+  }
+}
+
+/* === TABLET LANDSCAPE OVERRIDE === */
+/* Enforce tablet rules for 820px-1024px landscape (excludes phones in landscape).
+   Overrides "Mobile Landscape" when height is < 600px (e.g. iPad Mini).
+   Split-pane: lock container height, 1fr row, text column scrolls only. */
+/* min-height: 601px excludes short (phone) landscape so tablet rules don't override Mobile Landscape. */
+@media (min-width: 820px) and (max-width: 1024px) and (orientation: landscape) and (min-height: 601px) {
+
+  .lb-content,
+  .lb-figure {
+    display: grid !important;
+
+    /* 1. UNLOCK WIDTH: Allow full 96vw (Removing the 900px limit) */
+    width: 96vw !important;
+    max-width: none !important;
+
+    /* 2. REBALANCE COLUMNS: 1fr Image + 340px Text */
+    /* Widens text from 320px -> 340px and lets image fill the rest */
+    grid-template-columns: 1fr 340px !important;
+    grid-template-rows: 1fr !important;
+
+    height: min(86vh, 860px) !important;
+    overflow: hidden !important;
+    align-items: center !important; /* Center vertically */
+    justify-content: center !important;
+    gap: 48px !important;
+
+    margin: 0 !important;
+    padding: 0 40px !important;
+  }
+
+  /* 3. TOP FADE (Mirror of bottom: 40px strip at top, same position/size as bottom) */
+  .lb-content:has(.lb-prompt-expanded)::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 40px;
+    width: 340px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--bg) 15%, transparent);
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .lb-side::before {
+    display: none; /* Top fade is .lb-content::before (mirror of bottom) */
+  }
+
+  /* 4. BOTTOM FADE (Calculated for 340px Column) */
+  /* Anchors strictly to the text column on the right */
+  .lb-content:has(.lb-prompt-expanded)::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+
+    /* CALCULATION: */
+    /* Right Padding (40px) + Text Column Width (340px) */
+    right: 40px;
+    width: 340px;
+
+    height: 40px;
+    background: linear-gradient(to top, var(--bg) 15%, transparent);
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  /* Ensure container is relative so the bottom gradient anchors correctly */
+  .lb-content {
+    position: relative !important;
+  }
+
+  /* Ensure image scales to fill the new larger space */
+  .lb-media {
+    min-height: 0 !important;
+    height: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  /* IMAGE ITSELF: always "contain" within the panel; prevent blowout/clipping */
+  .lb-img {
+    width: auto !important;
+    height: auto !important;
+
+    max-width: 100% !important;
+    /* Cap by the container/viewport, not just 100% */
+    max-height: min(72vh, 720px) !important;
+
+    object-fit: contain !important;
+  }
+
+  /* 4. Restore Text Column (Unified Scroll Fix) */
+  .lb-side {
+    position: relative;
+    grid-column: auto !important;
+    grid-row: auto !important;
+
+    /* FIX: Switch to Block layout so content flows naturally (Icons follow text) */
+    display: block !important;
+
+    /* Sizing: Auto height allows vertical centering by the parent Grid.
+       Max-height 100% ensures it fits in the screen. */
+    height: auto !important;
+    max-height: 100% !important;
+
+    /* SCROLLING: Enable scrolling on the container itself */
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+
+    padding: 0 !important;
+    padding-right: 6px !important;
+    padding-top: 70px !important; /* 40px + 30px nudge down */
+
+    /* FIX: Scroll Clearance (Consistent with Tablet Portrait) */
+    /* Matches the 40px gradient height exactly so icons sit flush above it. */
+    padding-bottom: 40px !important;
+  }
+
+  /* Collapsed and expanded: center next to image (no snap to top when expanded) */
+  .lb-side:not(:has(.lb-prompt-expanded)) { align-self: center !important; margin-top: 12px !important; }
+  .lb-side:has(.lb-prompt-expanded) { align-self: center !important; }
+
+  /* 5. Reset Wrapper (Remove Internal Scroll) */
+  /* This ensures the wrapper grows with the text, pushing the icons down */
+  .lb-prompt-wrap,
+  .lb-prompt-wrap.lb-prompt-expanded {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+
+    /* Remove constraints so it flows naturally */
+    max-height: none !important;
+    overflow: visible !important;
+    min-height: 0 !important;
+  }
+
+  /* Hide scrollbar (tablet landscape, including iPad mini); scroll still works */
+  .lb-prompt-wrap {
+    scrollbar-width: none;          /* Firefox */
+    -ms-overflow-style: none;       /* IE / legacy Edge */
+  }
+
+  .lb-prompt-wrap::-webkit-scrollbar {
+    display: none;                  /* Safari / Chrome / iPadOS */
+  }
+
+  /* Make sure the text itself doesn't create layout overflow */
+  .lb-prompt-text {
+    min-height: 0 !important;
+  }
+
+  /* Keep 8-line preview behavior for collapsed state */
+  .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt-text {
+    -webkit-line-clamp: 8 !important;
+    line-clamp: 8 !important;
+  }
+
+  /* Do NOT modify .lb-close in this block */
+}
+
+/* === LARGE TABLET LANDSCAPE (1025px–1366px) === */
+/* Normalize top/bottom to 40px (match gradient); padding defines spacing, not margin. */
+@media (min-width: 1025px) and (max-width: 1366px) and (orientation: landscape) {
+  /* TOP FADE (Mirror of bottom: same as desktop bottom strip) */
+  .lb-content:has(.lb-prompt-expanded)::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 480px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--bg) 15%, transparent);
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .lb-side::before {
+    display: none !important; /* Use .lb-content::before mirror instead */
+  }
+
+  .lb-side {
+    padding-top: 70px !important; /* 40px + 30px nudge down */
+    padding-bottom: 40px !important;
+  }
+  .lb-side:not(:has(.lb-prompt-expanded)) { align-self: center !important; margin-top: 0 !important; }
+  .lb-side:has(.lb-prompt-expanded) { align-self: center !important; margin-top: 0 !important; }
+}
+
+/* === DESKTOP CLOSE ICON (FINAL) === */
+/* Balanced offset using ID override (top: 13px = 16px - 3px nudge up) */
+@media (min-width: 1025px) {
+  #lbClose {
+    position: fixed !important;
+    top: 13px !important;
+    right: 18px !important;  /* 1px right (was 19px) */
+
+    /* Remove debug styles */
+    background: transparent !important;
+    opacity: 0.55;
+  }
+
+  #lbClose:hover {
+    opacity: 1;
+  }
+}
+
+/* === LARGE TABLET POLISH (iPad Air / Pro) === */
+/* Targets devices that use Desktop width (1025px+) but are Touch (Coarse) */
+/* Uses 'position: relative' to shift the whole group right (Image + Text) without changing internal grid spacing */
+@media (min-width: 1025px) and (pointer: coarse) {
+  .lb-content {
+    /* 1. Reset the padding (so image doesn't shrink) */
+    padding-left: 0 !important;
+
+    /* 2. Shift the entire container right as a solid unit */
+    position: relative !important;
+    left: 32px !important;  /* The "Surgical Nudge" */
+  }
+}
+
+/* === HIDE PAGE SCROLLBAR (MOBILE & TABLET ONLY) === */
+/* Removes the visual scrollbar on touch devices for a cleaner, "app-like" feed. */
+/* Scrolling functionality remains 100% active. */
+@media (max-width: 1024px),
+       (min-width: 1025px) and (max-width: 1366px) and (pointer: coarse) {
+
+  html,
+  body {
+    scrollbar-width: none !important;       /* Firefox */
+    -ms-overflow-style: none !important;    /* IE / Edge */
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none !important;               /* Chrome / Safari / Webkit */
+    width: 0 !important;
+    height: 0 !important;
+  }
+}
+
+/* Desktop only: 1px reduction in gallery side padding (12px → 11px) */
+@media (min-width: 1025px) {
+  .wrap {
+    padding-left: 11px;
+    padding-right: 11px;
+  }
 }
