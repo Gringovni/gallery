@@ -665,18 +665,27 @@ body {
     display: flex;
     flex-direction: column;
     
-    /* UPDATED: Remove gap so gradient is flush with image */
     gap: 0;
     
-    overflow: hidden;
+    /* UPDATED: Enable vertical scrolling for the whole card */
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
     
-    /* UPDATED: Removed bottom padding (was 16px) -> 0 */
+    /* Hide scrollbar, keep scroll */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    
     padding: 72px 16px 0;
+  }
+  .lb-slide-slot .lb-content::-webkit-scrollbar {
+    display: none;
   }
 
   /* Image block (bigger, centered) */
   .lb-media{
     flex: 0 0 auto;
+    flex-shrink: 0; /* Ensure image doesn't shrink when text is long */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -693,10 +702,9 @@ body {
   .lb-media-link{ pointer-events: auto; }
 
   .lb-side {
-    flex: 1 1 auto;
+    flex: none; /* Let it take its natural height */
     min-height: 0;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow: visible; /* Let it flow in the parent scroll */
 
     /* FIX: Force Top to 0 (locks gradient), Set Bottom to 10px (tighter landing, icons closer to edge) */
     padding: 0;
@@ -1504,11 +1512,27 @@ body {
   }
 }
 
-/* Mobile portrait: nudge X icon up a tiny bit more */
+/* Mobile portrait: X scrolls with content (use in-content button, hide fixed one) */
 @media (max-width: 640px) and (orientation: portrait) {
-  button.lb-close {
+  .lb-container > button.lb-close {
+    display: none !important;
+  }
+  .lb-content > .lb-close {
+    position: absolute !important;
+    top: 8px;
+    right: 16px;
     transform: translateX(16px) translateY(-14px) translateZ(0);
     -webkit-transform: translateX(16px) translateY(-14px) translateZ(0);
+    z-index: 9999;
+    background: transparent !important;
+    border-radius: 0;
+  }
+}
+
+/* Mobile landscape: only show the original fixed X; hide in-content close buttons */
+@media (max-width: 640px) and (orientation: landscape) {
+  .lb-content > .lb-close {
+    display: none !important;
   }
 }
 
