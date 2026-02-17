@@ -106,6 +106,7 @@
       <div class="lb-track">
       <div class="lb-slide-slot">
         <div class="lb-content" role="document">
+          <button class="lb-close" aria-label="Close">×</button>
           <div class="lb-media">
             <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
               <img class="lb-img" alt="" />
@@ -125,6 +126,7 @@
       </div>
       <div class="lb-slide-slot">
         <div class="lb-content" role="document">
+          <button class="lb-close" aria-label="Close">×</button>
           <div class="lb-media">
             <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
               <img class="lb-img" alt="" />
@@ -144,6 +146,7 @@
       </div>
       <div class="lb-slide-slot">
         <div class="lb-content" role="document">
+          <button class="lb-close" aria-label="Close">×</button>
           <div class="lb-media">
             <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
               <img class="lb-img" alt="" />
@@ -276,7 +279,7 @@
       document.body.style.overflow = "hidden";
       
       updateNavState();
-      lbClose.focus();
+      (document.querySelector(".lb-content .lb-close") || lbClose).focus();
     }
 
     function closeLB() {
@@ -389,7 +392,9 @@
       });
     }
 
-    lbClose.addEventListener("click", closeLB);
+    lbContainer.addEventListener("click", (e) => {
+      if (e.target.closest(".lb-close")) closeLB();
+    });
     lbPrev.addEventListener("click", prev);
     lbNext.addEventListener("click", next);
 
@@ -474,9 +479,11 @@
     });
 
     /* Mobile: touchend fallback so close works even when click is blocked */
-    lbClose.addEventListener("touchend", (e) => {
-      e.preventDefault();
-      closeLB();
+    lbContainer.addEventListener("touchend", (e) => {
+      if (e.target.closest(".lb-close")) {
+        e.preventDefault();
+        closeLB();
+      }
     }, { passive: false });
 
     lbContainer.addEventListener("keydown", (e) => {
