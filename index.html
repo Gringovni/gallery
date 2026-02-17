@@ -283,8 +283,11 @@
       lbContainer.classList.remove("open");
       lbContainer.setAttribute("aria-hidden", "true");
       
-      // FIX: Restore background page scroll
-      document.body.style.overflow = "";
+      // FIX: Delay scroll restoration until fade-out is complete (200ms)
+      // This prevents the X icon from jumping left when the scrollbar reappears.
+      setTimeout(() => {
+        document.body.style.overflow = "";
+      }, 200);
       
       currentIndex = -1;
       if (lastFocusBeforeLB && lastFocusBeforeLB.focus) lastFocusBeforeLB.focus();
