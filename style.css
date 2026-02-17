@@ -556,8 +556,8 @@ body {
   font-size: 36px;
   line-height: 1;
   cursor: pointer;
-  color: var(--accent);
-  opacity: .55;
+  color: #444;
+  opacity: 0.6;
   user-select: none;
   z-index: 9999;
   transition: opacity 0.2s ease;
@@ -598,10 +598,10 @@ body {
   top: 50%;
   width: 16px;
   height: 16px;
-  border-right: 3px solid var(--accent);
-  border-bottom: 3px solid var(--accent);
+  border-right: 3px solid #444;
+  border-bottom: 3px solid #444;
   transform: translate(-50%, -50%) rotate(135deg);
-  opacity: 0.55;
+  opacity: 0.6;
   transition: opacity 0.2s ease;
 }
 .lb-nav:hover::before{
@@ -665,8 +665,8 @@ body {
     display: flex;
     flex-direction: column;
     
-    /* UPDATED: Reduced from 24px to 20px for a slightly tighter look */
-    gap: 20px;
+    /* UPDATED: Remove gap so gradient is flush with image */
+    gap: 0;
     
     overflow: hidden;
     
@@ -698,9 +698,9 @@ body {
     overflow: auto;
     -webkit-overflow-scrolling: touch;
 
-    /* FIX: Force Top to 0 (locks gradient), Set Bottom to 24px (perfect landing) */
+    /* FIX: Force Top to 0 (locks gradient), Set Bottom to 10px (tighter landing, icons closer to edge) */
     padding: 0;
-    padding-bottom: 24px !important;
+    padding-bottom: 10px !important;
   }
 
   /* 3. TOP GRADIENT (Sticky) - Hidden initially to show "PROMPT:" label */
@@ -759,10 +759,37 @@ body {
 
   /* Lift icons away from the screen edge */
   .lb-actions {
-    /* CHANGED: Final adjustment to 14px */
-    padding-bottom: 14px;
-    
+    padding-bottom: 6px;
     margin-right: 4px;
+  }
+}
+
+/* Mobile portrait lightbox: true edge-to-edge image (0–100vw), text inset unchanged */
+@media (max-width: 640px) and (orientation: portrait) {
+  /* 1. Remove horizontal padding from content so image area is full viewport width */
+  .lb-content,
+  .lb-figure {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .lb-slide-slot .lb-content {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  /* 2. Apply same horizontal inset to text area only so prompt looks unchanged */
+  .lb-side {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  /* 3. Image container: full width of content area (no negative-margin trick) */
+  .lb-media {
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+  }
+  .lb-img {
+    padding: 0;
+    border: none;
   }
 }
 
@@ -1065,8 +1092,8 @@ body {
     justify-content: center !important;
 
     /* PADDING UPDATE:
-       Top: 32px (nudge text down); Right: 64px (clears X icon); Bottom: 24px (gradient landing) */
-    padding: 32px 64px 24px 0 !important;
+       Top: 32px (nudge text down); Right: 80px (clears X icon, shortens line by ~1 word); Bottom: 10px (tighter landing, match portrait nudge) */
+    padding: 32px 80px 10px 0 !important;
   }
 
   /* 3. EXPANDED STATE: Snap to Top (only when content overflows; JS toggles .lb-overflow) */
@@ -1140,10 +1167,10 @@ body {
   /* 9. UI ELEMENTS */
   .lb-prompt-more { display: inline-flex !important; }
   .lb-nav { display: none !important; }
+  .lb-actions { padding-bottom: 6px !important; }
 
-  /* Match tablet: 18px (was 16px) */
   .lb-prompt {
-    font-size: 18px;
+    font-size: 16px;
     line-height: 1.5;
   }
 
@@ -1152,6 +1179,23 @@ body {
     top: 5px !important;
     right: 18px !important;
     z-index: 100;
+  }
+}
+
+/* Hide bottom gradients on mobile portrait and landscape only */
+@media (max-width: 640px),
+       (orientation: landscape) and (max-height: 600px) {
+  .lb-content::after {
+    opacity: 0 !important;
+    pointer-events: none;
+  }
+}
+
+/* Hide top gradient on mobile landscape only */
+@media (orientation: landscape) and (max-height: 600px) {
+  .lb-content::before {
+    opacity: 0 !important;
+    pointer-events: none;
   }
 }
 
@@ -1180,8 +1224,9 @@ body {
 
 @media (max-width: 640px){
   .lb-prompt{
-    font-size: 18px;
+    font-size: 16px;
     line-height: 1.5;
+    padding-top: 20px;
   }
 }
 
@@ -1850,7 +1895,7 @@ body {
 
     /* Remove debug styles */
     background: transparent !important;
-    opacity: 0.55;
+    opacity: 0.6;
   }
 
   #lbClose:hover {
