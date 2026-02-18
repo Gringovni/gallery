@@ -106,7 +106,6 @@
       <div class="lb-track">
       <div class="lb-slide-slot">
         <div class="lb-content" role="document">
-          <button class="lb-close" aria-label="Close">×</button>
           <div class="lb-media">
             <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
               <img class="lb-img" alt="" />
@@ -126,7 +125,6 @@
       </div>
       <div class="lb-slide-slot">
         <div class="lb-content" role="document">
-          <button class="lb-close" aria-label="Close">×</button>
           <div class="lb-media">
             <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
               <img class="lb-img" alt="" />
@@ -146,7 +144,6 @@
       </div>
       <div class="lb-slide-slot">
         <div class="lb-content" role="document">
-          <button class="lb-close" aria-label="Close">×</button>
           <div class="lb-media">
             <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
               <img class="lb-img" alt="" />
@@ -185,6 +182,7 @@
     let items = [];
     let currentIndex = -1;
     let lastFocusBeforeLB = null;
+    let savedScrollY = null; // mobile portrait: body fixed-lock scroll position
 
     function formatPrompt(raw){
       const text = (raw || "").toString();
@@ -275,11 +273,23 @@
       lbContainer.classList.add("open");
       lbContainer.setAttribute("aria-hidden", "false");
       
-      // FIX: Lock the background page scroll
-      document.body.style.overflow = "hidden";
-      
+      // FIX: Lock the background page scroll.
+      // Mobile portrait: use body fixed-lock to avoid compositor coupling with .lb-slide-slot touch scroll.
+      const isMobilePortrait = window.matchMedia("(max-width: 640px) and (orientation: portrait)").matches;
+      if (isMobilePortrait) {
+        savedScrollY = window.scrollY;
+        document.body.style.position = "fixed";
+        document.body.style.top = `-${savedScrollY}px`;
+        document.body.style.left = "0";
+        document.body.style.right = "0";
+        document.body.style.width = "100%";
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "hidden";
+      }
+
       updateNavState();
-      (document.querySelector(".lb-content .lb-close") || lbClose).focus();
+      lbClose.focus();
     }
 
     function closeLB() {
@@ -287,9 +297,20 @@
       lbContainer.setAttribute("aria-hidden", "true");
       
       // FIX: Delay scroll restoration until fade-out is complete (200ms)
-      // This prevents the X icon from jumping left when the scrollbar reappears.
+      const scrollToRestore = savedScrollY;
+      savedScrollY = null;
       setTimeout(() => {
-        document.body.style.overflow = "";
+        if (scrollToRestore != null) {
+          document.body.style.position = "";
+          document.body.style.top = "";
+          document.body.style.left = "";
+          document.body.style.right = "";
+          document.body.style.width = "";
+          document.body.style.overflow = "";
+          window.scrollTo(0, scrollToRestore);
+        } else {
+          document.body.style.overflow = "";
+        }
       }, 200);
       
       currentIndex = -1;
@@ -392,9 +413,7 @@
       });
     }
 
-    lbContainer.addEventListener("click", (e) => {
-      if (e.target.closest(".lb-close")) closeLB();
-    });
+    lbClose.addEventListener("click", closeLB);
     lbPrev.addEventListener("click", prev);
     lbNext.addEventListener("click", next);
 
@@ -479,11 +498,9 @@
     });
 
     /* Mobile: touchend fallback so close works even when click is blocked */
-    lbContainer.addEventListener("touchend", (e) => {
-      if (e.target.closest(".lb-close")) {
-        e.preventDefault();
-        closeLB();
-      }
+    lbClose.addEventListener("touchend", (e) => {
+      e.preventDefault();
+      closeLB();
     }, { passive: false });
 
     lbContainer.addEventListener("keydown", (e) => {
