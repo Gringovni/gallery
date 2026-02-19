@@ -547,9 +547,8 @@ body {
 .lb-open-new svg{ display: block; width: 20px; height: 20px; }
 
 /* Close button: match nav arrow size, weight, color, opacity, hover */
-/* Coordinate-only positioning (no transform) to avoid WebKit compositing flicker on iOS */
 .lb-close{
-  position: fixed;
+  position: absolute;
   top: 8px;
   right: 18px;
   border: none;
@@ -563,6 +562,9 @@ body {
   z-index: 9999;
   transition: opacity 0.2s ease;
   outline: none;
+  /* Promote to own layer so touches register on iOS */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
   touch-action: manipulation;
 }
 .lb-close:hover{ opacity: 1; }
@@ -801,7 +803,7 @@ body {
   }
 
   /* Whole lightbox scroll: one continuous page (image then prompt), no inner prompt scroll */
-  /* Scroll container: the slot; content flows naturally; X stays fixed (base .lb-close is position: fixed) */
+  /* Scroll container: the slot; content flows naturally; X anchored (base .lb-close is position: absolute) */
   .lb-slide-slot {
     align-items: flex-start !important;
     justify-content: flex-start !important;
@@ -1919,7 +1921,7 @@ body {
 /* Balanced offset using ID override (top: 13px = 16px - 3px nudge up) */
 @media (min-width: 1025px) {
   #lbClose {
-    position: fixed !important;
+    position: absolute !important;
     top: 13px !important;
     right: 18px !important;  /* 1px right (was 19px) */
 
