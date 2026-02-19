@@ -547,6 +547,7 @@ body {
 .lb-open-new svg{ display: block; width: 20px; height: 20px; }
 
 /* Close button: match nav arrow size, weight, color, opacity, hover */
+/* Coordinate-only positioning (no transform) to avoid WebKit compositing flicker on iOS */
 .lb-close{
   position: fixed;
   top: 8px;
@@ -562,9 +563,6 @@ body {
   z-index: 9999;
   transition: opacity 0.2s ease;
   outline: none;
-  /* Promote to own layer so touches register on iOS */
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
   touch-action: manipulation;
 }
 .lb-close:hover{ opacity: 1; }
@@ -1239,8 +1237,6 @@ body {
     padding: 12px;
     background: rgba(255, 255, 255, 0.9);
     border-radius: 50%;
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
     touch-action: manipulation;
   }
 
@@ -1527,22 +1523,22 @@ body {
   .footer-scroll{ animation: none; }
 }
 
-/* MOBILE ONLY: move close button right (+12px) and up slightly */
+/* MOBILE ONLY: move close button right (+12px) and up slightly — coordinate nudge (no transform) */
 @media (max-width: 640px),
        (orientation: landscape) and (max-height: 600px) and (max-width: 900px) {
   button.lb-close {
-    transform: translateX(16px) translateY(-12px) translateZ(0);
-    -webkit-transform: translateX(16px) translateY(-12px) translateZ(0);
+    top: -4px !important;
+    right: 2px !important;
     background: transparent !important;
     border-radius: 0;
   }
 }
 
-/* Mobile portrait: nudge X icon up a tiny bit more */
+/* Mobile portrait: nudge X icon up a tiny bit more — coordinate nudge (no transform) for WebKit */
 @media (max-width: 640px) and (orientation: portrait) {
   button.lb-close {
-    transform: translateX(16px) translateY(-14px) translateZ(0);
-    -webkit-transform: translateX(16px) translateY(-14px) translateZ(0);
+    top: -6px !important;
+    right: 2px !important;
   }
 }
 
