@@ -783,6 +783,7 @@ body {
   .lb-side {
     padding-left: 16px !important;
     padding-right: 16px !important;
+    padding-bottom: 2px !important;
   }
   /* Disable top gradient on mobile portrait */
   .lb-side::before {
