@@ -161,13 +161,17 @@ body {
   height: auto;
   display: block;
   border-radius: 0;
-  background: var(--bg);
+  background: #fff;
   transition: transform var(--transition-fast), filter var(--transition-fast);
 }
 
 .card:focus-visible {
   outline: 2px solid var(--text);
   outline-offset: 3px;
+}
+.card-img {
+  background: #fff;
+  transition: transform var(--transition-fast), filter var(--transition-fast);
 }
 /* DESKTOP ONLY: Hover interactions (Lift + Contrast) */
 @media (hover: hover) and (pointer: fine) {
@@ -267,7 +271,6 @@ body {
   position: fixed;
   inset: 0;
   z-index: 50;
-  display: grid;
 
   /* 1. Base State: Hidden but "layout-ready" */
   visibility: hidden;
@@ -276,20 +279,6 @@ body {
 
   /* 2. The Transition: Smooth fade for Opacity & Visibility */
   transition: opacity 0.18s ease, visibility 0.18s ease;
-}
-
-/* Invisible grid overlay: .lb and close wrapper share same cell so Safari renders button structurally */
-.lb,
-.lb-close-wrapper {
-  grid-area: 1 / 1;
-}
-
-.lb-close-wrapper {
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-start;
-  pointer-events: none;
-  z-index: 9999;
 }
 
 .lb-container.open {
@@ -418,7 +407,7 @@ body {
   
   object-fit: contain;
   display: block;
-  background: var(--bg);
+  background: #fff;
   padding: 8px;
   border: 1px solid rgba(0, 0, 0, 0.12);
 }
@@ -557,25 +546,31 @@ body {
 .lb-open-new:focus-visible{ outline: 2px solid #444; outline-offset: 2px; }
 .lb-open-new svg{ display: block; width: 20px; height: 20px; }
 
-/* Close button: in grid overlay wrapper; margins place it top-right (no position to avoid Safari bug) */
-.lb-close {
-  pointer-events: auto;
-  margin-top: 8px;
-  margin-right: 18px;
+/* Close button: match nav arrow size, weight, color, opacity, hover */
+.lb-close{
+  position: fixed;
+  top: 8px;
+  right: 18px;
   border: none;
   background: transparent;
   font-size: 36px;
   line-height: 1;
   cursor: pointer;
-  color: var(--text);
+  color: #444;
   opacity: 0.6;
   user-select: none;
   z-index: 9999;
   transition: opacity 0.2s ease;
   outline: none;
+  /* Promote to own layer so touches register on iOS */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
   touch-action: manipulation;
 }
 .lb-close:hover{ opacity: 1; }
+
+/* In-slot close buttons: only used in mobile portrait; hidden elsewhere */
+.lb-close-in-slot { display: none; }
 
 /* Nav buttons: must sit above viewport so prev/next receive clicks on desktop */
 .lb-nav{
@@ -801,7 +796,12 @@ body {
     margin-right: 0;
     width: 100%;
   }
+  /* Image: flush edge-to-edge; full width, height follows aspect (tall images like 9x16 scroll, no side bars) */
   .lb-img {
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: contain;
     padding: 0;
     border: none;
   }
@@ -811,13 +811,75 @@ body {
   }
 
   /* Whole lightbox scroll: one continuous page (image then prompt), no inner prompt scroll */
-  /* Scroll container: the slot; content flows naturally; X in grid overlay (margins only) */
+  /* Scroll container: the slot; content flows naturally; X is absolute so it scrolls away with content */
   .lb-slide-slot {
+    position: relative; /* anchor for .lb-close-in-slot */
+    flex-direction: column !important;
     align-items: flex-start !important;
     justify-content: flex-start !important;
     overflow-x: hidden !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .lb-slide-slot::-webkit-scrollbar {
+    display: none;
+  }
+  /* In-slot close: absolute so it stays at top of lightbox content and scrolls away when user scrolls */
+  .lb-close-wrap {
+    position: relative;
+    width: 100%;
+    height: 0;
+    flex: 0 0 0;
+    overflow: visible;
+    order: -1; /* ensure it stays at top in flex slot */
+  }
+  .lb-close-in-slot {
+    display: block !important;
+    visibility: visible !important;
+    position: absolute !important;
+    top: 8px;
+    right: 18px;
+    border: none;
+    background: transparent;
+    font-size: 36px;
+    line-height: 1;
+    cursor: pointer;
+    color: #444;
+    opacity: 0.6;
+    user-select: none;
+    z-index: 9999;
+    transition: opacity 0.2s ease;
+    outline: none;
+    transform: translateX(16px) translateY(-14px) translateZ(0);
+    -webkit-transform: translateX(16px) translateY(-14px) translateZ(0);
+    touch-action: manipulation;
+  }
+  @media (hover: hover) {
+    .lb-close-in-slot:hover { opacity: 1; }
+  }
+  /* Visible in-slot X only: nudge 4px right, 1px left */
+  .lb-slide-slot .lb-close-in-slot {
+    transform: translateX(19px) translateY(-14px) translateZ(0);
+    -webkit-transform: translateX(19px) translateY(-14px) translateZ(0);
+  }
+  /* During horizontal swipe: show main X (outside track, truly fixed); hide in-slot X so no double icon and no transform-clipping */
+  .lb-container.lb-swiping .lb-close-in-slot {
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  .lb-container.lb-swiping #lbClose {
+    display: block !important;
+    position: fixed !important;
+    top: 8px !important;
+    right: 18px !important;
+    transform: translateX(19px) translateY(-14px) translateZ(0);
+    -webkit-transform: translateX(19px) translateY(-14px) translateZ(0);
+  }
+  /* Hide the fixed main close button in portrait when not swiping; use in-slot buttons only */
+  #lbClose {
+    display: none !important;
   }
   .lb-content,
   .lb-slide-slot .lb-content {
@@ -830,6 +892,11 @@ body {
     overflow: visible !important;
     flex: 0 0 auto !important;
     min-height: 0 !important;
+  }
+  /* Prompt preview: 3 lines in portrait (overrides default 4-line mobile clamp) */
+  .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt-text {
+    -webkit-line-clamp: 3 !important;
+    line-clamp: 3 !important;
   }
 }
 
@@ -881,10 +948,10 @@ body {
     display: none;
   }
 
-  /* Move X icon slightly up and right for tablets */
+  /* Move X icon slightly up and right for tablets (vertical: 5px up, 3px right) */
   .lb-close {
-    margin-top: -5px !important;
-    margin-right: 5px !important;
+    top: -5px !important;
+    right: 5px !important;
   }
 }
 
@@ -990,10 +1057,11 @@ body {
     width: 100%;
   }
 
-  /* Move X icon inward for Tablet Portrait */
+  /* NEW: Move X icon inward for Tablet Portrait (Re-balanced) */
+  /* 1px top (1px nudge down), 10px right */
   .lb-close {
-    margin-top: 1px !important;
-    margin-right: 10px !important;
+    top: 1px !important;
+    right: 10px !important;
   }
 
   /* Hide nav arrows in stacked portrait mode */
@@ -1026,8 +1094,8 @@ body {
 /* Tablet landscape only (tall viewport): move X icon. min-height: 601px excludes phone landscape. */
 @media (min-width: 641px) and (max-width: 1024px) and (orientation: landscape) and (min-height: 601px) {
   .lb-close {
-    margin-top: -4px !important;
-    margin-right: 3px !important;
+    top: -4px !important;
+    right: 3px !important;
   }
 }
 
@@ -1214,8 +1282,10 @@ body {
   }
 
   .lb-close {
-    margin-top: 5px !important;
-    margin-right: 18px !important;
+    position: absolute !important;
+    top: 5px !important;
+    right: 18px !important;
+    z-index: 100;
   }
 }
 
@@ -1244,6 +1314,8 @@ body {
     padding: 12px;
     background: rgba(255, 255, 255, 0.9);
     border-radius: 50%;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
     touch-action: manipulation;
   }
 
@@ -1530,27 +1602,22 @@ body {
   .footer-scroll{ animation: none; }
 }
 
-/* MOBILE ONLY: move close button right (+12px) and up slightly — coordinate nudge (no transform) */
+/* MOBILE ONLY: move close button right (+12px) and up slightly */
 @media (max-width: 640px),
        (orientation: landscape) and (max-height: 600px) and (max-width: 900px) {
   button.lb-close {
-    margin-top: -4px !important;
-    margin-right: 2px !important;
+    transform: translateX(16px) translateY(-12px) translateZ(0);
+    -webkit-transform: translateX(16px) translateY(-12px) translateZ(0);
     background: transparent !important;
     border-radius: 0;
   }
 }
 
-/* Mobile portrait: nudge X icon — margins only (no position/transform) for WebKit grid overlay */
+/* Mobile portrait: nudge X icon up a tiny bit more */
 @media (max-width: 640px) and (orientation: portrait) {
   button.lb-close {
-    transform: none !important;
-    -webkit-transform: none !important;
-    position: static !important;
-    margin-top: -6px !important;
-    margin-right: 2px !important;
-    background: transparent !important;
-    border-radius: 0;
+    transform: translateX(16px) translateY(-14px) translateZ(0);
+    -webkit-transform: translateX(16px) translateY(-14px) translateZ(0);
   }
 }
 
@@ -1928,11 +1995,12 @@ body {
 }
 
 /* === DESKTOP CLOSE ICON (FINAL) === */
-/* Balanced offset via margins (grid overlay: no position) */
+/* Balanced offset using ID override (top: 13px = 16px - 3px nudge up) */
 @media (min-width: 1025px) {
   #lbClose {
-    margin-top: 13px !important;
-    margin-right: 18px !important;
+    position: fixed !important;
+    top: 13px !important;
+    right: 18px !important;  /* 1px right (was 19px) */
 
     /* Remove debug styles */
     background: transparent !important;
