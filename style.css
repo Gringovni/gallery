@@ -568,6 +568,7 @@ body {
   touch-action: manipulation;
 }
 .lb-close:hover{ opacity: 1; }
+.lb-close-in-slot { display: none; }
 
 /* Nav buttons: must sit above viewport so prev/next receive clicks on desktop */
 .lb-nav{
@@ -803,13 +804,83 @@ body {
   }
 
   /* Whole lightbox scroll: one continuous page (image then prompt), no inner prompt scroll */
-  /* Scroll container: the slot; content flows naturally; X stays fixed (base .lb-close is position: fixed) */
+  /* Scroll container: the slot; in-slot X anchors here and scrolls away */
   .lb-slide-slot {
+    position: relative;
+    flex-direction: column !important;
     align-items: flex-start !important;
     justify-content: flex-start !important;
     overflow-x: hidden !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .lb-slide-slot::-webkit-scrollbar {
+    display: none;
+  }
+  .lb-close-wrap {
+    position: relative;
+    width: 100%;
+    height: 0;
+    flex: 0 0 0;
+    overflow: visible;
+    order: -1;
+  }
+  .lb-close-in-slot {
+    display: block !important;
+    visibility: visible !important;
+    position: absolute !important;
+    top: 8px;
+    right: 18px;
+    border: none;
+    background: transparent;
+    font-size: 36px;
+    line-height: 1;
+    cursor: pointer;
+    color: #444;
+    opacity: 0.6;
+    user-select: none;
+    z-index: 9999;
+    transition: opacity 0.2s ease;
+    outline: none;
+    transform: translateX(16px) translateY(-14px) translateZ(0);
+    -webkit-transform: translateX(16px) translateY(-14px) translateZ(0);
+    touch-action: manipulation;
+  }
+  @media (hover: hover) {
+    .lb-close-in-slot:hover { opacity: 1; }
+  }
+  .lb-slide-slot .lb-close-in-slot {
+    transform: translateX(19px) translateY(-14px) translateZ(0);
+    -webkit-transform: translateX(19px) translateY(-14px) translateZ(0);
+  }
+  .lb-container.lb-swiping .lb-close-in-slot {
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  .lb-container.lb-swiping #lbClose {
+    display: block !important;
+    position: fixed !important;
+    top: 8px !important;
+    right: 18px !important;
+    transform: translateX(19px) translateY(-14px) translateZ(0);
+    -webkit-transform: translateX(19px) translateY(-14px) translateZ(0);
+  }
+  #lbClose {
+    display: none !important;
+  }
+  .lb-img {
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: contain;
+    padding: 0;
+    border: none;
+  }
+  .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt-text {
+    -webkit-line-clamp: 3 !important;
+    line-clamp: 3 !important;
   }
   .lb-content,
   .lb-slide-slot .lb-content {
@@ -1535,14 +1606,6 @@ body {
     -webkit-transform: translateX(16px) translateY(-12px) translateZ(0);
     background: transparent !important;
     border-radius: 0;
-  }
-}
-
-/* Mobile portrait: nudge X icon up a tiny bit more */
-@media (max-width: 640px) and (orientation: portrait) {
-  button.lb-close {
-    transform: translateX(16px) translateY(-14px) translateZ(0);
-    -webkit-transform: translateX(16px) translateY(-14px) translateZ(0);
   }
 }
 
