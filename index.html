@@ -556,7 +556,6 @@
       const track = document.querySelector(".lb-track");
       if (!track) return;
 
-      const portrait = () => window.matchMedia("(max-width: 640px) and (orientation: portrait)").matches;
       let startX = 0, startY = 0;
       let currentDeltaX = 0;
       let isDragging = false;
@@ -572,7 +571,6 @@
 
       track.addEventListener("touchstart", (e) => {
         if (e.touches.length > 1) return;
-        lbContainer.classList.remove("lb-swiping");
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
         currentDeltaX = 0;
@@ -600,7 +598,6 @@
             return;
           }
           isIntentDetermined = true;
-          if (portrait()) lbContainer.classList.add("lb-swiping");
         }
         if (isScrolling) return;
         currentDeltaX = deltaX;
@@ -620,7 +617,6 @@
           track.style.transform = "translate3d(-66.6666%, 0, 0)";
           track.addEventListener("transitionend", function onEnd() {
             track.removeEventListener("transitionend", onEnd);
-            lbContainer.classList.remove("lb-swiping");
             // Wrap Next
             currentIndex = (currentIndex + 1) % items.length;
             renderCarousel(currentIndex);
@@ -630,7 +626,6 @@
           track.style.transform = "translate3d(0%, 0, 0)";
           track.addEventListener("transitionend", function onEnd() {
             track.removeEventListener("transitionend", onEnd);
-            lbContainer.classList.remove("lb-swiping");
             // Wrap Prev
             currentIndex = (currentIndex - 1 + items.length) % items.length;
             renderCarousel(currentIndex);
@@ -638,10 +633,6 @@
           }, { once: true });
         } else {
           track.style.transform = "translate3d(-33.3333%, 0, 0)";
-          track.addEventListener("transitionend", function onSnapEnd() {
-            track.removeEventListener("transitionend", onSnapEnd);
-            lbContainer.classList.remove("lb-swiping");
-          }, { once: true });
         }
       });
     })();
