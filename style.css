@@ -856,28 +856,13 @@ body {
     -webkit-transform: translateX(16px) translateY(-14px) translateZ(0);
     touch-action: manipulation;
   }
-  @media (hover: hover) {
-    .lb-close-in-slot:hover { opacity: 1; }
-  }
+  .lb-close-in-slot:hover { opacity: 1; }
   /* Visible in-slot X only: nudge 4px right, 1px left */
   .lb-slide-slot .lb-close-in-slot {
     transform: translateX(19px) translateY(-14px) translateZ(0);
     -webkit-transform: translateX(19px) translateY(-14px) translateZ(0);
   }
-  /* During horizontal swipe: show main X (outside track, truly fixed); hide in-slot X so no double icon and no transform-clipping */
-  .lb-container.lb-swiping .lb-close-in-slot {
-    visibility: hidden !important;
-    pointer-events: none !important;
-  }
-  .lb-container.lb-swiping #lbClose {
-    display: block !important;
-    position: fixed !important;
-    top: 8px !important;
-    right: 18px !important;
-    transform: translateX(19px) translateY(-14px) translateZ(0);
-    -webkit-transform: translateX(19px) translateY(-14px) translateZ(0);
-  }
-  /* Hide the fixed main close button in portrait when not swiping; use in-slot buttons only */
+  /* Hide the fixed main close button in portrait; use in-slot buttons only */
   #lbClose {
     display: none !important;
   }
