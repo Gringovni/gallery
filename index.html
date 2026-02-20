@@ -105,7 +105,6 @@
       <div class="lb-viewport">
       <div class="lb-track">
       <div class="lb-slide-slot">
-        <div class="lb-close-wrap"><button type="button" class="lb-close lb-close-in-slot" aria-label="Close">×</button></div>
         <div class="lb-content" role="document">
           <div class="lb-media">
             <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
@@ -125,7 +124,6 @@
         </div>
       </div>
       <div class="lb-slide-slot">
-        <div class="lb-close-wrap"><button type="button" class="lb-close lb-close-in-slot" aria-label="Close">×</button></div>
         <div class="lb-content" role="document">
           <div class="lb-media">
             <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
@@ -145,7 +143,6 @@
         </div>
       </div>
       <div class="lb-slide-slot">
-        <div class="lb-close-wrap"><button type="button" class="lb-close lb-close-in-slot" aria-label="Close">×</button></div>
         <div class="lb-content" role="document">
           <div class="lb-media">
             <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
@@ -392,9 +389,7 @@
       });
     }
 
-    lbContainer.addEventListener("click", (e) => {
-      if (e.target.closest(".lb-close")) closeLB();
-    });
+    lbClose.addEventListener("click", closeLB);
     lbPrev.addEventListener("click", prev);
     lbNext.addEventListener("click", next);
 
@@ -478,12 +473,10 @@
       document.querySelectorAll(".lb-side").forEach(updateLbOverflow);
     });
 
-    /* Mobile: touchend fallback so close works even when click is blocked (any .lb-close including in-slot) */
-    lbContainer.addEventListener("touchend", (e) => {
-      if (e.target.closest(".lb-close")) {
-        e.preventDefault();
-        closeLB();
-      }
+    /* Mobile: touchend fallback so close works even when click is blocked */
+    lbClose.addEventListener("touchend", (e) => {
+      e.preventDefault();
+      closeLB();
     }, { passive: false });
 
     lbContainer.addEventListener("keydown", (e) => {
