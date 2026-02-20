@@ -569,9 +569,6 @@ body {
 }
 .lb-close:hover{ opacity: 1; }
 
-/* In-slot close buttons: only used in mobile portrait; hidden elsewhere */
-.lb-close-in-slot { display: none; }
-
 /* Nav buttons: must sit above viewport so prev/next receive clicks on desktop */
 .lb-nav{
   position: absolute;
@@ -796,12 +793,7 @@ body {
     margin-right: 0;
     width: 100%;
   }
-  /* Image: flush edge-to-edge; full width, height follows aspect (tall images like 9x16 scroll, no side bars) */
   .lb-img {
-    width: 100% !important;
-    height: auto !important;
-    max-height: none !important;
-    object-fit: contain;
     padding: 0;
     border: none;
   }
@@ -811,60 +803,13 @@ body {
   }
 
   /* Whole lightbox scroll: one continuous page (image then prompt), no inner prompt scroll */
-  /* Scroll container: the slot; content flows naturally; X is absolute so it scrolls away with content */
+  /* Scroll container: the slot; content flows naturally; X stays fixed (base .lb-close is position: fixed) */
   .lb-slide-slot {
-    position: relative; /* anchor for .lb-close-in-slot */
-    flex-direction: column !important;
     align-items: flex-start !important;
     justify-content: flex-start !important;
     overflow-x: hidden !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-  .lb-slide-slot::-webkit-scrollbar {
-    display: none;
-  }
-  /* In-slot close: absolute so it stays at top of lightbox content and scrolls away when user scrolls */
-  .lb-close-wrap {
-    position: relative;
-    width: 100%;
-    height: 0;
-    flex: 0 0 0;
-    overflow: visible;
-    order: -1; /* ensure it stays at top in flex slot */
-  }
-  .lb-close-in-slot {
-    display: block !important;
-    visibility: visible !important;
-    position: absolute !important;
-    top: 8px;
-    right: 18px;
-    border: none;
-    background: transparent;
-    font-size: 36px;
-    line-height: 1;
-    cursor: pointer;
-    color: #444;
-    opacity: 0.6;
-    user-select: none;
-    z-index: 9999;
-    transition: opacity 0.2s ease;
-    outline: none;
-    transform: translateX(16px) translateY(-14px) translateZ(0);
-    -webkit-transform: translateX(16px) translateY(-14px) translateZ(0);
-    touch-action: manipulation;
-  }
-  .lb-close-in-slot:hover { opacity: 1; }
-  /* Visible in-slot X only: nudge 4px right, 1px left */
-  .lb-slide-slot .lb-close-in-slot {
-    transform: translateX(19px) translateY(-14px) translateZ(0);
-    -webkit-transform: translateX(19px) translateY(-14px) translateZ(0);
-  }
-  /* Hide the fixed main close button in portrait; use in-slot buttons only */
-  #lbClose {
-    display: none !important;
   }
   .lb-content,
   .lb-slide-slot .lb-content {
@@ -877,11 +822,6 @@ body {
     overflow: visible !important;
     flex: 0 0 auto !important;
     min-height: 0 !important;
-  }
-  /* Prompt preview: 3 lines in portrait (overrides default 4-line mobile clamp) */
-  .lb-prompt-wrap:not(.lb-prompt-expanded) .lb-prompt-text {
-    -webkit-line-clamp: 3 !important;
-    line-clamp: 3 !important;
   }
 }
 
