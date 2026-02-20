@@ -32,15 +32,19 @@
   <a href="#masonry" class="skip-link">Skip to gallery</a>
 
   <!-- HERO -->
-  <section class="hero" id="hero" aria-label="Hero" data-scroll-target="#masonry">
-    <div class="hero-media" id="heroMedia" style="background-image:url('https://images.pexels.com/photos/20398189/pexels-photo-20398189.jpeg?auto=compress&cs=tinysrgb&w=2400');"></div>
-    <div class="hero-caption">
-      <span class="hero-caption-line">Where creative</span>
-      <span class="hero-caption-line">intent becomes</span>
-      <span class="hero-caption-line">visual clarity</span>
-    </div>
-    <button class="hero-scroll" type="button" aria-label="Scroll to gallery" id="heroScrollBtn"></button>
-  </section>
+<section class="hero" id="hero" aria-label="Hero" data-scroll-target="#masonry">
+  <div class="hero-media" id="heroMedia" style="background-image:url('https://images.pexels.com/photos/20398189/pexels-photo-20398189.jpeg?auto=compress&cs=tinysrgb&w=2400');"></div>
+
+    <!-- Hero editorial text -->
+<div class="hero-caption">
+  <span class="hero-caption-line">Where creative</span>
+  <span class="hero-caption-line">intent becomes</span>
+  <span class="hero-caption-line">visual clarity</span>
+</div>
+
+  <!-- Scroll cue arrow -->
+  <button class="hero-scroll" type="button" aria-label="Scroll to gallery" id="heroScrollBtn"></button>
+</section>
 
   <header class="hero-banner" role="banner" aria-label="Site header">
     <div class="hero-banner-inner">
@@ -96,74 +100,75 @@
 
   <!-- Lightbox: close button outside .lb so touches always register on mobile -->
   <div class="lb-container" id="lbContainer" aria-hidden="true">
-    <div class="lb" id="lb" role="dialog" aria-label="Image viewer" aria-modal="false">
+    <div class="lb" id="lb" role="dialog" aria-label="Image viewer">
       <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">‹</button>
       <div class="lb-viewport">
-        <div class="lb-track">
-          <div class="lb-slide-slot">
-            <div class="lb-content" role="document">
-              <div class="lb-media">
-                <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
-                  <img class="lb-img" alt="" />
-                </a>
-              </div>
-              <aside class="lb-side" aria-label="Prompt">
-                <div class="lb-prompt-wrap">
-                  <pre class="lb-prompt"><span class="lb-prompt-label">PROMPT:</span><span class="lb-prompt-text"></span></pre>
-                </div>
-                <div class="lb-actions">
-                  <button type="button" class="lb-prompt-more" aria-label="Show more prompt" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></button>
-                  <button type="button" class="lb-copy" aria-label="Copy prompt to clipboard"><span class="material-symbols-outlined lb-copy-icon" aria-hidden="true">content_copy</span></button>
-                  <button type="button" class="lb-open-new" aria-label="Open image in new tab"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg></button>
-                </div>
-              </aside>
-            </div>
+      <div class="lb-track">
+      <div class="lb-slide-slot">
+        <div class="lb-close-wrap"><button type="button" class="lb-close lb-close-in-slot" aria-label="Close">×</button></div>
+        <div class="lb-content" role="document">
+          <div class="lb-media">
+            <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
+              <img class="lb-img" alt="" />
+            </a>
           </div>
-          <div class="lb-slide-slot">
-            <div class="lb-content" role="document">
-              <div class="lb-media">
-                <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
-                  <img class="lb-img" alt="" />
-                </a>
-              </div>
-              <aside class="lb-side" aria-label="Prompt">
-                <div class="lb-prompt-wrap">
-                  <pre class="lb-prompt"><span class="lb-prompt-label">PROMPT:</span><span class="lb-prompt-text"></span></pre>
-                </div>
-                <div class="lb-actions">
-                  <button type="button" class="lb-prompt-more" aria-label="Show more prompt" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></button>
-                  <button type="button" class="lb-copy" aria-label="Copy prompt to clipboard"><span class="material-symbols-outlined lb-copy-icon" aria-hidden="true">content_copy</span></button>
-                  <button type="button" class="lb-open-new" aria-label="Open image in new tab"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg></button>
-                </div>
-              </aside>
+          <aside class="lb-side" aria-label="Prompt">
+            <div class="lb-prompt-wrap">
+              <pre class="lb-prompt"><span class="lb-prompt-label">PROMPT:</span><span class="lb-prompt-text"></span></pre>
             </div>
-          </div>
-          <div class="lb-slide-slot">
-            <div class="lb-content" role="document">
-              <div class="lb-media">
-                <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
-                  <img class="lb-img" alt="" />
-                </a>
-              </div>
-              <aside class="lb-side" aria-label="Prompt">
-                <div class="lb-prompt-wrap">
-                  <pre class="lb-prompt"><span class="lb-prompt-label">PROMPT:</span><span class="lb-prompt-text"></span></pre>
-                </div>
-                <div class="lb-actions">
-                  <button type="button" class="lb-prompt-more" aria-label="Show more prompt" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></button>
-                  <button type="button" class="lb-copy" aria-label="Copy prompt to clipboard"><span class="material-symbols-outlined lb-copy-icon" aria-hidden="true">content_copy</span></button>
-                  <button type="button" class="lb-open-new" aria-label="Open image in new tab"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg></button>
-                </div>
-              </aside>
+            <div class="lb-actions">
+              <button type="button" class="lb-prompt-more" aria-label="Show more prompt" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></button>
+              <button type="button" class="lb-copy" aria-label="Copy prompt to clipboard"><span class="material-symbols-outlined lb-copy-icon" aria-hidden="true">content_copy</span></button>
+              <button type="button" class="lb-open-new" aria-label="Open image in new tab"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg></button>
             </div>
-          </div>
+          </aside>
         </div>
+      </div>
+      <div class="lb-slide-slot">
+        <div class="lb-close-wrap"><button type="button" class="lb-close lb-close-in-slot" aria-label="Close">×</button></div>
+        <div class="lb-content" role="document">
+          <div class="lb-media">
+            <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
+              <img class="lb-img" alt="" />
+            </a>
+          </div>
+          <aside class="lb-side" aria-label="Prompt">
+            <div class="lb-prompt-wrap">
+              <pre class="lb-prompt"><span class="lb-prompt-label">PROMPT:</span><span class="lb-prompt-text"></span></pre>
+            </div>
+            <div class="lb-actions">
+              <button type="button" class="lb-prompt-more" aria-label="Show more prompt" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></button>
+              <button type="button" class="lb-copy" aria-label="Copy prompt to clipboard"><span class="material-symbols-outlined lb-copy-icon" aria-hidden="true">content_copy</span></button>
+              <button type="button" class="lb-open-new" aria-label="Open image in new tab"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg></button>
+            </div>
+          </aside>
+        </div>
+      </div>
+      <div class="lb-slide-slot">
+        <div class="lb-close-wrap"><button type="button" class="lb-close lb-close-in-slot" aria-label="Close">×</button></div>
+        <div class="lb-content" role="document">
+          <div class="lb-media">
+            <a class="lb-media-link" target="_blank" rel="noopener noreferrer" href="#" aria-label="Open image in new tab">
+              <img class="lb-img" alt="" />
+            </a>
+          </div>
+          <aside class="lb-side" aria-label="Prompt">
+            <div class="lb-prompt-wrap">
+              <pre class="lb-prompt"><span class="lb-prompt-label">PROMPT:</span><span class="lb-prompt-text"></span></pre>
+            </div>
+            <div class="lb-actions">
+              <button type="button" class="lb-prompt-more" aria-label="Show more prompt" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></button>
+              <button type="button" class="lb-copy" aria-label="Copy prompt to clipboard"><span class="material-symbols-outlined lb-copy-icon" aria-hidden="true">content_copy</span></button>
+              <button type="button" class="lb-open-new" aria-label="Open image in new tab"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor" aria-hidden="true"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg></button>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
       </div>
       <button class="lb-nav lb-next" id="lbNext" aria-label="Next">›</button>
     </div>
-    <div class="lb-close-wrapper">
-      <button class="lb-close" id="lbClose" aria-label="Close">×</button>
-    </div>
+    <button class="lb-close" id="lbClose" aria-label="Close">×</button>
   </div>
 
   <script>
@@ -269,8 +274,7 @@
       renderCarousel(currentIndex);
       lbContainer.classList.add("open");
       lbContainer.setAttribute("aria-hidden", "false");
-      lb.setAttribute("aria-modal", "true");
-
+      
       // FIX: Lock the background page scroll
       document.body.style.overflow = "hidden";
       
@@ -281,8 +285,7 @@
     function closeLB() {
       lbContainer.classList.remove("open");
       lbContainer.setAttribute("aria-hidden", "true");
-      lb.setAttribute("aria-modal", "false");
-
+      
       // FIX: Delay scroll restoration until fade-out is complete (200ms)
       // This prevents the X icon from jumping left when the scrollbar reappears.
       setTimeout(() => {
@@ -360,8 +363,7 @@
         card.setAttribute("aria-label", `View image ${i + 1}: ${item.title || "Untitled"}`);
 
         const img = document.createElement("img");
-        img.loading = i === 0 ? "eager" : "lazy";
-        if (i === 0) img.fetchPriority = "high";
+        img.loading = "lazy";
         img.src = item.thumb || item.src;
         img.alt = item.title || "";
         img.className = "card-img";
@@ -390,7 +392,9 @@
       });
     }
 
-    lbClose.addEventListener("click", closeLB);
+    lbContainer.addEventListener("click", (e) => {
+      if (e.target.closest(".lb-close")) closeLB();
+    });
     lbPrev.addEventListener("click", prev);
     lbNext.addEventListener("click", next);
 
@@ -474,10 +478,12 @@
       document.querySelectorAll(".lb-side").forEach(updateLbOverflow);
     });
 
-    /* Mobile: touchend fallback so close works even when click is blocked */
-    lbClose.addEventListener("touchend", (e) => {
-      e.preventDefault();
-      closeLB();
+    /* Mobile: touchend fallback so close works even when click is blocked (any .lb-close including in-slot) */
+    lbContainer.addEventListener("touchend", (e) => {
+      if (e.target.closest(".lb-close")) {
+        e.preventDefault();
+        closeLB();
+      }
     }, { passive: false });
 
     lbContainer.addEventListener("keydown", (e) => {
@@ -550,6 +556,7 @@
       const track = document.querySelector(".lb-track");
       if (!track) return;
 
+      const portrait = () => window.matchMedia("(max-width: 640px) and (orientation: portrait)").matches;
       let startX = 0, startY = 0;
       let currentDeltaX = 0;
       let isDragging = false;
@@ -565,6 +572,7 @@
 
       track.addEventListener("touchstart", (e) => {
         if (e.touches.length > 1) return;
+        lbContainer.classList.remove("lb-swiping");
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
         currentDeltaX = 0;
@@ -592,6 +600,7 @@
             return;
           }
           isIntentDetermined = true;
+          if (portrait()) lbContainer.classList.add("lb-swiping");
         }
         if (isScrolling) return;
         currentDeltaX = deltaX;
@@ -611,6 +620,7 @@
           track.style.transform = "translate3d(-66.6666%, 0, 0)";
           track.addEventListener("transitionend", function onEnd() {
             track.removeEventListener("transitionend", onEnd);
+            lbContainer.classList.remove("lb-swiping");
             // Wrap Next
             currentIndex = (currentIndex + 1) % items.length;
             renderCarousel(currentIndex);
@@ -620,6 +630,7 @@
           track.style.transform = "translate3d(0%, 0, 0)";
           track.addEventListener("transitionend", function onEnd() {
             track.removeEventListener("transitionend", onEnd);
+            lbContainer.classList.remove("lb-swiping");
             // Wrap Prev
             currentIndex = (currentIndex - 1 + items.length) % items.length;
             renderCarousel(currentIndex);
@@ -627,6 +638,10 @@
           }, { once: true });
         } else {
           track.style.transform = "translate3d(-33.3333%, 0, 0)";
+          track.addEventListener("transitionend", function onSnapEnd() {
+            track.removeEventListener("transitionend", onSnapEnd);
+            lbContainer.classList.remove("lb-swiping");
+          }, { once: true });
         }
       });
     })();
@@ -694,30 +709,37 @@
       if (heroScrollBtn) heroScrollBtn.addEventListener("click", (e) => { e.stopPropagation(); smoothScrollToGallery(); });
     })();
 
-    // FOOTER ARROW CLICK → SCROLL TO GALLERY (mirrored behavior)
-    (function () {
-      const btn = document.getElementById("footerScroll");
-      const target = document.getElementById("masonry");
-      const banner = document.querySelector(".hero-banner");
-      if (!btn || !target) return;
+    // FOOTER ARROW CLICK → SCROLL TO TOP (mirrored behavior)
+(function(){
+  const btn = document.getElementById("footerScroll");
+  const target = document.getElementById("masonry");
+  const banner = document.querySelector(".hero-banner");
+  if(!btn || !target) return;
 
-      btn.addEventListener("click", () => {
-        const startY = window.scrollY;
-        const offset = banner ? banner.offsetHeight : 0;
-        const targetY = target.getBoundingClientRect().top + window.scrollY - offset;
-        const distance = targetY - startY;
-        const duration = 1400;
+  btn.addEventListener("click", () => {
+    const startY = window.scrollY;
+    const offset = banner ? banner.offsetHeight : 0;
+    const targetY =
+      target.getBoundingClientRect().top + window.scrollY - offset;
+    const distance = targetY - startY;
+
+        const duration = 1400; // ms (matches hero)
         const startTime = performance.now();
 
-        function easeInOutCubic(t) {
-          return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        function easeInOutCubic(t){
+          return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
         }
-        function step(now) {
+
+        function step(now){
           const elapsed = now - startTime;
           const t = Math.min(elapsed / duration, 1);
-          window.scrollTo(0, startY + distance * easeInOutCubic(t));
-          if (t < 1) requestAnimationFrame(step);
+          const eased = easeInOutCubic(t);
+
+          window.scrollTo(0, startY + distance * eased);
+
+          if(t < 1) requestAnimationFrame(step);
         }
+
         requestAnimationFrame(step);
       });
     })();
