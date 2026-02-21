@@ -783,7 +783,7 @@ body {
   .lb-side {
     padding-left: 16px !important;
     padding-right: 16px !important;
-    padding-bottom: 2px !important;
+    padding-bottom: 0 !important;
   }
   /* Disable top gradient on mobile portrait */
   .lb-side::before {
@@ -1196,8 +1196,8 @@ body {
     justify-content: center !important;
 
     /* PADDING UPDATE:
-       Top: 32px (nudge text down); Right: 80px (clears X icon, shortens line by ~1 word); Bottom: 10px (tighter landing, match portrait nudge) */
-    padding: 32px 80px 10px 0 !important;
+       Top: 32px (nudge text down); Right: 80px (clears X icon, shortens line by ~1 word); Bottom: 8px (tighter landing) */
+    padding: 32px 80px 8px 0 !important;
   }
 
   /* 3. EXPANDED STATE: Snap to Top (only when content overflows; JS toggles .lb-overflow) */
@@ -1274,7 +1274,7 @@ body {
   .lb-actions { padding-bottom: 6px !important; }
 
   .lb-prompt {
-    font-size: 16px;
+    font-size: 17px;
     line-height: 1.5;
   }
 
@@ -1328,7 +1328,7 @@ body {
 
 @media (max-width: 640px){
   .lb-prompt{
-    font-size: 16px;
+    font-size: 17px;
     line-height: 1.5;
     padding-top: 20px;
   }
@@ -1377,6 +1377,13 @@ body {
 
     font-size: 32px;
     line-height: 1.2;
+  }
+}
+
+/* Mobile portrait only: nudge hero caption down a bit */
+@media (max-width: 640px) and (orientation: portrait) {
+  .hero-caption {
+    bottom: 138px;
   }
 }
 
@@ -1787,7 +1794,7 @@ body {
     position: absolute;
     bottom: 0;
     right: 0;      /* Align to the right column */
-    width: 480px;  /* Match the fixed text column width (experiment: 460 → 480) */
+    width: 520px;  /* Match the fixed text column width */
     height: 40px;
 
     background: linear-gradient(to top, var(--bg) 15%, transparent);
