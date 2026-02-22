@@ -422,7 +422,8 @@ body {
   
   /* SAFETY NET: Allow scrolling for long text */
   max-height: 100%; 
-  overflow-y: auto; 
+  overflow-y: auto;
+  overscroll-behavior-y: contain; /* prevent overscroll chaining to page (iOS) */
   
   /* Keep existing styling */
   color: var(--muted);
@@ -700,6 +701,7 @@ body {
     min-height: 0;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain; /* prevent overscroll chaining to page (iOS) */
 
     /* FIX: Force Top to 0 (locks gradient), Set Bottom to 10px (tighter landing, icons closer to edge) */
     padding: 0;
@@ -816,6 +818,7 @@ body {
     overflow-x: hidden !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain; /* prevent overscroll chaining to page (iOS) */
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
@@ -1000,6 +1003,7 @@ body {
     min-height: 0;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain; /* prevent overscroll chaining to page (iOS) */
     padding: 0;
 
     /* Scroll Clearance: Matches the bottom gradient height so icons can escape */
@@ -1190,6 +1194,7 @@ body {
     height: 100% !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain; /* prevent overscroll chaining to page (iOS) */
 
     display: flex !important;
     flex-direction: column !important;
@@ -1913,6 +1918,7 @@ body {
     /* SCROLLING: Enable scrolling on the container itself */
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain; /* prevent overscroll chaining to page (iOS) */
 
     padding: 0 !important;
     padding-right: 6px !important;
