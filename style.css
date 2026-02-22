@@ -41,6 +41,7 @@ html, body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
+  overflow-x: hidden; /* iOS: avoid rubber-band revealing horizontal space / extra side sensitivity in gallery */
 
   /* REMOVE MOBILE TAP HIGHLIGHT:
      Eliminates the blue/grey flash on Android/iOS when tapping images or buttons.
@@ -50,6 +51,7 @@ html, body {
 
 body {
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  overscroll-behavior-x: none; /* iOS: no horizontal overscroll during vertical gallery scroll */
 }
 
 /* Skip link (accessibility) */
