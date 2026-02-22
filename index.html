@@ -185,6 +185,7 @@
     let items = [];
     let currentIndex = -1;
     let lastFocusBeforeLB = null;
+    let savedScrollY = 0;
 
     function formatPrompt(raw){
       const text = (raw || "").toString();
@@ -277,8 +278,14 @@
       lbContainer.classList.add("open");
       lbContainer.setAttribute("aria-hidden", "false");
       
-      // FIX: Lock the background page scroll
+      // iOS-safe scroll lock: prevent background scroll and overscroll bleed-through
+      savedScrollY = window.scrollY;
       document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${savedScrollY}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
       
       updateNavState();
       lbClose.focus();
@@ -292,6 +299,12 @@
       // This prevents the X icon from jumping left when the scrollbar reappears.
       setTimeout(() => {
         document.body.style.overflow = "";
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.left = "";
+        document.body.style.right = "";
+        document.body.style.width = "";
+        window.scrollTo(0, savedScrollY);
       }, 200);
       
       currentIndex = -1;
