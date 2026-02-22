@@ -584,6 +584,7 @@
       track.addEventListener("touchstart", (e) => {
         if (e.touches.length > 1) return;
         lbContainer.classList.remove("lb-swiping");
+        if (portrait()) lbContainer.classList.add("lb-swiping"); /* hide in-slot X before any move so no 1-frame travel on iOS */
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
         currentDeltaX = 0;
