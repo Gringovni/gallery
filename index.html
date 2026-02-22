@@ -218,12 +218,14 @@
       const wrap = slot.querySelector(".lb-prompt-wrap");
       const moreBtn = slot.querySelector(".lb-prompt-more");
 
-      // === NEW: Reset Scroll State on Slide Change ===
+      // === Reset Scroll State on Slide Change ===
       const side = slot.querySelector(".lb-side");
       if (side) {
         side.scrollTop = 0; // Jump to top
         side.classList.remove("scrolled"); // Hide top fade
       }
+      // On mobile portrait the slot is the vertical scroll container; reset it so swipe doesn't feel poppy (harmless on tablet/desktop).
+      slot.scrollTop = 0;
       // ===============================================
 
       if (index < 0 || index >= items.length) {
@@ -601,7 +603,8 @@
         if (isScrolling) return;
         currentDeltaX = deltaX;
         setTrackTransform(deltaX);
-      }, { passive: true });
+        e.preventDefault(); /* avoid scroll vs transform conflict on iOS (vertical scroll and horizontal track move) */
+      }, { passive: false });
 
       track.addEventListener("touchend", (e) => {
         if (!isDragging || isScrolling) return;
@@ -617,20 +620,22 @@
           track.addEventListener("transitionend", function onEnd() {
             track.removeEventListener("transitionend", onEnd);
             lbContainer.classList.remove("lb-swiping");
-            // Wrap Next
             currentIndex = (currentIndex + 1) % items.length;
-            renderCarousel(currentIndex);
-            updateNavState();
+            requestAnimationFrame(() => {
+              renderCarousel(currentIndex);
+              updateNavState();
+            });
           }, { once: true });
         } else if (goPrev) {
           track.style.transform = "translate3d(0%, 0, 0)";
           track.addEventListener("transitionend", function onEnd() {
             track.removeEventListener("transitionend", onEnd);
             lbContainer.classList.remove("lb-swiping");
-            // Wrap Prev
             currentIndex = (currentIndex - 1 + items.length) % items.length;
-            renderCarousel(currentIndex);
-            updateNavState();
+            requestAnimationFrame(() => {
+              renderCarousel(currentIndex);
+              updateNavState();
+            });
           }, { once: true });
         } else {
           track.style.transform = "translate3d(-33.3333%, 0, 0)";
