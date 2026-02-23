@@ -348,7 +348,8 @@ body {
 }
 
 .lb-animating {
-  transition: transform var(--transition-smooth);
+  /* Softer ease-out so settle doesn't snap at the end (Option 1) */
+  transition: transform 0.35s ease-out;
 }
 
 /* Desktop layout: keep your intent (image left, prompt right) */
