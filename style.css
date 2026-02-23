@@ -134,13 +134,6 @@ body {
   }
 }
 
-/* Viewport fix: 1px padding nudge on right at narrow widths so masonry content width is even → integer column boundaries (helps Safari top-row alignment) */
-@media (max-width: 768px) {
-  .wrap {
-    padding-right: calc(max(var(--gap), env(safe-area-inset-right)) + 1px);
-  }
-}
-
 /* Masonry */
 .masonry{
   column-count: 3;
@@ -149,13 +142,28 @@ body {
   padding-top: 0;
 }
 
-@media (max-width: 1100px){
-  .masonry{ column-count: 2; }
+/* First row + rest: on desktop, wrappers are layout-neutral so all cards flow in 3 columns */
+.masonry-first-row,
+.masonry-rest {
+  display: contents;
 }
 
-@media (max-width: 640px) {
-  .masonry { column-count: 2; }
+@media (max-width: 1100px){
+  .masonry { column-count: unset; }
+  .masonry-first-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gap);
+    margin-bottom: var(--gap);
+  }
+  .masonry-first-row .card { margin-bottom: 0; }
+  .masonry-rest {
+    display: block;
+    column-count: 2;
+    column-gap: var(--gap);
+  }
 }
+
 
 /* Card */
 .card {
