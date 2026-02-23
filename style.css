@@ -142,28 +142,13 @@ body {
   padding-top: 0;
 }
 
-/* First row + rest: on desktop, wrappers are layout-neutral so all cards flow in 3 columns */
-.masonry-first-row,
-.masonry-rest {
-  display: contents;
-}
-
 @media (max-width: 1100px){
-  .masonry { column-count: unset; }
-  .masonry-first-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--gap);
-    margin-bottom: var(--gap);
-  }
-  .masonry-first-row .card { margin-bottom: 0; }
-  .masonry-rest {
-    display: block;
-    column-count: 2;
-    column-gap: var(--gap);
-  }
+  .masonry{ column-count: 2; }
 }
 
+@media (max-width: 640px) {
+  .masonry { column-count: 2; }
+}
 
 /* Card */
 .card {
