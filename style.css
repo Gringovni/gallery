@@ -828,6 +828,10 @@ body {
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
+  /* Softer settle tail on iPhone: duration sweet spot (track only) */
+  .lb-track.lb-animating {
+    transition: transform 0.38s cubic-bezier(0.25, 0.75, 0.4, 1);
+  }
   .lb-slide-slot::-webkit-scrollbar {
     display: none;
   }
