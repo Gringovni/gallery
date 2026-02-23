@@ -250,6 +250,17 @@
       if (moreBtn) moreBtn.setAttribute("aria-expanded", "false");
     }
 
+    function preloadAdjacent(centerIndex) {
+      const len = items.length;
+      if (len === 0) return;
+      const idxA = (centerIndex + 2) % len;
+      const idxB = (centerIndex - 2 + len) % len;
+      const urlA = items[idxA]?.src;
+      const urlB = items[idxB]?.src;
+      if (urlA) { const img = new Image(); img.src = urlA; }
+      if (urlB && urlB !== urlA) { const img = new Image(); img.src = urlB; }
+    }
+
     function renderCarousel(centerIndex) {
       const track = lb.querySelector(".lb-track");
       const slots = lb.querySelectorAll(".lb-slide-slot");
@@ -269,6 +280,8 @@
       
       track.classList.remove("lb-animating");
       track.style.transform = "translate3d(-33.3333%, 0, 0)";
+
+      preloadAdjacent(centerIndex);
     }
 
     function openLB(index) {
