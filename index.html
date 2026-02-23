@@ -578,6 +578,7 @@
       let isScrolling = false;
       let isIntentDetermined = false;
       let lockInVersion = 0;
+      let cachedLbWidth = 0;
       const thresholdPercent = 0.2;
       const intentThresholdPx = 12;  /* don't decide scroll vs swipe until we've moved this far */
       const scrollRatio = 1.5;       /* require vertical to be 1.5× horizontal to treat as scroll */
@@ -589,6 +590,7 @@
       track.addEventListener("touchstart", (e) => {
         if (e.touches.length > 1) return;
         lbContainer.classList.remove("lb-swiping");
+        cachedLbWidth = lb.offsetWidth;
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
         currentDeltaX = 0;
@@ -628,7 +630,7 @@
         if (!isDragging || isScrolling) return;
         isDragging = false;
         track.classList.add("lb-animating");
-        const thresholdPx = lb.offsetWidth * thresholdPercent;
+        const thresholdPx = cachedLbWidth * thresholdPercent;
         // Allow swipe wrapping
         const goPrev = currentDeltaX > thresholdPx && items.length > 1;
         const goNext = currentDeltaX < -thresholdPx && items.length > 1;
