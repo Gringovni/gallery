@@ -150,6 +150,15 @@ body {
   .masonry { column-count: 2; }
 }
 
+/* iOS WebKit only: integer column width in 2-column masonry to avoid top-row misalignment */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 1100px) {
+    .masonry {
+      column-gap: 7px;
+    }
+  }
+}
+
 /* Card */
 .card {
   break-inside: avoid;
