@@ -577,6 +577,7 @@
       let isDragging = false;
       let isScrolling = false;
       let isIntentDetermined = false;
+      let lockInVersion = 0;
       const thresholdPercent = 0.2;
       const intentThresholdPx = 12;  /* don't decide scroll vs swipe until we've moved this far */
       const scrollRatio = 1.5;       /* require vertical to be 1.5× horizontal to treat as scroll */
@@ -638,9 +639,29 @@
             track.removeEventListener("transitionend", onEnd);
             lbContainer.classList.remove("lb-swiping");
             currentIndex = (currentIndex + 1) % items.length;
+            lockInVersion++;
+            const version = lockInVersion;
             requestAnimationFrame(() => {
-              renderCarousel(currentIndex);
-              updateNavState();
+              const slots = lb.querySelectorAll(".lb-slide-slot");
+              if (track && slots.length === 3 && items.length > 0) {
+                const len = items.length;
+                const idxPrev = (currentIndex - 1 + len) % len;
+                const idxCur = currentIndex;
+                const idxNext = (currentIndex + 1) % len;
+                populateSlot(slots[1], idxCur);
+                track.classList.remove("lb-animating");
+                track.style.transform = "translate3d(-33.3333%, 0, 0)";
+                updateNavState();
+                requestAnimationFrame(() => {
+                  if (version !== lockInVersion) return;
+                  populateSlot(slots[0], idxPrev);
+                  populateSlot(slots[2], idxNext);
+                  preloadAdjacent(currentIndex);
+                });
+              } else {
+                renderCarousel(currentIndex);
+                updateNavState();
+              }
             });
           }, { once: true });
         } else if (goPrev) {
@@ -649,9 +670,29 @@
             track.removeEventListener("transitionend", onEnd);
             lbContainer.classList.remove("lb-swiping");
             currentIndex = (currentIndex - 1 + items.length) % items.length;
+            lockInVersion++;
+            const version = lockInVersion;
             requestAnimationFrame(() => {
-              renderCarousel(currentIndex);
-              updateNavState();
+              const slots = lb.querySelectorAll(".lb-slide-slot");
+              if (track && slots.length === 3 && items.length > 0) {
+                const len = items.length;
+                const idxPrev = (currentIndex - 1 + len) % len;
+                const idxCur = currentIndex;
+                const idxNext = (currentIndex + 1) % len;
+                populateSlot(slots[1], idxCur);
+                track.classList.remove("lb-animating");
+                track.style.transform = "translate3d(-33.3333%, 0, 0)";
+                updateNavState();
+                requestAnimationFrame(() => {
+                  if (version !== lockInVersion) return;
+                  populateSlot(slots[0], idxPrev);
+                  populateSlot(slots[2], idxNext);
+                  preloadAdjacent(currentIndex);
+                });
+              } else {
+                renderCarousel(currentIndex);
+                updateNavState();
+              }
             });
           }, { once: true });
         } else {
