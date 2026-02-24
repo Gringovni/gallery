@@ -25,7 +25,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=1">
+  <link rel="stylesheet" href="style.css?v=35">
 </head>
 
 <body>
@@ -173,12 +173,6 @@
 
   <script>
     const masonry = document.getElementById("masonry");
-
-    (function () {
-      const ua = navigator.userAgent;
-      const isIOSSafari = /iP(hone|ad|od)/.test(ua) && /Safari/.test(ua) && !/CriOS|FxiOS/.test(ua);
-      if (isIOSSafari) document.documentElement.classList.add("ios-safari");
-    })();
 
     const lbContainer = document.getElementById("lbContainer");
     const lb = document.getElementById("lb");
@@ -380,8 +374,6 @@
       const existingCards = masonry.querySelectorAll(".card");
       existingCards.forEach((el) => el.remove());
 
-      const useGridFallback = document.documentElement.classList.contains("ios-safari") && window.innerWidth <= 1100;
-
       items.forEach((item, i) => {
         const card = document.createElement("article");
         card.className = "card";
@@ -395,15 +387,21 @@
         img.alt = item.title || "";
         img.className = "card-img";
 
-        if (useGridFallback) img.addEventListener("load", debouncedSetGridSpans);
-
+        // Add click event to each card
         card.addEventListener("click", (e) => {
           e.preventDefault();
+
+          // 1. FREEZE: Keep the lift active instantly
           card.classList.add("lb-hold");
+
+          // 2. OPEN LIGHTBOX
           openLB(i);
+
+          // 3. CLEANUP (Behind the scenes)
+          // Wait for the lightbox fade-in (approx 350ms)
           setTimeout(() => {
-            card.classList.remove("lb-hold");
-            card.blur();
+            card.classList.remove("lb-hold"); // Unfreeze the lift
+            card.blur(); // CRITICAL: Remove browser focus so the card is "fresh" when you return
           }, 350);
         });
         card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLB(i); } });
@@ -411,35 +409,7 @@
         card.appendChild(img);
         masonry.appendChild(card);
       });
-
-      if (useGridFallback) requestAnimationFrame(() => { setTimeout(debouncedSetGridSpans, 50); });
     }
-
-    const GRID_ROW_PX = 4;
-    let setGridSpansTimeout;
-    function setGridSpans() {
-      if (!document.documentElement.classList.contains("ios-safari") || window.innerWidth > 1100) return;
-      const cards = masonry.querySelectorAll(":scope > .card");
-      cards.forEach((card) => {
-        const h = card.offsetHeight;
-        const span = Math.max(1, Math.ceil(h / GRID_ROW_PX));
-        card.style.gridRowEnd = "span " + span;
-      });
-    }
-    function debouncedSetGridSpans() {
-      clearTimeout(setGridSpansTimeout);
-      setGridSpansTimeout = setTimeout(setGridSpans, 80);
-    }
-
-    let resizeTimeout;
-    window.addEventListener("resize", () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        if (document.documentElement.classList.contains("ios-safari") && window.innerWidth <= 1100 && items.length && document.body.contains(masonry)) {
-          debouncedSetGridSpans();
-        }
-      }, 150);
-    });
 
     lbContainer.addEventListener("click", (e) => { if (e.target.closest(".lb-close")) closeLB(); });
     lbPrev.addEventListener("click", prev);
