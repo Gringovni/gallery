@@ -252,6 +252,14 @@ body {
   color: #111;
 }
 
+.site-footer a:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px rgba(68, 68, 68, 0.35),
+    0 2px 6px rgba(68, 68, 68, 0.15);
+  border-radius: 6px;
+}
+
 /* Mobile: smaller footer font + more padding so line 1 fits and isn’t cut off */
 @media (max-width: 640px){
   .site-footer{
@@ -1155,8 +1163,8 @@ body {
 }
 
 /* === MOBILE LANDSCAPE SPECIFIC LAYOUT (FINAL FRAME FIX) === */
-/* Target: Short landscape = phones (max-height: 600px). No width limit so 844px-wide phones match. */
-@media (orientation: landscape) and (max-height: 600px) {
+/* Target: Phones in landscape. max-height: 700px so we match when address bar hides; max-width: 900px excludes tablets; pointer: coarse = touch. */
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 700px) and (max-width: 900px) {
 
   /* 1. CONTAINER: Enable positioning for gradients */
   .lb-content {
@@ -1325,7 +1333,7 @@ body {
 
 /* Hide bottom gradients on mobile portrait and landscape only */
 @media (max-width: 640px),
-       (orientation: landscape) and (max-height: 600px) {
+       (pointer: coarse) and (orientation: landscape) and (max-height: 700px) and (max-width: 900px) {
   .lb-content::after {
     opacity: 0 !important;
     pointer-events: none;
@@ -1333,7 +1341,7 @@ body {
 }
 
 /* Hide top gradient on mobile landscape only */
-@media (orientation: landscape) and (max-height: 600px) {
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 700px) and (max-width: 900px) {
   .lb-content::before {
     opacity: 0 !important;
     pointer-events: none;
@@ -1561,9 +1569,12 @@ body {
 
 .hero-scroll:hover{ opacity: 1; }
 
-.hero-scroll:focus-visible{
-  outline: 2px solid rgba(255,255,255,0.85);
-  outline-offset: 3px;
+.hero-scroll:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.5),
+    0 2px 6px rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
 }
 
 /* Smooth, continuous vertical motion */
@@ -1634,9 +1645,12 @@ body {
   content: none;
 }
 
-.footer-scroll:focus-visible{
-  outline: 2px solid rgba(17, 17, 17, 0.5);
-  outline-offset: 3px;
+.footer-scroll:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px rgba(68, 68, 68, 0.35),
+    0 2px 6px rgba(68, 68, 68, 0.15);
+  border-radius: 15px;
 }
 
 @media (prefers-reduced-motion: reduce){
@@ -1645,7 +1659,7 @@ body {
 
 /* MOBILE ONLY: move close button right (+12px) and up slightly */
 @media (max-width: 640px),
-       (orientation: landscape) and (max-height: 600px) and (max-width: 900px) {
+       (pointer: coarse) and (orientation: landscape) and (max-height: 700px) and (max-width: 900px) {
   button.lb-close {
     transform: translateX(16px) translateY(-12px) translateZ(0);
     -webkit-transform: translateX(16px) translateY(-12px) translateZ(0);
@@ -2085,5 +2099,28 @@ body {
   .wrap {
     padding-left: 11px;
     padding-right: 11px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .lb-nav {
+    padding: 14px 14px;
+  }
+  .lb-nav:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px rgba(68, 68, 68, 0.35),
+      0 2px 6px rgba(68, 68, 68, 0.15);
+    border-radius: 15px;
+  }
+  .lb-prompt-more:focus-visible,
+  .lb-copy:focus-visible,
+  .lb-open-new:focus-visible,
+  .lb-close:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px rgba(68, 68, 68, 0.35),
+      0 2px 6px rgba(68, 68, 68, 0.15);
+    border-radius: 8px;
   }
 }
