@@ -157,12 +157,12 @@ body {
   .masonry { column-count: 2; }
 }
 
-/* iOS WebKit only: card-level compositing so each item snaps to pixel grid (top-row alignment) */
+/* iOS WebKit only: 1px shrink + explicit column-width so Safari uses integer column boundaries (top-row alignment) */
 @supports (-webkit-touch-callout: none) {
   @media (max-width: 1100px) {
-    .masonry .card {
-      transform: translateZ(0);
-      -webkit-transform: translateZ(0);
+    .masonry {
+      width: calc(100% - 1px);
+      column-width: 178px;
     }
   }
 }
