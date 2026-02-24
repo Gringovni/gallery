@@ -371,10 +371,44 @@
       masonryError.classList.add("hidden");
       masonry.setAttribute("aria-busy", "false");
 
-      const existingCards = masonry.querySelectorAll(".card");
-      existingCards.forEach((el) => el.remove());
+      renderMasonry();
+    }
+
+    function renderMasonry() {
+      if (!items.length) return;
+
+      const numCols = window.innerWidth <= 1100 ? 2 : 3;
+
+      const existingCols = masonry.querySelectorAll(".masonry-col");
+      existingCols.forEach((el) => el.remove());
+
+      for (let c = 0; c < numCols; c++) {
+        const col = document.createElement("div");
+        col.className = "masonry-col";
+        masonry.appendChild(col);
+      }
+
+      const cols = masonry.querySelectorAll(".masonry-col");
+      const colSums = Array.from({ length: numCols }, () => 0);
+
+      const sizeMatch = /(\d+)\/(\d+)$/;
 
       items.forEach((item, i) => {
+        const src = item.thumb || item.src;
+        let width = 1, height = 1;
+        const m = src.match(sizeMatch);
+        if (m) {
+          width = parseInt(m[1], 10);
+          height = parseInt(m[2], 10);
+        }
+        const aspectRatio = height / width;
+
+        let minIdx = 0;
+        for (let c = 1; c < numCols; c++) {
+          if (colSums[c] < colSums[minIdx]) minIdx = c;
+        }
+        colSums[minIdx] += aspectRatio;
+
         const card = document.createElement("article");
         card.className = "card";
         card.tabIndex = 0;
@@ -383,9 +417,11 @@
 
         const img = document.createElement("img");
         img.loading = "lazy";
-        img.src = item.thumb || item.src;
+        img.src = src;
         img.alt = item.title || "";
         img.className = "card-img";
+        img.width = width;
+        img.height = height;
 
         card.addEventListener("click", (e) => {
           e.preventDefault();
@@ -399,9 +435,22 @@
         card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLB(i); } });
 
         card.appendChild(img);
-        masonry.appendChild(card);
+        cols[minIdx].appendChild(card);
       });
     }
+
+    let resizeTimeout;
+    let lastColBreakpoint = window.innerWidth <= 1100;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        const nowNarrow = window.innerWidth <= 1100;
+        if (nowNarrow !== lastColBreakpoint && items.length && document.body.contains(masonry)) {
+          lastColBreakpoint = nowNarrow;
+          renderMasonry();
+        }
+      }, 150);
+    });
 
     lbContainer.addEventListener("click", (e) => { if (e.target.closest(".lb-close")) closeLB(); });
     lbPrev.addEventListener("click", prev);
