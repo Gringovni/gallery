@@ -122,12 +122,17 @@ body {
   }
 }
 
-/* iPhone Safari: avoid fractional 2-col widths causing 1px top-row misalignment */
+/* iPhone Safari: prevent fractional 2-column rounding misalignment */
 @supports (-webkit-touch-callout: none) {
   @media (max-width: 1024px) {
     .wrap {
-      /* take 1px from the RIGHT only (no horizontal shift) */
-      padding-right: calc(max(var(--gap), env(safe-area-inset-right)) + 1px);
+      /* Must override existing !important rule */
+      padding-right: calc(max(var(--gap), env(safe-area-inset-right)) + 1px) !important;
+    }
+
+    /* TEMPORARY PROBE — confirms this block is applying */
+    .masonry {
+      outline: 2px solid red;
     }
   }
 }
