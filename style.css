@@ -135,25 +135,24 @@ body {
 }
 
 /* Masonry */
-.masonry{
-  column-count: 3;
-  column-gap: var(--gap);
+.masonry {
+  display: flex;
+  gap: var(--gap);
+  align-items: flex-start;
   margin: 0;
   padding-top: 0;
 }
 
-@media (max-width: 1100px) {
-  .masonry { column-count: 2; }
-}
-
-@media (max-width: 640px) {
-  .masonry { column-count: 2; }
+.masonry-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  flex: 1;
+  min-width: 0;
 }
 
 /* Card */
 .card {
-  break-inside: avoid;
-  margin: 0 0 var(--gap);
   cursor: pointer;
   outline: none;
 }
