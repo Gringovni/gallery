@@ -165,10 +165,19 @@ body {
   }
   .masonry-first-row .card { margin-bottom: 0; }
   .masonry-rest {
-    display: block;
-    column-count: 2;
-    column-gap: var(--gap);
+    display: flex;
+    gap: var(--gap);
     padding-top: calc(var(--gap) - 1px);
+  }
+  .masonry-col {
+    flex: 1;
+    min-width: 0;
+  }
+  .masonry-col .card {
+    margin-bottom: var(--gap);
+  }
+  .masonry-col .card:last-child {
+    margin-bottom: 0;
   }
 }
 
