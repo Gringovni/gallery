@@ -157,11 +157,11 @@ body {
   .masonry { column-count: 2; }
 }
 
-/* iOS WebKit only: 1px padding nudge on right so masonry content width is even → integer column boundaries (top-row alignment) */
+/* iOS WebKit only: explicit column-width (integer) so Safari uses consistent column boundaries (top-row alignment) */
 @supports (-webkit-touch-callout: none) {
-  @media (max-width: 1024px) {
-    .wrap {
-      padding-right: calc(max(var(--gap), env(safe-area-inset-right)) + 1px);
+  @media (max-width: 1100px) {
+    .masonry {
+      column-width: 178px;
     }
   }
 }
