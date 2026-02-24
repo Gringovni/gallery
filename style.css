@@ -157,11 +157,11 @@ body {
   .masonry { column-count: 2; }
 }
 
-/* iOS WebKit only: exact pixel width at 375px viewport so column width is integer (top-row alignment) */
+/* iOS WebKit only: isolation: isolate creates stacking context; may improve Safari top-row alignment */
 @supports (-webkit-touch-callout: none) {
-  @media (max-width: 375px) and (min-width: 374px) {
+  @media (max-width: 1100px) {
     .masonry {
-      width: 362px;
+      isolation: isolate;
     }
   }
 }
