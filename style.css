@@ -157,11 +157,11 @@ body {
   .masonry { column-count: 2; }
 }
 
-/* iOS WebKit only: column-fill: auto so Safari fills first column then second; may improve top-row alignment */
+/* iOS WebKit only: layout containment so Safari rounds column boundaries consistently (top-row alignment) */
 @supports (-webkit-touch-callout: none) {
   @media (max-width: 1100px) {
     .masonry {
-      column-fill: auto;
+      contain: layout;
     }
   }
 }
