@@ -135,20 +135,19 @@ body {
 }
 
 /* Masonry */
-.masonry {
-  display: flex;
-  gap: var(--gap);
-  align-items: flex-start;
+.masonry{
+  column-count: 3;
+  column-gap: var(--gap);
   margin: 0;
   padding-top: 0;
 }
 
-.masonry-col {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap);
-  flex: 1;
-  min-width: 0;
+@media (max-width: 1100px){
+  .masonry{ column-count: 2; }
+}
+
+@media (max-width: 640px) {
+  .masonry { column-count: 2; }
 }
 
 /* iOS Safari only: grid fallback for 2-column to avoid top-row misalignment (kill switch: remove .ios-safari from <html>) */
@@ -164,6 +163,8 @@ body {
 
 /* Card */
 .card {
+  break-inside: avoid;
+  margin: 0 0 var(--gap);
   cursor: pointer;
   outline: none;
 }
