@@ -57,8 +57,6 @@
     <section id="masonry" class="masonry" aria-label="Gallery" aria-busy="false" aria-live="polite">
       <p class="masonry-loading" id="masonryLoading">Loading gallery…</p>
       <p class="masonry-error hidden" id="masonryError" role="alert"></p>
-      <div class="masonry-first-row"></div>
-      <div class="masonry-rest"></div>
     </section>
 
     <section class="editorial-layout" aria-label="Project framework">
@@ -373,81 +371,37 @@
       masonryError.classList.add("hidden");
       masonry.setAttribute("aria-busy", "false");
 
-      renderMasonry();
-    }
-
-    function buildCard(item, i) {
-      const card = document.createElement("article");
-      card.className = "card";
-      card.tabIndex = 0;
-      card.setAttribute("role", "button");
-      card.setAttribute("aria-label", `View image ${i + 1}: ${item.title || "Untitled"}`);
-
-      const img = document.createElement("img");
-      img.loading = "lazy";
-      img.src = item.thumb || item.src;
-      img.alt = item.title || "";
-      img.className = "card-img";
-
-      card.addEventListener("click", (e) => {
-        e.preventDefault();
-        card.classList.add("lb-hold");
-        openLB(i);
-        setTimeout(() => {
-          card.classList.remove("lb-hold");
-          card.blur();
-        }, 350);
-      });
-      card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLB(i); } });
-
-      card.appendChild(img);
-      return card;
-    }
-
-    function renderMasonry() {
-      if (!items.length) return;
       const existingCards = masonry.querySelectorAll(".card");
       existingCards.forEach((el) => el.remove());
-      const firstRow = masonry.querySelector(".masonry-first-row");
-      const rest = masonry.querySelector(".masonry-rest");
-      if (firstRow) firstRow.innerHTML = "";
-      if (rest) rest.innerHTML = "";
 
-      const isNarrow = window.matchMedia("(max-width: 1100px)").matches;
+      items.forEach((item, i) => {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        card.setAttribute("aria-label", `View image ${i + 1}: ${item.title || "Untitled"}`);
 
-      if (isNarrow) {
-        const colLeft = document.createElement("div");
-        colLeft.className = "masonry-col masonry-col-left";
-        const colRight = document.createElement("div");
-        colRight.className = "masonry-col masonry-col-right";
-        rest.appendChild(colLeft);
-        rest.appendChild(colRight);
+        const img = document.createElement("img");
+        img.loading = "lazy";
+        img.src = item.thumb || item.src;
+        img.alt = item.title || "";
+        img.className = "card-img";
 
-        items.forEach((item, i) => {
-          const card = buildCard(item, i);
-          if (i < 2) {
-            (firstRow || masonry).appendChild(card);
-          } else {
-            const target = colLeft.offsetHeight <= colRight.offsetHeight ? colLeft : colRight;
-            target.appendChild(card);
-          }
+        card.addEventListener("click", (e) => {
+          e.preventDefault();
+          card.classList.add("lb-hold");
+          openLB(i);
+          setTimeout(() => {
+            card.classList.remove("lb-hold");
+            card.blur();
+          }, 350);
         });
-      } else {
-        items.forEach((item, i) => {
-          const card = buildCard(item, i);
-          const target = i < 2 ? (firstRow || masonry) : (rest || masonry);
-          target.appendChild(card);
-        });
-      }
+        card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLB(i); } });
+
+        card.appendChild(img);
+        masonry.appendChild(card);
+      });
     }
-
-    let resizeTimeout;
-    window.addEventListener("resize", () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        if (items.length && document.body.contains(masonry)) renderMasonry();
-      }, 150);
-    });
 
     lbContainer.addEventListener("click", (e) => { if (e.target.closest(".lb-close")) closeLB(); });
     lbPrev.addEventListener("click", prev);
