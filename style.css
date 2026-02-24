@@ -150,11 +150,11 @@ body {
   .masonry { column-count: 2; }
 }
 
-/* iOS WebKit only: 1px padding nudge on left so masonry content width is even → integer column boundaries (top-row alignment) */
+/* iOS WebKit only: shrink masonry by 1px so content width is even → integer column boundaries (top-row alignment) */
 @supports (-webkit-touch-callout: none) {
-  @media (max-width: 1024px) {
-    .wrap {
-      padding-left: calc(max(var(--gap), env(safe-area-inset-left)) + 1px);
+  @media (max-width: 1100px) {
+    .masonry {
+      width: calc(100% - 1px);
     }
   }
 }
