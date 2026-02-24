@@ -157,11 +157,12 @@ body {
   .masonry { column-count: 2; }
 }
 
-/* iOS WebKit only: will-change: transform hints compositing layer; may improve Safari top-row alignment */
+/* iOS WebKit only: first two cards same min-height so top row aligns visually (top-row alignment) */
 @supports (-webkit-touch-callout: none) {
   @media (max-width: 1100px) {
-    .masonry {
-      will-change: transform;
+    .masonry .card:nth-child(1),
+    .masonry .card:nth-child(2) {
+      min-height: 200px;
     }
   }
 }
