@@ -157,11 +157,11 @@ body {
   .masonry { column-count: 2; }
 }
 
-/* Probe: confirm Safari-only block runs on iPhone (remove after testing) */
+/* iOS WebKit only: integer column width in 2-column masonry to avoid top-row misalignment */
 @supports (-webkit-touch-callout: none) {
   @media (max-width: 1100px) {
     .masonry {
-      outline: 3px solid red;
+      column-gap: 7px;
     }
   }
 }
