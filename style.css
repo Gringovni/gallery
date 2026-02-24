@@ -157,13 +157,11 @@ body {
   .masonry { column-count: 2; }
 }
 
-/* iOS WebKit only: Option 1 + Option 2 combined (7px gap + compositing layer) for Safari top-row alignment */
+/* iOS WebKit only: exact pixel width at 375px viewport so column width is integer (top-row alignment) */
 @supports (-webkit-touch-callout: none) {
-  @media (max-width: 1100px) {
+  @media (max-width: 375px) and (min-width: 374px) {
     .masonry {
-      column-gap: 7px;
-      transform: translateZ(0);
-      -webkit-transform: translateZ(0);
+      width: 362px;
     }
   }
 }
