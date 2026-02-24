@@ -149,25 +149,20 @@ body {
   padding-top: 0;
 }
 
-/* Option 11: first row as grid so top two images align; desktop uses contents so 3-column unchanged */
-.masonry-first-row,
-.masonry-rest {
-  display: contents;
+@media (max-width: 1100px) {
+  .masonry { column-count: 2; }
 }
 
-@media (max-width: 1100px) {
-  .masonry { column-count: unset; }
-  .masonry-first-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--gap);
-    margin-bottom: var(--gap);
-  }
-  .masonry-first-row .card { margin-bottom: 0; }
-  .masonry-rest {
-    display: block;
-    column-count: 2;
-    column-gap: var(--gap);
+@media (max-width: 640px) {
+  .masonry { column-count: 2; }
+}
+
+/* Probe: confirm Safari-only block runs on iPhone (remove after testing) */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 1100px) {
+    .masonry {
+      outline: 3px solid red;
+    }
   }
 }
 
