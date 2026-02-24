@@ -174,6 +174,12 @@
   <script>
     const masonry = document.getElementById("masonry");
 
+    (function () {
+      const ua = navigator.userAgent;
+      const isIOSSafari = /iP(hone|ad|od)/.test(ua) && /Safari/.test(ua) && !/CriOS|FxiOS/.test(ua);
+      if (isIOSSafari) document.documentElement.classList.add("ios-safari");
+    })();
+
     const lbContainer = document.getElementById("lbContainer");
     const lb = document.getElementById("lb");
     const lbClose = document.getElementById("lbClose");
@@ -374,26 +380,34 @@
       renderMasonry();
     }
 
+    const GRID_ROW_PX = 4;
+    let setGridSpansTimeout;
+    function setGridSpans() {
+      if (!document.documentElement.classList.contains("ios-safari") || window.innerWidth > 1100) return;
+      const cards = masonry.querySelectorAll(":scope > .card");
+      cards.forEach((card) => {
+        const h = card.offsetHeight;
+        const span = Math.max(1, Math.ceil(h / GRID_ROW_PX));
+        card.style.gridRowEnd = "span " + span;
+      });
+    }
+    function debouncedSetGridSpans() {
+      clearTimeout(setGridSpansTimeout);
+      setGridSpansTimeout = setTimeout(setGridSpans, 80);
+    }
+
     function renderMasonry() {
       if (!items.length) return;
 
       const numCols = window.innerWidth <= 1100 ? 2 : 3;
+      const useGridFallback = document.documentElement.classList.contains("ios-safari") && numCols === 2;
 
-      const existingCols = masonry.querySelectorAll(".masonry-col");
-      existingCols.forEach((el) => el.remove());
-
-      for (let c = 0; c < numCols; c++) {
-        const col = document.createElement("div");
-        col.className = "masonry-col";
-        masonry.appendChild(col);
-      }
-
-      const cols = masonry.querySelectorAll(".masonry-col");
-      const colSums = Array.from({ length: numCols }, () => 0);
+      masonry.querySelectorAll(".masonry-col").forEach((el) => el.remove());
+      masonry.querySelectorAll(":scope > .card").forEach((el) => el.remove());
 
       const sizeMatch = /(\d+)\/(\d+)$/;
 
-      items.forEach((item, i) => {
+      function buildCard(item, i) {
         const src = item.thumb || item.src;
         let width = 1, height = 1;
         const m = src.match(sizeMatch);
@@ -401,14 +415,6 @@
           width = parseInt(m[1], 10);
           height = parseInt(m[2], 10);
         }
-        const aspectRatio = height / width;
-
-        let minIdx = 0;
-        for (let c = 1; c < numCols; c++) {
-          if (colSums[c] < colSums[minIdx]) minIdx = c;
-        }
-        colSums[minIdx] += aspectRatio;
-
         const card = document.createElement("article");
         card.className = "card";
         card.tabIndex = 0;
@@ -423,6 +429,8 @@
         img.width = width;
         img.height = height;
 
+        if (useGridFallback) img.addEventListener("load", debouncedSetGridSpans);
+
         card.addEventListener("click", (e) => {
           e.preventDefault();
           card.classList.add("lb-hold");
@@ -435,7 +443,41 @@
         card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLB(i); } });
 
         card.appendChild(img);
-        cols[minIdx].appendChild(card);
+        return card;
+      }
+
+      if (useGridFallback) {
+        items.forEach((item, i) => masonry.appendChild(buildCard(item, i)));
+        requestAnimationFrame(() => { setTimeout(debouncedSetGridSpans, 50); });
+        return;
+      }
+
+      for (let c = 0; c < numCols; c++) {
+        const col = document.createElement("div");
+        col.className = "masonry-col";
+        masonry.appendChild(col);
+      }
+
+      const cols = masonry.querySelectorAll(".masonry-col");
+      const colSums = Array.from({ length: numCols }, () => 0);
+
+      items.forEach((item, i) => {
+        const src = item.thumb || item.src;
+        let width = 1, height = 1;
+        const m = src.match(sizeMatch);
+        if (m) {
+          width = parseInt(m[1], 10);
+          height = parseInt(m[2], 10);
+        }
+        const aspectRatio = (height || 1) / (width || 1);
+
+        let minIdx = 0;
+        for (let c = 1; c < numCols; c++) {
+          if (colSums[c] < colSums[minIdx]) minIdx = c;
+        }
+        colSums[minIdx] += aspectRatio;
+
+        cols[minIdx].appendChild(buildCard(item, i));
       });
     }
 
@@ -448,6 +490,8 @@
         if (nowNarrow !== lastColBreakpoint && items.length && document.body.contains(masonry)) {
           lastColBreakpoint = nowNarrow;
           renderMasonry();
+        } else if (document.documentElement.classList.contains("ios-safari") && nowNarrow && items.length && document.body.contains(masonry)) {
+          debouncedSetGridSpans();
         }
       }, 150);
     });
