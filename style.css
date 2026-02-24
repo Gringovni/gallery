@@ -134,6 +134,13 @@ body {
   }
 }
 
+/* Viewport fix: 1px padding nudge on right at narrow widths so masonry content width is even → integer column boundaries (helps Safari top-row alignment) */
+@media (max-width: 768px) {
+  .wrap {
+    padding-right: calc(max(var(--gap), env(safe-area-inset-right)) + 1px);
+  }
+}
+
 /* Masonry */
 .masonry{
   column-count: 3;
@@ -148,15 +155,6 @@ body {
 
 @media (max-width: 640px) {
   .masonry { column-count: 2; }
-}
-
-/* iOS WebKit only: explicit column-width (integer) so Safari uses consistent column boundaries (top-row alignment) */
-@supports (-webkit-touch-callout: none) {
-  @media (max-width: 1100px) {
-    .masonry {
-      column-width: 178px;
-    }
-  }
 }
 
 /* Card */
