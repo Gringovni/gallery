@@ -157,11 +157,11 @@ body {
   .masonry { column-count: 2; }
 }
 
-/* iOS WebKit only: explicit 6px margin-bottom (no var(--gap)) to rule out variable rounding (top-row alignment) */
-@supports (-webkit-touch-callout: none) {
+/* Alternative Safari gate (-webkit-hyphens): integer column width in 2-col masonry for top-row alignment */
+@supports (-webkit-hyphens: none) {
   @media (max-width: 1100px) {
-    .masonry .card {
-      margin-bottom: 6px;
+    .masonry {
+      column-gap: 7px;
     }
   }
 }
