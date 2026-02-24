@@ -129,10 +129,20 @@ body {
       /* Must override existing !important rule */
       padding-right: calc(max(var(--gap), env(safe-area-inset-right)) + 1px) !important;
     }
+  }
+}
 
-    /* TEMPORARY PROBE — confirms this block is applying */
-    .masonry {
-      outline: 2px solid red;
+/* iOS Safari: stabilize multi-column masonry card layout */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 1100px) {
+    .masonry .card {
+      display: inline-block;
+      width: 100%;
+      vertical-align: top;
+
+      -webkit-column-break-inside: avoid;
+      break-inside: avoid;
+      page-break-inside: avoid;
     }
   }
 }
