@@ -149,20 +149,26 @@ body {
   padding-top: 0;
 }
 
+/* Option 11: first row as grid (top two images align); desktop uses contents so 3-column unchanged */
+.masonry-first-row,
+.masonry-rest {
+  display: contents;
+}
+
 @media (max-width: 1100px) {
-  .masonry { column-count: 2; }
-}
-
-@media (max-width: 640px) {
-  .masonry { column-count: 2; }
-}
-
-/* iOS WebKit only: isolation: isolate creates stacking context; may improve Safari top-row alignment */
-@supports (-webkit-touch-callout: none) {
-  @media (max-width: 1100px) {
-    .masonry {
-      isolation: isolate;
-    }
+  .masonry { column-count: unset; }
+  .masonry-first-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gap);
+    margin-bottom: 0;
+  }
+  .masonry-first-row .card { margin-bottom: 0; }
+  .masonry-rest {
+    display: block;
+    column-count: 2;
+    column-gap: var(--gap);
+    padding-top: var(--gap);
   }
 }
 
