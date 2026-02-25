@@ -2014,6 +2014,26 @@ body {
   /* Do NOT modify .lb-close in this block */
 }
 
+/* Phone landscape: prevent tablet-820 landscape overrides from leaking in (width/padding/grid/height). */
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 700px) and (max-width: 900px) {
+  .lb-content {
+    /* Re-assert phone landscape layout */
+    width: 100vw !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    grid-template-columns: 1fr 50vw !important;
+
+    /* Keep full-height behavior consistent across address bar states */
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+  }
+
+  /* Ensure tablet max-height cap doesn't shrink the image panel */
+  .lb-img {
+    max-height: 100% !important;
+  }
+}
+
 /* === LARGE TABLET LANDSCAPE (1025px–1366px) === */
 /* Normalize top/bottom to 40px (match gradient); padding defines spacing, not margin. */
 @media (min-width: 1025px) and (max-width: 1366px) and (orientation: landscape) {
