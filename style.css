@@ -1208,11 +1208,13 @@ body {
   }
 
   .lb-media-link {
-    width: auto !important; /* Force the wrapper to shrink-wrap horizontally */
-    height: 100% !important; /* Pass the height constraint down to the image */
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    /* FIX: Swapping flex for block forces Safari to recalculate size instantly upon image load */
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    margin: 0 auto !important; /* Failsafe centering */
   }
 
   /* 3. THE IMAGE: Hugs the border exactly */
@@ -1221,10 +1223,9 @@ body {
     height: auto !important;
     max-width: 100% !important;
     max-height: 100% !important;
-    
-    /* Preserve aspect ratio (contain); avoids stretch from object-fit: fill on some devices */
-    object-fit: contain !important; 
+    object-fit: contain !important; /* Keeps your previous fix active */
     display: block !important;
+    margin: 0 auto !important;
   }
 
   /* 2. TEXT COLUMN: Increased right padding to clear X icon */
