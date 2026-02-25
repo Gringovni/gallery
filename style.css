@@ -115,10 +115,21 @@ body {
 /* Applies to Tablets (iPad Mini/Air/Pro Portrait) and Mobile. */
 @media (max-width: 1024px) {
   .wrap {
+    outline: 4px solid blue; /* Temporary debug probe */
     /* Match the 6px gutter exactly */
     /* max() ensures we never go below the device safe-area (notch/dynamic island) */
     padding-left: max(var(--gap), env(safe-area-inset-left));
     padding-right: max(var(--gap), env(safe-area-inset-right));
+  }
+}
+
+/* Landscape Override - Phone */
+@media (max-width: 1024px) and (orientation: landscape) and (max-height: 600px) {
+  .wrap {
+    outline: 4px solid red; /* Temporary debug probe */
+    /* clamp(MINIMUM, IDEAL, MAXIMUM) - much safer for WebKit */
+    padding-left: clamp(var(--gap), env(safe-area-inset-left), 16px);
+    padding-right: clamp(var(--gap), env(safe-area-inset-right), 16px);
   }
 }
 
