@@ -1166,13 +1166,14 @@ body {
 /* Target: Short landscape = phones (max-height: 600px). No width limit so 844px-wide phones match. */
 @media (orientation: landscape) and (max-height: 600px) {
 
-  /* 1. CONTAINER: Enable positioning for gradients */
+  /* 1. CONTAINER: Full width in landscape (no oversized frame on sides) */
   .lb-content {
     display: grid !important;
     grid-template-columns: 1fr 50vw !important;
     grid-template-rows: 100% !important;
 
     width: 100vw !important;
+    max-width: none !important;
     height: 100vh !important;
     max-height: 100vh !important;
     height: 100dvh !important;
@@ -1185,10 +1186,11 @@ body {
     position: relative !important;
   }
 
-  /* Shift image + text group right without shrinking image (wider width + translate) */
+  /* Lock slot content to full viewport width (no shift; avoids narrow card look) */
   .lb-slide-slot .lb-content {
-    width: calc(100vw + 20px) !important;
-    transform: translateX(10px) !important;
+    width: 100vw !important;
+    max-width: none !important;
+    transform: none !important;
   }
 
   /* 2. IMAGE SLOT: Balanced frame */
@@ -1208,8 +1210,7 @@ body {
   }
 
   .lb-media-link {
-    width: fit-content; /* Let it shrink-wrap the image instead of forcing 100% */
-    max-width: 100%;
+    width: 100%;
     height: 100%;
     display: flex;
     align-items: center;
@@ -1222,7 +1223,7 @@ body {
     height: auto !important;
     max-width: 100% !important;
     max-height: 100% !important;
-    /* Removing object-fit forces Safari to make the bounding box match the photo exactly */
+    object-fit: contain !important;
     display: block !important;
   }
 
