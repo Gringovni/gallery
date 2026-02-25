@@ -1333,7 +1333,7 @@ body {
 
 /* Hide bottom gradients on mobile portrait and landscape only */
 @media (max-width: 640px),
-       (orientation: landscape) and (max-height: 600px) {
+       (pointer: coarse) and (orientation: landscape) and (max-height: 700px) {
   .lb-content::after {
     opacity: 0 !important;
     pointer-events: none;
@@ -1341,7 +1341,7 @@ body {
 }
 
 /* Hide top gradient on mobile landscape only */
-@media (orientation: landscape) and (max-height: 600px) {
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 700px) {
   .lb-content::before {
     opacity: 0 !important;
     pointer-events: none;
@@ -1659,7 +1659,7 @@ body {
 
 /* MOBILE ONLY: move close button right (+12px) and up slightly */
 @media (max-width: 640px),
-       (orientation: landscape) and (max-height: 600px) and (max-width: 900px) {
+       (pointer: coarse) and (orientation: landscape) and (max-height: 700px) and (max-width: 900px) {
   button.lb-close {
     transform: translateX(16px) translateY(-12px) translateZ(0);
     -webkit-transform: translateX(16px) translateY(-12px) translateZ(0);
