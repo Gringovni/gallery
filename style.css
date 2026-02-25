@@ -1163,7 +1163,7 @@ body {
 }
 
 /* === MOBILE LANDSCAPE SPECIFIC LAYOUT (FINAL FRAME FIX) === */
-/* Touch + short landscape (max-height: 700px) = phones; tablets use min-height: 701px. */
+/* Touch + short landscape (max-height: 700px) = phones; tablets use min-height: 701px. Fix: 600/601 boundary caused phones to sometimes get tablet layout (40px frame). */
 @media (pointer: coarse) and (orientation: landscape) and (max-height: 700px) {
 
   /* 1. CONTAINER: Enable positioning for gradients */
