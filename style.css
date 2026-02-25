@@ -122,10 +122,10 @@ body {
   }
 }
 
-/* Phone landscape: cap safe-area side padding so iPhone notch doesn't create huge gutters */
-@media (pointer: coarse) and (orientation: landscape) and (max-height: 700px) and (max-width: 1024px) {
+/* Cap safe-area side padding in phone landscape so gutters don't get huge (e.g. iPhone) */
+@media (max-width: 1024px) and (orientation: landscape) and (max-height: 600px) {
   .wrap {
-    padding-left:  max(var(--gap), min(env(safe-area-inset-left), 16px));
+    padding-left: max(var(--gap), min(env(safe-area-inset-left), 16px));
     padding-right: max(var(--gap), min(env(safe-area-inset-right), 16px));
   }
 }
