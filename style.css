@@ -1166,14 +1166,13 @@ body {
 /* Target: Short landscape = phones (max-height: 600px). No width limit so 844px-wide phones match. */
 @media (orientation: landscape) and (max-height: 600px) {
 
-  /* 1. CONTAINER: Full width in landscape (no oversized frame on sides) */
+  /* 1. CONTAINER: Enable positioning for gradients */
   .lb-content {
     display: grid !important;
     grid-template-columns: 1fr 50vw !important;
     grid-template-rows: 100% !important;
 
     width: 100vw !important;
-    max-width: none !important;
     height: 100vh !important;
     max-height: 100vh !important;
     height: 100dvh !important;
@@ -1186,11 +1185,10 @@ body {
     position: relative !important;
   }
 
-  /* Lock slot content to full viewport width (no shift; avoids narrow card look) */
+  /* Shift image + text group right without shrinking image (wider width + translate) */
   .lb-slide-slot .lb-content {
-    width: 100vw !important;
-    max-width: none !important;
-    transform: none !important;
+    width: calc(100vw + 20px) !important;
+    transform: translateX(10px) !important;
   }
 
   /* 2. IMAGE SLOT: Balanced frame */
@@ -1210,8 +1208,8 @@ body {
   }
 
   .lb-media-link {
-    width: 100%;
-    height: 100%;
+    width: auto !important; /* Force the wrapper to shrink-wrap horizontally */
+    height: 100% !important; /* Pass the height constraint down to the image */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1223,7 +1221,9 @@ body {
     height: auto !important;
     max-width: 100% !important;
     max-height: 100% !important;
-    object-fit: contain !important;
+    
+    /* CRITICAL OVERRIDE: Neutralizes the global object-fit rule */
+    object-fit: initial !important; 
     display: block !important;
   }
 
