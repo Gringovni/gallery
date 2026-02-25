@@ -1208,11 +1208,11 @@ body {
   }
 
   .lb-media-link {
+    /* Grid (not flex) so Safari recalculates on image load → fixes oversized frame; 100% keeps slot fill, no clipping */
     width: 100% !important;
     height: 100% !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid !important;
+    place-items: center;
   }
 
   /* 3. THE IMAGE: Hugs the border exactly */
