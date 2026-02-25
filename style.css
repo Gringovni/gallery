@@ -1208,10 +1208,11 @@ body {
   }
 
   .lb-media-link {
-    /* FIX: block forces Safari to recalculate size on image load (first-open frame fix) */
-    display: block !important;
-    width: auto !important;
+    width: 100% !important;
     height: 100% !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   /* 3. THE IMAGE: Hugs the border exactly */
