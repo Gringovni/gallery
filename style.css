@@ -1130,8 +1130,8 @@ body {
   }
 }
 
-/* Tablet landscape only (tall viewport): move X icon. min-height: 601px excludes phone landscape. */
-@media (min-width: 641px) and (max-width: 1024px) and (orientation: landscape) and (min-height: 601px) {
+/* Tablet landscape only (tall viewport): move X icon. min-height: 701px excludes phone landscape. */
+@media (min-width: 641px) and (max-width: 1024px) and (orientation: landscape) and (min-height: 701px) {
   .lb-close {
     top: -4px !important;
     right: 3px !important;
@@ -1139,8 +1139,8 @@ body {
 }
 
 /* TABLET LANDSCAPE (iPad Mini & Air) - EXCLUDES MOBILE */
-/* Added (min-height: 600px) to ensure we don't catch phones in landscape */
-@media (min-width: 641px) and (max-width: 1024px) and (orientation: landscape) and (min-height: 600px) {
+/* min-height: 701px so phones in landscape (<=700px) always get mobile-landscape layout */
+@media (min-width: 641px) and (max-width: 1024px) and (orientation: landscape) and (min-height: 701px) {
 
   .lb-content {
     flex-direction: row; /* Ensure side-by-side */
@@ -1163,8 +1163,8 @@ body {
 }
 
 /* === MOBILE LANDSCAPE SPECIFIC LAYOUT (FINAL FRAME FIX) === */
-/* Target: Phones in landscape. max-height: 700px so we match when address bar hides; max-width: 900px excludes tablets; pointer: coarse = touch. */
-@media (pointer: coarse) and (orientation: landscape) and (max-height: 700px) and (max-width: 900px) {
+/* Touch + short landscape (max-height: 700px) = phones; tablets use min-height: 701px. */
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 700px) {
 
   /* 1. CONTAINER: Enable positioning for gradients */
   .lb-content {
@@ -1333,7 +1333,7 @@ body {
 
 /* Hide bottom gradients on mobile portrait and landscape only */
 @media (max-width: 640px),
-       (pointer: coarse) and (orientation: landscape) and (max-height: 700px) and (max-width: 900px) {
+       (orientation: landscape) and (max-height: 600px) {
   .lb-content::after {
     opacity: 0 !important;
     pointer-events: none;
@@ -1341,7 +1341,7 @@ body {
 }
 
 /* Hide top gradient on mobile landscape only */
-@media (pointer: coarse) and (orientation: landscape) and (max-height: 700px) and (max-width: 900px) {
+@media (orientation: landscape) and (max-height: 600px) {
   .lb-content::before {
     opacity: 0 !important;
     pointer-events: none;
@@ -1659,7 +1659,7 @@ body {
 
 /* MOBILE ONLY: move close button right (+12px) and up slightly */
 @media (max-width: 640px),
-       (pointer: coarse) and (orientation: landscape) and (max-height: 700px) and (max-width: 900px) {
+       (orientation: landscape) and (max-height: 600px) and (max-width: 900px) {
   button.lb-close {
     transform: translateX(16px) translateY(-12px) translateZ(0);
     -webkit-transform: translateX(16px) translateY(-12px) translateZ(0);
@@ -1856,10 +1856,9 @@ body {
 
 /* === TABLET LANDSCAPE OVERRIDE === */
 /* Enforce tablet rules for 820px-1024px landscape (excludes phones in landscape).
-   Overrides "Mobile Landscape" when height is < 600px (e.g. iPad Mini).
-   Split-pane: lock container height, 1fr row, text column scrolls only. */
-/* min-height: 601px excludes short (phone) landscape so tablet rules don't override Mobile Landscape. */
-@media (min-width: 820px) and (max-width: 1024px) and (orientation: landscape) and (min-height: 601px) {
+   Phones use mobile-landscape up to max-height: 700px; tablets from min-height: 701px. */
+/* min-height: 701px excludes short (phone) landscape so tablet rules don't override Mobile Landscape. */
+@media (min-width: 820px) and (max-width: 1024px) and (orientation: landscape) and (min-height: 701px) {
 
   .lb-content,
   .lb-figure {
@@ -2012,26 +2011,6 @@ body {
   }
 
   /* Do NOT modify .lb-close in this block */
-}
-
-/* Phone landscape: prevent tablet-820 landscape overrides from leaking in (width/padding/grid/height). */
-@media (pointer: coarse) and (orientation: landscape) and (max-height: 700px) and (max-width: 900px) {
-  .lb-content {
-    /* Re-assert phone landscape layout */
-    width: 100vw !important;
-    padding: 0 !important;
-    gap: 0 !important;
-    grid-template-columns: 1fr 50vw !important;
-
-    /* Keep full-height behavior consistent across address bar states */
-    height: 100dvh !important;
-    max-height: 100dvh !important;
-  }
-
-  /* Ensure tablet max-height cap doesn't shrink the image panel */
-  .lb-img {
-    max-height: 100% !important;
-  }
 }
 
 /* === LARGE TABLET LANDSCAPE (1025px–1366px) === */
