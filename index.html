@@ -187,6 +187,25 @@
     let lastFocusBeforeLB = null;
     let savedScrollY = 0;
 
+    /* Safari iOS landscape: first tap on X may reveal address bar instead of closing; arm pending close so resize can close */
+    let pendingCloseAt = 0;
+    let pendingCloseTimeout = null;
+    function armPendingClose() {
+      pendingCloseAt = Date.now();
+      if (pendingCloseTimeout) clearTimeout(pendingCloseTimeout);
+      pendingCloseTimeout = setTimeout(() => {
+        pendingCloseAt = 0;
+        pendingCloseTimeout = null;
+      }, 600);
+    }
+    function clearPendingClose() {
+      pendingCloseAt = 0;
+      if (pendingCloseTimeout) {
+        clearTimeout(pendingCloseTimeout);
+        pendingCloseTimeout = null;
+      }
+    }
+
     function formatPrompt(raw){
       const text = (raw || "").toString();
 
@@ -304,6 +323,7 @@
     }
 
     function closeLB() {
+      clearPendingClose();
       lbContainer.classList.remove("open");
       lbContainer.setAttribute("aria-hidden", "true");
       
@@ -498,15 +518,23 @@
       document.querySelectorAll(".lb-side").forEach(updateLbOverflow);
     });
 
-    /* Prevent first tap on close from being used to show address bar (mobile landscape) */
-    lbContainer.addEventListener("touchstart", (e) => {
-      if (e.target.closest(".lb-close")) e.preventDefault();
-    }, { passive: false });
-
     /* Mobile: touchend fallback so close works even when click is blocked */
     lbContainer.addEventListener("touchend", (e) => {
       if (e.target.closest(".lb-close")) { e.preventDefault(); closeLB(); }
     }, { passive: false });
+
+    /* Safari iOS landscape: arm pending close on X tap; if address bar reveal causes viewport resize, close on resize */
+    lbContainer.addEventListener("pointerdown", (e) => {
+      if (e.target.closest(".lb-close")) armPendingClose();
+    });
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", () => {
+        if (!lbContainer.classList.contains("open")) return;
+        if (!pendingCloseAt) return;
+        if (Date.now() - pendingCloseAt > 600) return clearPendingClose();
+        closeLB();
+      });
+    }
 
     lbContainer.addEventListener("keydown", (e) => {
       if (!lbContainer.classList.contains("open")) return;
