@@ -149,6 +149,16 @@ body {
   }
 }
 
+/* === BLACK SIDE GUTTERS (SAFE-AREA LANDSCAPE, GALLERY VIEW) ===
+   Device-agnostic: only applies when safe-area env() is supported.
+   Keeps content white via .wrap background; lightbox stays white because .lb already covers viewport. */
+@media (max-width: 1024px) and (orientation: landscape) {
+  @supports (padding: env(safe-area-inset-left)) {
+    body { background: #000; }
+    .wrap { background: #fff; }
+  }
+}
+
 /* Masonry */
 .masonry{
   column-count: 3;
