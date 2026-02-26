@@ -2120,8 +2120,8 @@ body {
   }
 }
 
-/* === HARDWARE SAFE AREA (NOTCH) FIX FOR LANDSCAPE === */
-@media (orientation: landscape) {
+/* === HARDWARE SAFE AREA (NOTCH) FIX FOR MOBILE LANDSCAPE ONLY === */
+@media (orientation: landscape) and (max-height: 600px) {
   /* 1. Paint pure black strips locked strictly to the screen edges */
   body::before,
   body::after {
