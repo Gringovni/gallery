@@ -2160,13 +2160,9 @@ body {
       width: 100% !important;
       max-width: 100% !important;
     }
-    /* In-slot close: viewport-relative so right respects notch; no notch = 18px, notch = safe area */
-    .lb-container .lb-close-in-slot {
-      position: fixed !important;
-      top: 8px !important;
-      right: max(18px, env(safe-area-inset-right)) !important;
-      transform: translateY(-14px) translateZ(0);
-      -webkit-transform: translateY(-14px) translateZ(0);
+    /* Push the close button inward by the exact notch width, preserving all existing approved transforms */
+    .lb-container .lb-close {
+      right: calc(18px + env(safe-area-inset-right)) !important;
     }
   }
 }
