@@ -498,6 +498,11 @@
       document.querySelectorAll(".lb-side").forEach(updateLbOverflow);
     });
 
+    /* Prevent first tap on close from being used to show address bar (mobile landscape) */
+    lbContainer.addEventListener("touchstart", (e) => {
+      if (e.target.closest(".lb-close")) e.preventDefault();
+    }, { passive: false });
+
     /* Mobile: touchend fallback so close works even when click is blocked */
     lbContainer.addEventListener("touchend", (e) => {
       if (e.target.closest(".lb-close")) { e.preventDefault(); closeLB(); }
