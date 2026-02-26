@@ -2164,15 +2164,15 @@ body {
     .lb-container .lb-close {
       right: calc(18px + env(safe-area-inset-right)) !important;
     }
-    /* Expand invisible touch target down and left to escape Safari top-edge dead zone; no visual or layout change */
-    .lb-container .lb-close::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: -40px;
-      left: -30px;
-      pointer-events: auto;
-    }
+  }
+
+  .lb-close::after {
+    content: "";
+    position: absolute;
+    /* Expand hit area asymmetrically: slightly up/right, but drastically down/left */
+    top: -15px;
+    right: -15px;
+    bottom: -40px; /* Pulls the interactive zone down, escaping the OS dead zone */
+    left: -30px;   /* Pulls the interactive zone left, away from the physical screen edge */
   }
 }
