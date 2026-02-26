@@ -151,11 +151,21 @@ body {
 
 /* === BLACK SIDE GUTTERS (SAFE-AREA LANDSCAPE, GALLERY VIEW) ===
    Device-agnostic: only applies when safe-area env() is supported.
-   Keeps content white via .wrap background; lightbox stays white because .lb already covers viewport. */
+   Black in safe-area strip, then exactly var(--gap) white, then masonry; no padding/layout change.
+   Lightbox stays white because .lb already covers viewport. */
 @media (max-width: 1024px) and (orientation: landscape) {
   @supports (padding: env(safe-area-inset-left)) {
     body { background: #000; }
-    .wrap { background: #fff; }
+    .wrap {
+      background: linear-gradient(
+          to right,
+          transparent 0,
+          transparent calc(env(safe-area-inset-left) - var(--gap)),
+          #fff calc(env(safe-area-inset-left) - var(--gap)),
+          #fff calc(100% - env(safe-area-inset-right) + var(--gap)),
+          transparent calc(100% - env(safe-area-inset-right) + var(--gap))
+        );
+    }
   }
 }
 
