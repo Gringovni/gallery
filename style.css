@@ -122,6 +122,40 @@ body {
   }
 }
 
+/* === LANDSCAPE SAFE-AREA GUTTERS (WRAP ONLY) === */
+/* Keep banner/footer unchanged. Black only in the safe-area strips. */
+@media (max-width: 1024px) and (orientation: landscape) and (pointer: coarse) {
+  @supports (padding: env(safe-area-inset-left)) {
+    .wrap {
+      position: relative; /* for ::before layer */
+      /* Keep content notch-safe, but only the extra gap remains white */
+      padding-left: calc(env(safe-area-inset-left) + var(--gap));
+      padding-right: calc(env(safe-area-inset-right) + var(--gap));
+      background: #fff; /* ensures wrap content stays white */
+      z-index: 0;
+    }
+
+    .wrap::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+
+      /* Paint ONLY the safe-area widths black, leave the rest transparent/white */
+      background:
+        linear-gradient(to right,
+          #000 0,
+          #000 env(safe-area-inset-left),
+          transparent env(safe-area-inset-left),
+          transparent calc(100% - env(safe-area-inset-right)),
+          #000 calc(100% - env(safe-area-inset-right)),
+          #000 100%
+        );
+    }
+  }
+}
+
 /* iOS Safari: stabilize multi-column masonry card layout */
 @supports (-webkit-touch-callout: none) {
   @media (max-width: 1100px) {
