@@ -2160,5 +2160,10 @@ body {
       width: 100% !important;
       max-width: 100% !important;
     }
+    /* Stop in-slot close from being pushed into notch (remove translateX(19px)) */
+    .lb-container .lb-close-in-slot {
+      transform: translateY(-14px) translateZ(0);
+      -webkit-transform: translateY(-14px) translateZ(0);
+    }
   }
 }
