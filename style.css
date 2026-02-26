@@ -2147,4 +2147,14 @@ body {
     margin-left: env(safe-area-inset-left);
     margin-right: env(safe-area-inset-right);
   }
+
+  /* 3. Lightbox only: pad content so image + prompt stay inside safe area; overlay stays full-bleed white */
+  @supports (padding: env(safe-area-inset-left)) {
+    .lb-container .lb-slide-slot .lb-content {
+      padding-left: max(16px, env(safe-area-inset-left)) !important;
+      padding-right: max(16px, env(safe-area-inset-right)) !important;
+      /* DEBUG: remove outline after confirming on iPhone landscape */
+      outline: 2px solid red;
+    }
+  }
 }
