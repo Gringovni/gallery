@@ -2167,3 +2167,11 @@ body {
     }
   }
 }
+
+/* Mobile landscape phones only: prevent the slide slot itself from scrolling.
+   Portrait keeps the original .lb-slide-slot overflow behavior. */
+@media (orientation: landscape) and (max-height: 600px) {
+  .lb-slide-slot {
+    overflow-y: hidden !important;
+  }
+}
