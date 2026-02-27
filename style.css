@@ -42,6 +42,7 @@ html, body {
   background: var(--bg);
   color: var(--text);
   overflow-x: hidden; /* iOS: avoid rubber-band revealing horizontal space / extra side sensitivity in gallery */
+  -webkit-text-size-adjust: 100%; /* Normalize iOS Safari text sizing across orientations */
 
   /* REMOVE MOBILE TAP HIGHLIGHT:
      Eliminates the blue/grey flash on Android/iOS when tapping images or buttons.
