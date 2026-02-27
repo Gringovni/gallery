@@ -585,6 +585,8 @@
       const thresholdPercent = 0.2;
       const intentThresholdPx = 12;  /* don't decide scroll vs swipe until we've moved this far */
       const scrollRatio = 1.5;       /* require vertical to be 1.5× horizontal to treat as scroll */
+      const scrollRatioNonPortrait = 1.25; /* tablet/landscape: less strict so horizontal swipes register more easily */
+      const DEBUG_SWIPE = false;
 
       function setTrackTransform(offsetPx) {
         track.style.transform = `translate3d(calc(-33.3333% + ${offsetPx}px), 0, 0)`;
@@ -615,12 +617,15 @@
         if (!isIntentDetermined) {
           const total = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
           if (total < intentThresholdPx) return; /* wait for meaningful movement */
-          if (absY > scrollRatio * absX) {
+          const ratio = portrait() ? scrollRatio : scrollRatioNonPortrait;
+          if (absY > ratio * absX) {
             isScrolling = true;
             isDragging = false;
+            if (DEBUG_SWIPE) console.log("[lb swipe] intent=scroll");
             return;
           }
           isIntentDetermined = true;
+          if (DEBUG_SWIPE) console.log("[lb swipe] intent=swipe");
           if (portrait()) lbContainer.classList.add("lb-swiping");
         }
         if (isScrolling) return;
