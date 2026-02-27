@@ -2165,14 +2165,12 @@ body {
       right: calc(18px + env(safe-area-inset-right)) !important;
     }
   }
+}
 
-  .lb-close::after {
-    content: "";
-    position: absolute;
-    /* Expand hit area asymmetrically: slightly up/right, but drastically down/left */
-    top: -15px;
-    right: -15px;
-    bottom: -40px; /* Pulls the interactive zone down, escaping the OS dead zone */
-    left: -30px;   /* Pulls the interactive zone left, away from the physical screen edge */
+/* === PREVIEW ONLY: move lightbox close button down to test 44px rule (mobile landscape) === */
+@media (orientation: landscape) and (max-height: 600px) {
+  .lb-container button.lb-close {
+    /* 56px - existing translateY(-12px) ≈ 44px effective distance from physical top edge */
+    top: 56px !important;
   }
 }
