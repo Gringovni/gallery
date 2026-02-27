@@ -2166,11 +2166,3 @@ body {
     }
   }
 }
-
-/* === PREVIEW ONLY: move lightbox close button down to test 44px rule (mobile landscape) === */
-@media (orientation: landscape) and (max-height: 600px) {
-  .lb-container button.lb-close {
-    /* 56px - existing translateY(-12px) ≈ 44px effective distance from physical top edge */
-    top: 56px !important;
-  }
-}
