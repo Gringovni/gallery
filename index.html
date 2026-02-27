@@ -633,7 +633,9 @@
         if (!isDragging || isScrolling) return;
         isDragging = false;
         track.classList.add("lb-animating");
-        const thresholdPx = cachedLbWidth * thresholdPercent;
+        const baseThresholdPx = cachedLbWidth * thresholdPercent;
+        const maxThresholdPx = 80;
+        const thresholdPx = portrait() ? baseThresholdPx : Math.min(baseThresholdPx, maxThresholdPx);
         // Allow swipe wrapping
         const goPrev = currentDeltaX > thresholdPx && items.length > 1;
         const goNext = currentDeltaX < -thresholdPx && items.length > 1;
