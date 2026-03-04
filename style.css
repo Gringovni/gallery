@@ -172,16 +172,19 @@ body {
   display: block;
   border-radius: 0;
   background: #fff;
-  transition: transform var(--transition-fast), filter var(--transition-fast);
+  filter: blur(0.25px);
+  transition:
+    filter 120ms ease-out,
+    transform var(--transition-fast);
+}
+
+.card-img.is-loaded {
+  filter: none;
 }
 
 .card:focus-visible {
   outline: 2px solid var(--text);
   outline-offset: 3px;
-}
-.card-img {
-  background: #fff;
-  transition: transform var(--transition-fast), filter var(--transition-fast);
 }
 /* DESKTOP ONLY: Hover interactions (Lift + Contrast) */
 @media (hover: hover) and (pointer: fine) {
@@ -2174,4 +2177,16 @@ body {
   .lb-slide-slot {
     overflow-y: hidden !important;
   }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
