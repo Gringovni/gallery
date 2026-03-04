@@ -2126,23 +2126,36 @@ body {
 
 /* === HARDWARE SAFE AREA (NOTCH) FIX FOR MOBILE LANDSCAPE ONLY === */
 @media (orientation: landscape) and (max-height: 600px) {
-  /* 1. Paint root canvas black natively */
+
   html {
     background-color: #000;
   }
 
-  /* 2. Constrain content column using solid borders instead of margins.
-        This forces iOS Chrome to paint the gutters black via the box model
-        while keeping the content geometry perfectly identical. */
   body {
-    background-color: var(--bg);
-    border-left: env(safe-area-inset-left) solid #000;
-    border-right: env(safe-area-inset-right) solid #000;
-    margin: 0 !important; /* Reset to prevent double-inset */
+    /* 1. Force the body to span the exact physical screen edges */
+    margin: 0 !important;
+    border: none !important;
     min-height: 100vh;
+
+    /* 2. Squeeze content inward into the safe area using padding instead of margins.
+          This keeps the content geometry perfectly identical to previous layout iterations. */
+    padding-left: env(safe-area-inset-left) !important;
+    padding-right: env(safe-area-inset-right) !important;
+
+    /* 3. Paint the notches pure black and the center column white on a single layer.
+          This completely neutralizes iOS Chrome/WKWebView stacking and margin bugs. */
+    background: linear-gradient(
+      to right,
+      #000 0%,
+      #000 env(safe-area-inset-left),
+      var(--bg) env(safe-area-inset-left),
+      var(--bg) calc(100% - env(safe-area-inset-right)),
+      #000 calc(100% - env(safe-area-inset-right)),
+      #000 100%
+    ) !important;
   }
 
-  /* 3. Lightbox: pad the overlay so all content stays inside safe area */
+  /* 4. Lightbox: pad the overlay so all content stays inside safe area */
   @supports (padding: env(safe-area-inset-left)) {
     .lb-container .lb {
       padding-left: env(safe-area-inset-left);
