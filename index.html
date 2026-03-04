@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Latent Illumination • Production-Level AI Imagery</title>
+  <link rel="canonical" href="https://www.latentillumination.com/" />
   <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon-512x512.png">
 
@@ -55,6 +56,7 @@
   </header>
 
   <main class="wrap">
+    <h1 class="visually-hidden">Production-Level AI Imagery</h1>
     <section id="masonry" class="masonry" aria-label="Gallery" aria-busy="false" aria-live="polite">
       <p class="masonry-loading" id="masonryLoading">Loading gallery…</p>
       <p class="masonry-error hidden" id="masonryError" role="alert"></p>
@@ -375,6 +377,14 @@
       masonryError.classList.add("hidden");
       masonry.setAttribute("aria-busy", "false");
 
+      // Determine how many thumbnails are likely above the fold, based on masonry columns.
+      const masonryStyles = window.getComputedStyle(masonry);
+      let cols = parseInt(masonryStyles.columnCount, 10);
+      if (!cols || cols < 1) cols = 1;
+      const rowsAboveFold = 3;
+      let eagerCount = cols * rowsAboveFold;
+      eagerCount = Math.max(6, Math.min(12, eagerCount));
+
       const existingCards = masonry.querySelectorAll(".card");
       existingCards.forEach((el) => el.remove());
 
@@ -386,10 +396,34 @@
         card.setAttribute("aria-label", `View image ${i + 1}: ${item.title || "Untitled"}`);
 
         const img = document.createElement("img");
-        img.loading = "lazy";
+        const isEager = i < eagerCount;
+        if (isEager) {
+          // Above-the-fold thumbnails: eager load + show immediately
+          img.loading = "eager";
+        } else {
+          img.loading = "lazy";
+        }
+        img.decoding = "async";
         img.src = item.thumb || item.src;
         img.alt = item.title || "";
         img.className = "card-img";
+
+        // Eager thumbnails: mark as loaded immediately so they render at full quality
+        if (isEager) {
+          img.classList.add("is-loaded");
+        }
+
+        // Fade-in when loaded (thumbnails only)
+        img.addEventListener("load", () => {
+          if (!img.classList.contains("is-loaded")) {
+            img.classList.add("is-loaded");
+          }
+        });
+
+        // Handle cached images that are already complete by the time listeners are attached
+        if (img.complete && !img.classList.contains("is-loaded")) {
+          img.classList.add("is-loaded");
+        }
 
         // Add click event to each card
         card.addEventListener("click", (e) => {
