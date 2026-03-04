@@ -2126,32 +2126,33 @@ body {
 
 /* === HARDWARE SAFE AREA (NOTCH) FIX FOR MOBILE LANDSCAPE ONLY === */
 @media (orientation: landscape) and (max-height: 600px) {
-  /* 1. Paint the root canvas black. This natively fills the hardware safe-area gutters in all iOS browsers (Safari & Chrome). */
+  /* 1. Paint root canvas black natively */
   html {
     background-color: #000;
   }
 
-  /* 2. Constrain the master content column to the safe area and paint it white. */
+  /* 2. Constrain content column using solid borders instead of margins.
+        This forces iOS Chrome to paint the gutters black via the box model
+        while keeping the content geometry perfectly identical. */
   body {
     background-color: var(--bg);
-    margin-left: env(safe-area-inset-left);
-    margin-right: env(safe-area-inset-right);
-    min-height: 100vh; /* Ensures the white background spans the full height even if content is short */
+    border-left: env(safe-area-inset-left) solid #000;
+    border-right: env(safe-area-inset-right) solid #000;
+    margin: 0 !important; /* Reset to prevent double-inset */
+    min-height: 100vh;
   }
 
-  /* 3. Lightbox: pad the overlay so all content (image, prompt, close) stays inside safe area */
+  /* 3. Lightbox: pad the overlay so all content stays inside safe area */
   @supports (padding: env(safe-area-inset-left)) {
     .lb-container .lb {
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
     }
-    /* Prevent 100vw children from breaking out of the padded area */
     .lb-container .lb-content,
     .lb-container .lb-slide-slot .lb-content {
       width: 100% !important;
       max-width: 100% !important;
     }
-    /* Push the close button inward by the exact notch width */
     .lb-container .lb-close {
       right: calc(18px + env(safe-area-inset-right)) !important;
     }
