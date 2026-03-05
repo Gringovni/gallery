@@ -2176,26 +2176,10 @@ body {
     background: var(--bg) !important;
   }
 
-  /* Chrome iOS only: viewport root as positioning context; lightbox overlay absolute (not fixed) to avoid WKWebView clipping */
-  html.chrome-ios,
-  html.chrome-ios body {
-    height: 100%;
-  }
-  html.chrome-ios body {
-    margin: 0;
-  }
-  html.chrome-ios #viewportRoot {
-    position: relative;
-    width: 100vw;
-    min-height: 100svh;
-    min-height: 100dvh;
-  }
-  .chrome-ios .lb-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+  /* iOS Chrome Only: Force the native browser shell into light mode when the lightbox opens
+     in an attempt to override the native black safe-area letterboxing. */
+  html.chrome-ios:has(.lb-container.open) {
+    color-scheme: light !important;
   }
 }
 
