@@ -28,6 +28,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
+
+  <script>
+    // Isolate iOS Chrome to fix its specific safe-area lightbox rendering without breaking Safari
+    if (navigator.userAgent.match('CriOS')) {
+      document.documentElement.classList.add('chrome-ios');
+    }
+  </script>
 </head>
 
 <body>
