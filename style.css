@@ -2126,9 +2126,32 @@ body {
 
 /* === HARDWARE SAFE AREA (NOTCH) FIX FOR MOBILE LANDSCAPE ONLY === */
 @media (orientation: landscape) and (max-height: 600px) {
-  
+
   html {
     background-color: #000;
+  }
+
+  /* Chrome iOS: white html background so OS-level gutters stay white; black gutters via DOM panels below */
+  html.chrome-ios {
+    background-color: var(--bg) !important;
+  }
+
+  /* Chrome iOS only: fixed black gutter panels for gallery mode (hidden by JS when lightbox opens) */
+  html.chrome-ios .chrome-ios-gutter {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    background: #000;
+    z-index: 45;
+    pointer-events: none;
+  }
+  html.chrome-ios #chrome-ios-gutter-left {
+    left: 0;
+    width: env(safe-area-inset-left);
+  }
+  html.chrome-ios #chrome-ios-gutter-right {
+    right: 0;
+    width: env(safe-area-inset-right);
   }
 
   body {
@@ -2168,22 +2191,6 @@ body {
     .lb-container .lb-close {
       right: calc(18px + env(safe-area-inset-right)) !important;
     }
-  }
-
-  /* iOS Chrome Only: Absolute override to force the entire viewport to white when the lightbox opens.
-     This neutralizes root canvas colors, body gradients, and pseudo-element masks. */
-  html.chrome-ios:has(.lb-container.open) {
-    background-color: var(--bg) !important;
-  }
-  
-  html.chrome-ios:has(.lb-container.open) body {
-    background: var(--bg) !important;
-  }
-
-  /* Hide any pseudo-element masks if they exist from previous layout iterations */
-  html.chrome-ios:has(.lb-container.open) body::before,
-  html.chrome-ios:has(.lb-container.open) body::after {
-    display: none !important;
   }
 }
 
