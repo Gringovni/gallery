@@ -38,7 +38,6 @@
 </head>
 
 <body>
-  <div id="viewportRoot">
   <a href="#masonry" class="skip-link">Skip to gallery</a>
 
   <!-- HERO -->
@@ -181,7 +180,6 @@
     </div>
     <button class="lb-close" id="lbClose" aria-label="Close">×</button>
   </div>
-  </div><!-- #viewportRoot -->
 
   <script>
     // Disable automatic history scroll restoration so reloads don't land mid‑gallery.
@@ -317,24 +315,25 @@
       lbContainer.classList.add("open");
       lbContainer.setAttribute("aria-hidden", "false");
 
+      // iOS Chrome Only: Inject color-scheme meta tag to force native light mode gutters
+      if (document.documentElement.classList.contains("chrome-ios")) {
+        let colorSchemeMeta = document.querySelector('meta[name="color-scheme"]');
+        if (!colorSchemeMeta) {
+          colorSchemeMeta = document.createElement("meta");
+          colorSchemeMeta.name = "color-scheme";
+          document.head.appendChild(colorSchemeMeta);
+        }
+        colorSchemeMeta.content = "light";
+      }
+
       // Force reflow so Safari applies correct frame on first open (mobile landscape)
       requestAnimationFrame(() => { void lbContainer.offsetHeight; });
 
+      // Option B: overflow-only lock (no position:fixed) so Safari may collapse address bar
       savedScrollY = window.scrollY;
-      const isChromeIosLandscape = document.documentElement.classList.contains("chrome-ios") && window.matchMedia("(orientation: landscape) and (max-height: 600px)").matches;
-      if (isChromeIosLandscape) {
-        // Body position lock only (no overflow:hidden) to avoid WKWebView clipping
-        document.body.classList.add("scroll-locked");
-        document.body.style.position = "fixed";
-        document.body.style.top = -savedScrollY + "px";
-        document.body.style.left = "0";
-        document.body.style.right = "0";
-        document.body.style.width = "100%";
-      } else {
-        document.documentElement.style.overflow = "hidden";
-        document.body.style.overflow = "hidden";
-      }
-
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+      
       updateNavState();
       lbClose.focus();
     }
@@ -342,23 +341,19 @@
     function closeLB() {
       lbContainer.classList.remove("open");
       lbContainer.setAttribute("aria-hidden", "true");
-
-      const usedBodyLock = document.body.classList.contains("scroll-locked");
+      
       // FIX: Delay scroll restoration until fade-out is complete (200ms)
       setTimeout(() => {
-        if (usedBodyLock) {
-          document.body.style.position = "";
-          document.body.style.top = "";
-          document.body.style.left = "";
-          document.body.style.right = "";
-          document.body.style.width = "";
-          document.body.classList.remove("scroll-locked");
-          window.scrollTo(0, savedScrollY);
-        } else {
-          document.documentElement.style.overflow = "";
-          document.body.style.overflow = "";
-          window.scrollTo(0, savedScrollY);
+        // iOS Chrome Only: Revert color-scheme meta tag to allow black gallery gutters
+        if (document.documentElement.classList.contains("chrome-ios")) {
+          const colorSchemeMeta = document.querySelector('meta[name="color-scheme"]');
+          if (colorSchemeMeta) {
+            colorSchemeMeta.content = "normal";
+          }
         }
+        document.documentElement.style.overflow = "";
+        document.body.style.overflow = "";
+        window.scrollTo(0, savedScrollY);
       }, 200);
       
       currentIndex = -1;
