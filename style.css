@@ -2167,12 +2167,12 @@ body {
     }
   }
 
-  /* iOS Chrome Only: Force the lightbox background to physically stretch edge-to-edge over the black gutters */
+  /* iOS Chrome Only: Bypass layer clipping by bleeding the white background outward 
+     using a massive box shadow. This visually covers the z-index: 45 black gutters 
+     without fighting WKWebView's box model or safe-area math. */
   .chrome-ios .lb-container {
-    left: calc(0px - env(safe-area-inset-left)) !important;
-    right: calc(0px - env(safe-area-inset-right)) !important;
-    width: calc(100% + env(safe-area-inset-left) + env(safe-area-inset-right)) !important;
     background-color: var(--bg) !important;
+    box-shadow: 0 0 0 150px var(--bg) !important;
   }
 }
 
