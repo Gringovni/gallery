@@ -2176,31 +2176,26 @@ body {
     background: var(--bg) !important;
   }
 
-  /* Chrome iOS only: full-screen white flood layer behind lightbox + compositor kick */
-  .chrome-ios .lb-container {
-    isolation: isolate;
-    transform: translateZ(0);
-    will-change: transform;
+  /* Chrome iOS only: viewport root as positioning context; lightbox overlay absolute (not fixed) to avoid WKWebView clipping */
+  html.chrome-ios,
+  html.chrome-ios body {
+    height: 100%;
   }
-  .chrome-ios .lb-flood {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    background: var(--bg);
-    /* Compositor triggers so WKWebView repaints the layer into safe-area gutters */
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
-    transform: translateZ(0);
-    will-change: opacity;
+  html.chrome-ios body {
+    margin: 0;
   }
-  .chrome-ios .lb-container.open .lb-flood {
-    display: block;
-  }
-  /* Keep lightbox content above the flood */
-  .chrome-ios .lb-container .lb {
+  html.chrome-ios #viewportRoot {
     position: relative;
-    z-index: 1;
+    width: 100vw;
+    min-height: 100svh;
+    min-height: 100dvh;
+  }
+  .chrome-ios .lb-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
 }
 
