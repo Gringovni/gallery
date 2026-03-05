@@ -38,6 +38,7 @@
 </head>
 
 <body>
+  <div id="viewportRoot">
   <a href="#masonry" class="skip-link">Skip to gallery</a>
 
   <!-- HERO -->
@@ -110,7 +111,6 @@
 
   <!-- Lightbox: close button outside .lb so touches always register on mobile -->
   <div class="lb-container" id="lbContainer" aria-hidden="true">
-    <div class="lb-flood" aria-hidden="true"></div>
     <div class="lb" id="lb" role="dialog" aria-label="Image viewer">
       <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">‹</button>
       <div class="lb-viewport">
@@ -181,6 +181,7 @@
     </div>
     <button class="lb-close" id="lbClose" aria-label="Close">×</button>
   </div>
+  </div><!-- #viewportRoot -->
 
   <script>
     // Disable automatic history scroll restoration so reloads don't land mid‑gallery.
@@ -316,25 +317,24 @@
       lbContainer.classList.add("open");
       lbContainer.setAttribute("aria-hidden", "false");
 
-      // Chrome iOS + landscape: ensure white flood layer exists (create if missing)
-      if (document.documentElement.classList.contains("chrome-ios") && window.matchMedia("(orientation: landscape) and (max-height: 600px)").matches) {
-        let flood = lbContainer.querySelector(".lb-flood");
-        if (!flood) {
-          flood = document.createElement("div");
-          flood.className = "lb-flood";
-          flood.setAttribute("aria-hidden", "true");
-          lbContainer.insertBefore(flood, lbContainer.firstChild);
-        }
-      }
-
       // Force reflow so Safari applies correct frame on first open (mobile landscape)
       requestAnimationFrame(() => { void lbContainer.offsetHeight; });
 
-      // Option B: overflow-only lock (no position:fixed) so Safari may collapse address bar
       savedScrollY = window.scrollY;
-      document.documentElement.style.overflow = "hidden";
-      document.body.style.overflow = "hidden";
-      
+      const isChromeIosLandscape = document.documentElement.classList.contains("chrome-ios") && window.matchMedia("(orientation: landscape) and (max-height: 600px)").matches;
+      if (isChromeIosLandscape) {
+        // Body position lock only (no overflow:hidden) to avoid WKWebView clipping
+        document.body.classList.add("scroll-locked");
+        document.body.style.position = "fixed";
+        document.body.style.top = -savedScrollY + "px";
+        document.body.style.left = "0";
+        document.body.style.right = "0";
+        document.body.style.width = "100%";
+      } else {
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
+      }
+
       updateNavState();
       lbClose.focus();
     }
@@ -342,12 +342,23 @@
     function closeLB() {
       lbContainer.classList.remove("open");
       lbContainer.setAttribute("aria-hidden", "true");
-      
+
+      const usedBodyLock = document.body.classList.contains("scroll-locked");
       // FIX: Delay scroll restoration until fade-out is complete (200ms)
       setTimeout(() => {
-        document.documentElement.style.overflow = "";
-        document.body.style.overflow = "";
-        window.scrollTo(0, savedScrollY);
+        if (usedBodyLock) {
+          document.body.style.position = "";
+          document.body.style.top = "";
+          document.body.style.left = "";
+          document.body.style.right = "";
+          document.body.style.width = "";
+          document.body.classList.remove("scroll-locked");
+          window.scrollTo(0, savedScrollY);
+        } else {
+          document.documentElement.style.overflow = "";
+          document.body.style.overflow = "";
+          window.scrollTo(0, savedScrollY);
+        }
       }, 200);
       
       currentIndex = -1;
