@@ -2170,11 +2170,9 @@ body {
     }
   }
 
-  /* Chrome iOS only: explicit state class (lb-open) so gutters repaint when lightbox opens; :has() is unreliable on physical devices */
-  html.chrome-ios.lb-open {
-    background: var(--bg) !important;
-  }
-  html.chrome-ios.lb-open body {
+  /* iOS Chrome Only: Dynamically switch the body's gradient to solid white when the lightbox is open.
+     This flawlessly overwrites the black gutters without fighting WKWebView clipping boundaries. */
+  .chrome-ios body:has(.lb-container.open) {
     background: var(--bg) !important;
   }
 }
