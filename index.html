@@ -206,6 +206,9 @@
     const masonryLoading = document.getElementById("masonryLoading");
     const masonryError = document.getElementById("masonryError");
 
+    const isChromeIos = document.documentElement.classList.contains("chrome-ios");
+    const landscapeSafeAreaMedia = window.matchMedia("(orientation: landscape) and (max-height: 600px)");
+
     let items = [];
     let currentIndex = -1;
     let lastFocusBeforeLB = null;
@@ -309,11 +312,6 @@
     }
 
     function openLB(index) {
-      if (document.documentElement.classList.contains("chrome-ios") && window.matchMedia("(orientation: landscape) and (max-height: 600px)").matches) {
-        window.location.href = "/viewer.html?i=" + index;
-        return;
-      }
-
       currentIndex = index;
       lastFocusBeforeLB = document.activeElement;
       renderCarousel(currentIndex);
@@ -325,8 +323,12 @@
 
       // Option B: overflow-only lock (no position:fixed) so Safari may collapse address bar
       savedScrollY = window.scrollY;
-      document.documentElement.style.overflow = "hidden";
-      document.body.style.overflow = "hidden";
+      // Chrome iOS landscape: skip overflow:hidden — it collapses the ICB to the safe-area boundary,
+      // preventing position:fixed elements from reaching the physical screen edges (black gutter bug).
+      if (!(isChromeIos && landscapeSafeAreaMedia.matches)) {
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
+      }
       
       updateNavState();
       lbClose.focus();
@@ -338,8 +340,10 @@
       
       // FIX: Delay scroll restoration until fade-out is complete (200ms)
       setTimeout(() => {
-        document.documentElement.style.overflow = "";
-        document.body.style.overflow = "";
+        if (!(isChromeIos && landscapeSafeAreaMedia.matches)) {
+          document.documentElement.style.overflow = "";
+          document.body.style.overflow = "";
+        }
         window.scrollTo(0, savedScrollY);
       }, 200);
       
