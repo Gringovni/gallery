@@ -2170,10 +2170,20 @@ body {
     }
   }
 
-  /* iOS Chrome Only: Dynamically switch the body's gradient to solid white when the lightbox is open.
-     This flawlessly overwrites the black gutters without fighting WKWebView clipping boundaries. */
-  .chrome-ios body:has(.lb-container.open) {
+  /* iOS Chrome Only: Absolute override to force the entire viewport to white when the lightbox opens.
+     This neutralizes root canvas colors, body gradients, and pseudo-element masks. */
+  html.chrome-ios:has(.lb-container.open) {
+    background-color: var(--bg) !important;
+  }
+  
+  html.chrome-ios:has(.lb-container.open) body {
     background: var(--bg) !important;
+  }
+
+  /* Hide any pseudo-element masks if they exist from previous layout iterations */
+  html.chrome-ios:has(.lb-container.open) body::before,
+  html.chrome-ios:has(.lb-container.open) body::after {
+    display: none !important;
   }
 }
 
