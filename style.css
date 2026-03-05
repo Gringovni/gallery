@@ -2126,45 +2126,9 @@ body {
 
 /* === HARDWARE SAFE AREA (NOTCH) FIX FOR MOBILE LANDSCAPE ONLY === */
 @media (orientation: landscape) and (max-height: 600px) {
-
-  /* Safari natively paints the black gutters perfectly via html background */
+  
   html {
     background-color: #000;
-  }
-
-  /* Chrome iOS: Force the unpaintable OS-level layer to be white permanently */
-  html.chrome-ios {
-    background-color: var(--bg) !important;
-  }
-
-  /* Chrome iOS: Physical injected DOM elements that act as the black gutters */
-  .chrome-ios-gutter {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    background-color: #000;
-    z-index: 45; /* Sits below lightbox (50), above gallery */
-    pointer-events: none;
-    display: none; /* Hidden by default to protect Safari */
-  }
-
-  html.chrome-ios .chrome-ios-gutter {
-    display: block;
-  }
-
-  html.chrome-ios .chrome-ios-gutter-left {
-    left: 0;
-    width: env(safe-area-inset-left);
-  }
-
-  html.chrome-ios .chrome-ios-gutter-right {
-    right: 0;
-    width: env(safe-area-inset-right);
-  }
-
-  /* Chrome iOS: Hide the black DOM gutters when the lightbox opens, revealing the white OS layer */
-  html.chrome-ios:has(.lb-container.open) .chrome-ios-gutter {
-    display: none !important;
   }
 
   body {
@@ -2204,6 +2168,14 @@ body {
     .lb-container .lb-close {
       right: calc(18px + env(safe-area-inset-right)) !important;
     }
+  }
+
+  /* Chrome iOS only: explicit state class (lb-open) so gutters repaint when lightbox opens; :has() is unreliable on physical devices */
+  html.chrome-ios.lb-open {
+    background: var(--bg) !important;
+  }
+  html.chrome-ios.lb-open body {
+    background: var(--bg) !important;
   }
 }
 
