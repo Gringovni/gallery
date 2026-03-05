@@ -322,15 +322,7 @@
       savedScrollY = window.scrollY;
       document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
-
-      // iOS Chrome Only: Relinquish the safe area to the OS to force native white gutters
-      if (document.documentElement.classList.contains("chrome-ios")) {
-        const viewportMeta = document.querySelector('meta[name="viewport"]');
-        if (viewportMeta) {
-          viewportMeta.content = "width=device-width, initial-scale=1.0";
-        }
-      }
-
+      
       updateNavState();
       lbClose.focus();
     }
@@ -341,13 +333,6 @@
       
       // FIX: Delay scroll restoration until fade-out is complete (200ms)
       setTimeout(() => {
-        // iOS Chrome Only: Reclaim the safe area for the black gallery gutters
-        if (document.documentElement.classList.contains("chrome-ios")) {
-          const viewportMeta = document.querySelector('meta[name="viewport"]');
-          if (viewportMeta) {
-            viewportMeta.content = "width=device-width, initial-scale=1.0, viewport-fit=cover";
-          }
-        }
         document.documentElement.style.overflow = "";
         document.body.style.overflow = "";
         window.scrollTo(0, savedScrollY);
