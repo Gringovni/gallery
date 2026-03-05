@@ -33,6 +33,16 @@
     // Isolate iOS Chrome to fix its specific safe-area lightbox rendering without breaking Safari
     if (navigator.userAgent.match('CriOS')) {
       document.documentElement.classList.add('chrome-ios');
+
+      // Inject physical black gutter panels for gallery mode to bypass WKWebView compositor bugs
+      document.addEventListener("DOMContentLoaded", function() {
+        const leftGutter = document.createElement('div');
+        leftGutter.className = 'chrome-ios-gutter chrome-ios-gutter-left';
+        const rightGutter = document.createElement('div');
+        rightGutter.className = 'chrome-ios-gutter chrome-ios-gutter-right';
+        document.body.appendChild(leftGutter);
+        document.body.appendChild(rightGutter);
+      });
     }
   </script>
 </head>
@@ -206,18 +216,6 @@
     const masonryLoading = document.getElementById("masonryLoading");
     const masonryError = document.getElementById("masonryError");
 
-    // iOS Chrome only: inject fixed black gutter panels for gallery-mode safe areas (hidden when lightbox open)
-    if (document.documentElement.classList.contains("chrome-ios")) {
-      const left = document.createElement("div");
-      left.id = "chrome-ios-gutter-left";
-      left.className = "chrome-ios-gutter";
-      const right = document.createElement("div");
-      right.id = "chrome-ios-gutter-right";
-      right.className = "chrome-ios-gutter";
-      document.body.appendChild(left);
-      document.body.appendChild(right);
-    }
-
     let items = [];
     let currentIndex = -1;
     let lastFocusBeforeLB = null;
@@ -334,11 +332,7 @@
       savedScrollY = window.scrollY;
       document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
-
-      if (document.documentElement.classList.contains("chrome-ios")) {
-        document.querySelectorAll(".chrome-ios-gutter").forEach(function (el) { el.style.display = "none"; });
-      }
-
+      
       updateNavState();
       lbClose.focus();
     }
@@ -349,9 +343,6 @@
       
       // FIX: Delay scroll restoration until fade-out is complete (200ms)
       setTimeout(() => {
-        if (document.documentElement.classList.contains("chrome-ios")) {
-          document.querySelectorAll(".chrome-ios-gutter").forEach(function (el) { el.style.display = ""; });
-        }
         document.documentElement.style.overflow = "";
         document.body.style.overflow = "";
         window.scrollTo(0, savedScrollY);
