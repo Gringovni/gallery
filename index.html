@@ -206,6 +206,18 @@
     const masonryLoading = document.getElementById("masonryLoading");
     const masonryError = document.getElementById("masonryError");
 
+    // iOS Chrome only: inject fixed black gutter panels for gallery-mode safe areas (hidden when lightbox open)
+    if (document.documentElement.classList.contains("chrome-ios")) {
+      const left = document.createElement("div");
+      left.id = "chrome-ios-gutter-left";
+      left.className = "chrome-ios-gutter";
+      const right = document.createElement("div");
+      right.id = "chrome-ios-gutter-right";
+      right.className = "chrome-ios-gutter";
+      document.body.appendChild(left);
+      document.body.appendChild(right);
+    }
+
     let items = [];
     let currentIndex = -1;
     let lastFocusBeforeLB = null;
@@ -322,7 +334,11 @@
       savedScrollY = window.scrollY;
       document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
-      
+
+      if (document.documentElement.classList.contains("chrome-ios")) {
+        document.querySelectorAll(".chrome-ios-gutter").forEach(function (el) { el.style.display = "none"; });
+      }
+
       updateNavState();
       lbClose.focus();
     }
@@ -333,6 +349,9 @@
       
       // FIX: Delay scroll restoration until fade-out is complete (200ms)
       setTimeout(() => {
+        if (document.documentElement.classList.contains("chrome-ios")) {
+          document.querySelectorAll(".chrome-ios-gutter").forEach(function (el) { el.style.display = ""; });
+        }
         document.documentElement.style.overflow = "";
         document.body.style.overflow = "";
         window.scrollTo(0, savedScrollY);
