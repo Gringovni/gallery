@@ -209,21 +209,24 @@
     const isChromeIos = document.documentElement.classList.contains("chrome-ios");
     const landscapeSafeAreaMedia = window.matchMedia("(orientation: landscape) and (max-height: 600px)");
 
-    function getThemeColorMeta() {
-      let meta = document.querySelector('meta[name="theme-color"]');
-      if (!meta) {
-        meta = document.createElement("meta");
-        meta.name = "theme-color";
-        meta.content = "#ffffff";
-        document.head.appendChild(meta);
+    let originalViewportContent = "";
+    let viewportMeta = null;
+    if (isChromeIos) {
+      viewportMeta = document.querySelector('meta[name="viewport"]');
+      if (viewportMeta) {
+        originalViewportContent = viewportMeta.getAttribute("content") || "";
+      } else {
+        viewportMeta = document.createElement("meta");
+        viewportMeta.name = "viewport";
+        originalViewportContent = "width=device-width,initial-scale=1,viewport-fit=cover";
+        viewportMeta.setAttribute("content", originalViewportContent);
+        document.head.appendChild(viewportMeta);
       }
-      return meta;
     }
 
-    function applyThemeColor(color) {
-      if (!isChromeIos) return;
-      const meta = getThemeColorMeta();
-      meta.content = color;
+    function setViewportAndReflow(content) {
+      if (!viewportMeta) return;
+      viewportMeta.setAttribute("content", content);
       requestAnimationFrame(function() {
         requestAnimationFrame(function() {
           void document.documentElement.offsetHeight;
@@ -231,10 +234,34 @@
       });
     }
 
-    function syncChromeIosThemeColor() {
-      if (!isChromeIos) return;
-      if (lbContainer.classList.contains("open")) applyThemeColor("#ffffff");
-      else if (landscapeSafeAreaMedia.matches) applyThemeColor("#000000");
+    function runViewportReinitOnLightboxOpen() {
+      if (!isChromeIos || !landscapeSafeAreaMedia.matches || !viewportMeta) return;
+      const orig = originalViewportContent;
+      let tempContent;
+      let backContent;
+      if (/viewport-fit=cover/i.test(orig)) {
+        tempContent = orig.replace(/viewport-fit=cover/i, "viewport-fit=contain");
+        backContent = orig;
+      } else {
+        backContent = orig ? orig + ",viewport-fit=cover" : "viewport-fit=cover";
+        tempContent = orig ? orig + ",viewport-fit=contain" : "viewport-fit=contain";
+      }
+      viewportMeta.setAttribute("content", tempContent);
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          viewportMeta.setAttribute("content", backContent);
+          requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+              void document.documentElement.offsetHeight;
+            });
+          });
+        });
+      });
+    }
+
+    function restoreViewportOnLightboxClose() {
+      if (!isChromeIos || !landscapeSafeAreaMedia.matches || !viewportMeta) return;
+      setViewportAndReflow(originalViewportContent);
     }
 
     let items = [];
@@ -346,10 +373,7 @@
       lbContainer.classList.add("open");
       lbContainer.setAttribute("aria-hidden", "false");
 
-      if (isChromeIos) {
-        document.documentElement.classList.add("lb-open");
-        applyThemeColor("#ffffff");
-      }
+      if (isChromeIos && landscapeSafeAreaMedia.matches) runViewportReinitOnLightboxOpen();
 
       // Force reflow so Safari applies correct frame on first open (mobile landscape)
       requestAnimationFrame(() => { void lbContainer.offsetHeight; });
@@ -369,10 +393,7 @@
       
       // FIX: Delay scroll restoration until fade-out is complete (200ms)
       setTimeout(() => {
-        if (isChromeIos) {
-          document.documentElement.classList.remove("lb-open");
-          if (landscapeSafeAreaMedia.matches) applyThemeColor("#000000");
-        }
+        if (isChromeIos && landscapeSafeAreaMedia.matches) restoreViewportOnLightboxClose();
         document.documentElement.style.overflow = "";
         document.body.style.overflow = "";
         window.scrollTo(0, savedScrollY);
@@ -622,10 +643,6 @@
 
     window.addEventListener("resize", () => {
       document.querySelectorAll(".lb-side").forEach(updateLbOverflow);
-      if (isChromeIos) syncChromeIosThemeColor();
-    });
-    window.addEventListener("orientationchange", () => {
-      if (isChromeIos) syncChromeIosThemeColor();
     });
 
     /* Mobile: touchend fallback so close works even when click is blocked */
