@@ -2175,6 +2175,33 @@ body {
   .chrome-ios body:has(.lb-container.open) {
     background: var(--bg) !important;
   }
+
+  /* Chrome iOS only: full-screen white flood layer behind lightbox + compositor kick */
+  .chrome-ios .lb-container {
+    isolation: isolate;
+    transform: translateZ(0);
+    will-change: transform;
+  }
+  .chrome-ios .lb-flood {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: var(--bg);
+    /* Compositor triggers so WKWebView repaints the layer into safe-area gutters */
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    transform: translateZ(0);
+    will-change: opacity;
+  }
+  .chrome-ios .lb-container.open .lb-flood {
+    display: block;
+  }
+  /* Keep lightbox content above the flood */
+  .chrome-ios .lb-container .lb {
+    position: relative;
+    z-index: 1;
+  }
 }
 
 /* Mobile landscape phones only: prevent the slide slot itself from scrolling.
