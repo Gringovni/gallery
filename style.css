@@ -2131,12 +2131,6 @@ body {
     background-color: #000;
   }
 
-  /* iOS Chrome Only: Force the root OS layer to be transparent so WKWebView
-     cannot cache a solid color in the safe-area letterbox. */
-  html.chrome-ios {
-    background-color: transparent !important;
-  }
-
   body {
     /* 1. Force the body to span the exact physical screen edges */
     margin: 0 !important;
@@ -2176,16 +2170,13 @@ body {
     }
   }
 
-  /* iOS Chrome Only: When the lightbox opens, strip the body's gradient and
-     make it transparent. This ensures nothing sits between the white lightbox
-     overlay and the transparent OS root. */
-  html.chrome-ios:has(.lb-container.open) body {
-    background: transparent !important;
-  }
-
-  /* iOS Chrome Only: Lightbox container paints the white fill (body is transparent when open). */
-  .chrome-ios .lb-container.open {
+  /* iOS Chrome Only: Set the target color for the safe-area gutters.
+     WKWebView ignores this until forced to repaint by our JS kick. */
+  html.chrome-ios:has(.lb-container.open) {
     background-color: var(--bg) !important;
+  }
+  html.chrome-ios:has(.lb-container.open) body {
+    background: var(--bg) !important;
   }
 }
 
