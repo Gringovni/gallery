@@ -2167,12 +2167,10 @@ body {
     }
   }
 
-  /* iOS Chrome Only: Bypass layer clipping by bleeding the white background outward 
-     using a massive box shadow. This visually covers the z-index: 45 black gutters 
-     without fighting WKWebView's box model or safe-area math. */
-  .chrome-ios .lb-container {
-    background-color: var(--bg) !important;
-    box-shadow: 0 0 0 150px var(--bg) !important;
+  /* iOS Chrome Only: Dynamically switch the body's gradient to solid white when the lightbox is open.
+     This flawlessly overwrites the black gutters without fighting WKWebView clipping boundaries. */
+  .chrome-ios body:has(.lb-container.open) {
+    background: var(--bg) !important;
   }
 }
 
