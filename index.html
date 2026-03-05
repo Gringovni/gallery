@@ -33,16 +33,6 @@
     // Isolate iOS Chrome to fix its specific safe-area lightbox rendering without breaking Safari
     if (navigator.userAgent.match('CriOS')) {
       document.documentElement.classList.add('chrome-ios');
-
-      // Inject physical black gutter panels for gallery mode to bypass WKWebView compositor bugs
-      document.addEventListener("DOMContentLoaded", function() {
-        const leftGutter = document.createElement('div');
-        leftGutter.className = 'chrome-ios-gutter chrome-ios-gutter-left';
-        const rightGutter = document.createElement('div');
-        rightGutter.className = 'chrome-ios-gutter chrome-ios-gutter-right';
-        document.body.appendChild(leftGutter);
-        document.body.appendChild(rightGutter);
-      });
     }
   </script>
 </head>
@@ -216,6 +206,37 @@
     const masonryLoading = document.getElementById("masonryLoading");
     const masonryError = document.getElementById("masonryError");
 
+    const isChromeIos = document.documentElement.classList.contains("chrome-ios");
+    const landscapeSafeAreaMedia = window.matchMedia("(orientation: landscape) and (max-height: 600px)");
+
+    function getThemeColorMeta() {
+      let meta = document.querySelector('meta[name="theme-color"]');
+      if (!meta) {
+        meta = document.createElement("meta");
+        meta.name = "theme-color";
+        meta.content = "#ffffff";
+        document.head.appendChild(meta);
+      }
+      return meta;
+    }
+
+    function applyThemeColor(color) {
+      if (!isChromeIos) return;
+      const meta = getThemeColorMeta();
+      meta.content = color;
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          void document.documentElement.offsetHeight;
+        });
+      });
+    }
+
+    function syncChromeIosThemeColor() {
+      if (!isChromeIos) return;
+      if (lbContainer.classList.contains("open")) applyThemeColor("#ffffff");
+      else if (landscapeSafeAreaMedia.matches) applyThemeColor("#000000");
+    }
+
     let items = [];
     let currentIndex = -1;
     let lastFocusBeforeLB = null;
@@ -325,6 +346,11 @@
       lbContainer.classList.add("open");
       lbContainer.setAttribute("aria-hidden", "false");
 
+      if (isChromeIos) {
+        document.documentElement.classList.add("lb-open");
+        applyThemeColor("#ffffff");
+      }
+
       // Force reflow so Safari applies correct frame on first open (mobile landscape)
       requestAnimationFrame(() => { void lbContainer.offsetHeight; });
 
@@ -332,7 +358,7 @@
       savedScrollY = window.scrollY;
       document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
-      
+
       updateNavState();
       lbClose.focus();
     }
@@ -343,6 +369,10 @@
       
       // FIX: Delay scroll restoration until fade-out is complete (200ms)
       setTimeout(() => {
+        if (isChromeIos) {
+          document.documentElement.classList.remove("lb-open");
+          if (landscapeSafeAreaMedia.matches) applyThemeColor("#000000");
+        }
         document.documentElement.style.overflow = "";
         document.body.style.overflow = "";
         window.scrollTo(0, savedScrollY);
@@ -592,6 +622,10 @@
 
     window.addEventListener("resize", () => {
       document.querySelectorAll(".lb-side").forEach(updateLbOverflow);
+      if (isChromeIos) syncChromeIosThemeColor();
+    });
+    window.addEventListener("orientationchange", () => {
+      if (isChromeIos) syncChromeIosThemeColor();
     });
 
     /* Mobile: touchend fallback so close works even when click is blocked */
