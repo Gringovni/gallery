@@ -206,9 +206,6 @@
     const masonryLoading = document.getElementById("masonryLoading");
     const masonryError = document.getElementById("masonryError");
 
-    const isChromeIos = document.documentElement.classList.contains("chrome-ios");
-    const landscapeSafeAreaMedia = window.matchMedia("(orientation: landscape) and (max-height: 600px)");
-
     let items = [];
     let currentIndex = -1;
     let lastFocusBeforeLB = null;
@@ -323,13 +320,16 @@
 
       // Option B: overflow-only lock (no position:fixed) so Safari may collapse address bar
       savedScrollY = window.scrollY;
-      // Chrome iOS landscape: skip overflow:hidden — it collapses the ICB to the safe-area boundary,
-      // preventing position:fixed elements from reaching the physical screen edges (black gutter bug).
-      if (!(isChromeIos && landscapeSafeAreaMedia.matches)) {
-        document.documentElement.style.overflow = "hidden";
-        document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+
+      // Chrome iOS + landscape: force body background to solid white using !important inline style.
+      // This bypasses the !important gradient in the stylesheet and the unreliable :has() CSS path,
+      // and should trigger a repaint of the body background in the safe-area gutter region.
+      if (isChromeIos && landscapeSafeAreaMedia.matches) {
+        document.body.style.setProperty("background", "#ffffff", "important");
       }
-      
+
       updateNavState();
       lbClose.focus();
     }
@@ -340,10 +340,12 @@
       
       // FIX: Delay scroll restoration until fade-out is complete (200ms)
       setTimeout(() => {
-        if (!(isChromeIos && landscapeSafeAreaMedia.matches)) {
-          document.documentElement.style.overflow = "";
-          document.body.style.overflow = "";
+        // Chrome iOS + landscape: restore body background gradient by removing the inline override.
+        if (isChromeIos && landscapeSafeAreaMedia.matches) {
+          document.body.style.removeProperty("background");
         }
+        document.documentElement.style.overflow = "";
+        document.body.style.overflow = "";
         window.scrollTo(0, savedScrollY);
       }, 200);
       
