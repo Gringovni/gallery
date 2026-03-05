@@ -323,16 +323,12 @@
       document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
 
-      // iOS Chrome Only: Force a hardware-level repaint of the safe-area gutters
+      // iOS Chrome Only: Relinquish the safe area to the OS to force native white gutters
       if (document.documentElement.classList.contains("chrome-ios")) {
-        setTimeout(() => {
-          document.body.style.transform = "scale(1.0001)";
-          const currentScroll = window.scrollY;
-          window.scrollTo(0, currentScroll + 1);
-          setTimeout(() => {
-            window.scrollTo(0, currentScroll);
-          }, 50);
-        }, 50);
+        const viewportMeta = document.querySelector('meta[name="viewport"]');
+        if (viewportMeta) {
+          viewportMeta.content = "width=device-width, initial-scale=1.0";
+        }
       }
 
       updateNavState();
@@ -345,9 +341,12 @@
       
       // FIX: Delay scroll restoration until fade-out is complete (200ms)
       setTimeout(() => {
-        // iOS Chrome Only: Clean up the hardware kick transform
+        // iOS Chrome Only: Reclaim the safe area for the black gallery gutters
         if (document.documentElement.classList.contains("chrome-ios")) {
-          document.body.style.transform = "";
+          const viewportMeta = document.querySelector('meta[name="viewport"]');
+          if (viewportMeta) {
+            viewportMeta.content = "width=device-width, initial-scale=1.0, viewport-fit=cover";
+          }
         }
         document.documentElement.style.overflow = "";
         document.body.style.overflow = "";
