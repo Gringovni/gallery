@@ -2170,13 +2170,19 @@ body {
     }
   }
 
-  /* iOS Chrome Only: Set the target color for the safe-area gutters.
-     WKWebView ignores this until forced to repaint by our JS kick. */
-  html.chrome-ios:has(.lb-container.open) {
-    background-color: var(--bg) !important;
-  }
-  html.chrome-ios:has(.lb-container.open) body {
+  /* iOS Chrome Only: Dynamically switch the body's gradient to solid white when the lightbox is open.
+     This flawlessly overwrites the black gutters without fighting WKWebView clipping boundaries. */
+  .chrome-ios body:has(.lb-container.open) {
     background: var(--bg) !important;
+  }
+
+  /* iOS Chrome Only: Compensate for the physical canvas shrinking when
+     viewport-fit=cover is removed. This visually pushes the lightbox back out
+     to the edges of the new safe rectangular bounds. */
+  html.chrome-ios:has(.lb-container.open) .lb-container {
+    transform: scale(1.05);
+    transform-origin: center center;
+    transition: none;
   }
 }
 
