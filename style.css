@@ -2175,15 +2175,6 @@ body {
   .chrome-ios body:has(.lb-container.open) {
     background: var(--bg) !important;
   }
-
-  /* iOS Chrome Only: Compensate for the physical canvas shrinking when
-     viewport-fit=cover is removed. This visually pushes the lightbox back out
-     to the edges of the new safe rectangular bounds. */
-  html.chrome-ios:has(.lb-container.open) .lb-container {
-    transform: scale(1.05);
-    transform-origin: center center;
-    transition: none;
-  }
 }
 
 /* Mobile landscape phones only: prevent the slide slot itself from scrolling.
