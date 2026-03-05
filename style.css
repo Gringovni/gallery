@@ -2123,45 +2123,45 @@ body {
 
 /* === HARDWARE SAFE AREA (NOTCH) FIX FOR MOBILE LANDSCAPE ONLY === */
 @media (orientation: landscape) and (max-height: 600px) {
-  /* 1. Paint pure black strips locked strictly to the screen edges */
-  body::before,
-  body::after {
-    content: "";
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    background: #000;
-    z-index: 45; /* Sits below Lightbox, but above page content */
-    pointer-events: none;
-  }
-  body::before {
-    left: 0;
-    width: env(safe-area-inset-left);
-  }
-  body::after {
-    right: 0;
-    width: env(safe-area-inset-right);
+  
+  html {
+    background-color: #000;
   }
 
-  /* 2. Constrain the master content column to sit exactly between the safe areas */
   body {
-    margin-left: env(safe-area-inset-left);
-    margin-right: env(safe-area-inset-right);
+    /* 1. Force the body to span the exact physical screen edges */
+    margin: 0 !important;
+    border: none !important;
+    min-height: 100vh;
+    
+    /* 2. Squeeze content inward into the safe area using padding instead of margins. */
+    padding-left: env(safe-area-inset-left) !important;
+    padding-right: env(safe-area-inset-right) !important;
+
+    /* 3. Paint the notches pure black and the center column white on a single layer.
+          This completely neutralizes iOS Chrome/WKWebView stacking and margin bugs. */
+    background: linear-gradient(
+      to right,
+      #000 0%,
+      #000 env(safe-area-inset-left),
+      var(--bg) env(safe-area-inset-left),
+      var(--bg) calc(100% - env(safe-area-inset-right)),
+      #000 calc(100% - env(safe-area-inset-right)),
+      #000 100%
+    ) !important;
   }
 
-  /* 3. Lightbox: pad the overlay so all content (image, prompt, close) stays inside safe area */
+  /* 4. Lightbox: pad the overlay so all content stays inside safe area */
   @supports (padding: env(safe-area-inset-left)) {
     .lb-container .lb {
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
     }
-    /* Prevent 100vw children from breaking out of the padded area */
     .lb-container .lb-content,
     .lb-container .lb-slide-slot .lb-content {
       width: 100% !important;
       max-width: 100% !important;
     }
-    /* Push the close button inward by the exact notch width, preserving all existing approved transforms */
     .lb-container .lb-close {
       right: calc(18px + env(safe-area-inset-right)) !important;
     }
