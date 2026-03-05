@@ -80,8 +80,11 @@ body {
   margin: 0;
   padding: 24px var(--pad);
   text-align: center;
-  color: var(--muted);
-  font-size: 15px;
+  font-family: "Source Serif 4", Georgia, serif;
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #555;
   column-span: all;
 }
 .masonry-error { color: var(--error); }
