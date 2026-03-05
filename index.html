@@ -322,14 +322,7 @@
       savedScrollY = window.scrollY;
       document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
-
-      // Chrome iOS + landscape: force body background to solid white using !important inline style.
-      // This bypasses the !important gradient in the stylesheet and the unreliable :has() CSS path,
-      // and should trigger a repaint of the body background in the safe-area gutter region.
-      if (isChromeIos && landscapeSafeAreaMedia.matches) {
-        document.body.style.setProperty("background", "#ffffff", "important");
-      }
-
+      
       updateNavState();
       lbClose.focus();
     }
@@ -340,10 +333,6 @@
       
       // FIX: Delay scroll restoration until fade-out is complete (200ms)
       setTimeout(() => {
-        // Chrome iOS + landscape: restore body background gradient by removing the inline override.
-        if (isChromeIos && landscapeSafeAreaMedia.matches) {
-          document.body.style.removeProperty("background");
-        }
         document.documentElement.style.overflow = "";
         document.body.style.overflow = "";
         window.scrollTo(0, savedScrollY);
