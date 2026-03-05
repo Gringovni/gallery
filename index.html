@@ -206,64 +206,6 @@
     const masonryLoading = document.getElementById("masonryLoading");
     const masonryError = document.getElementById("masonryError");
 
-    const isChromeIos = document.documentElement.classList.contains("chrome-ios");
-    const landscapeSafeAreaMedia = window.matchMedia("(orientation: landscape) and (max-height: 600px)");
-
-    let originalViewportContent = "";
-    let viewportMeta = null;
-    if (isChromeIos) {
-      viewportMeta = document.querySelector('meta[name="viewport"]');
-      if (viewportMeta) {
-        originalViewportContent = viewportMeta.getAttribute("content") || "";
-      } else {
-        viewportMeta = document.createElement("meta");
-        viewportMeta.name = "viewport";
-        originalViewportContent = "width=device-width,initial-scale=1,viewport-fit=cover";
-        viewportMeta.setAttribute("content", originalViewportContent);
-        document.head.appendChild(viewportMeta);
-      }
-    }
-
-    function setViewportAndReflow(content) {
-      if (!viewportMeta) return;
-      viewportMeta.setAttribute("content", content);
-      requestAnimationFrame(function() {
-        requestAnimationFrame(function() {
-          void document.documentElement.offsetHeight;
-        });
-      });
-    }
-
-    function runViewportReinitOnLightboxOpen() {
-      if (!isChromeIos || !landscapeSafeAreaMedia.matches || !viewportMeta) return;
-      const orig = originalViewportContent;
-      let tempContent;
-      let backContent;
-      if (/viewport-fit=cover/i.test(orig)) {
-        tempContent = orig.replace(/viewport-fit=cover/i, "viewport-fit=contain");
-        backContent = orig;
-      } else {
-        backContent = orig ? orig + ",viewport-fit=cover" : "viewport-fit=cover";
-        tempContent = orig ? orig + ",viewport-fit=contain" : "viewport-fit=contain";
-      }
-      viewportMeta.setAttribute("content", tempContent);
-      requestAnimationFrame(function() {
-        requestAnimationFrame(function() {
-          viewportMeta.setAttribute("content", backContent);
-          requestAnimationFrame(function() {
-            requestAnimationFrame(function() {
-              void document.documentElement.offsetHeight;
-            });
-          });
-        });
-      });
-    }
-
-    function restoreViewportOnLightboxClose() {
-      if (!isChromeIos || !landscapeSafeAreaMedia.matches || !viewportMeta) return;
-      setViewportAndReflow(originalViewportContent);
-    }
-
     let items = [];
     let currentIndex = -1;
     let lastFocusBeforeLB = null;
@@ -367,13 +309,16 @@
     }
 
     function openLB(index) {
+      if (document.documentElement.classList.contains("chrome-ios") && window.matchMedia("(orientation: landscape) and (max-height: 600px)").matches) {
+        window.location.href = "/viewer.html?i=" + index;
+        return;
+      }
+
       currentIndex = index;
       lastFocusBeforeLB = document.activeElement;
       renderCarousel(currentIndex);
       lbContainer.classList.add("open");
       lbContainer.setAttribute("aria-hidden", "false");
-
-      if (isChromeIos && landscapeSafeAreaMedia.matches) runViewportReinitOnLightboxOpen();
 
       // Force reflow so Safari applies correct frame on first open (mobile landscape)
       requestAnimationFrame(() => { void lbContainer.offsetHeight; });
@@ -382,7 +327,7 @@
       savedScrollY = window.scrollY;
       document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
-
+      
       updateNavState();
       lbClose.focus();
     }
@@ -393,7 +338,6 @@
       
       // FIX: Delay scroll restoration until fade-out is complete (200ms)
       setTimeout(() => {
-        if (isChromeIos && landscapeSafeAreaMedia.matches) restoreViewportOnLightboxClose();
         document.documentElement.style.overflow = "";
         document.body.style.overflow = "";
         window.scrollTo(0, savedScrollY);
