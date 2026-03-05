@@ -315,17 +315,6 @@
       lbContainer.classList.add("open");
       lbContainer.setAttribute("aria-hidden", "false");
 
-      // iOS Chrome Only: Inject color-scheme meta tag to force native light mode gutters
-      if (document.documentElement.classList.contains("chrome-ios")) {
-        let colorSchemeMeta = document.querySelector('meta[name="color-scheme"]');
-        if (!colorSchemeMeta) {
-          colorSchemeMeta = document.createElement("meta");
-          colorSchemeMeta.name = "color-scheme";
-          document.head.appendChild(colorSchemeMeta);
-        }
-        colorSchemeMeta.content = "light";
-      }
-
       // Force reflow so Safari applies correct frame on first open (mobile landscape)
       requestAnimationFrame(() => { void lbContainer.offsetHeight; });
 
@@ -344,13 +333,6 @@
       
       // FIX: Delay scroll restoration until fade-out is complete (200ms)
       setTimeout(() => {
-        // iOS Chrome Only: Revert color-scheme meta tag to allow black gallery gutters
-        if (document.documentElement.classList.contains("chrome-ios")) {
-          const colorSchemeMeta = document.querySelector('meta[name="color-scheme"]');
-          if (colorSchemeMeta) {
-            colorSchemeMeta.content = "normal";
-          }
-        }
         document.documentElement.style.overflow = "";
         document.body.style.overflow = "";
         window.scrollTo(0, savedScrollY);
