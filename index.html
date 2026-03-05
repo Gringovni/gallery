@@ -110,6 +110,7 @@
 
   <!-- Lightbox: close button outside .lb so touches always register on mobile -->
   <div class="lb-container" id="lbContainer" aria-hidden="true">
+    <div class="lb-flood" aria-hidden="true"></div>
     <div class="lb" id="lb" role="dialog" aria-label="Image viewer">
       <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">‹</button>
       <div class="lb-viewport">
@@ -314,6 +315,17 @@
       renderCarousel(currentIndex);
       lbContainer.classList.add("open");
       lbContainer.setAttribute("aria-hidden", "false");
+
+      // Chrome iOS + landscape: ensure white flood layer exists (create if missing)
+      if (document.documentElement.classList.contains("chrome-ios") && window.matchMedia("(orientation: landscape) and (max-height: 600px)").matches) {
+        let flood = lbContainer.querySelector(".lb-flood");
+        if (!flood) {
+          flood = document.createElement("div");
+          flood.className = "lb-flood";
+          flood.setAttribute("aria-hidden", "true");
+          lbContainer.insertBefore(flood, lbContainer.firstChild);
+        }
+      }
 
       // Force reflow so Safari applies correct frame on first open (mobile landscape)
       requestAnimationFrame(() => { void lbContainer.offsetHeight; });
