@@ -318,8 +318,17 @@
       // Force reflow so Safari applies correct frame on first open (mobile landscape)
       requestAnimationFrame(() => { void lbContainer.offsetHeight; });
 
-      // Option B: overflow-only lock (no position:fixed) so Safari may collapse address bar
       savedScrollY = window.scrollY;
+      const banner = document.querySelector(".hero-banner");
+      if (banner && banner.getBoundingClientRect().top <= 0) {
+        const bannerHeight = banner.offsetHeight;
+        banner.classList.add("lb-frozen");
+        if (banner.nextElementSibling) {
+          const currentMargin = parseFloat(getComputedStyle(banner.nextElementSibling).marginTop) || 0;
+          banner.dataset.origMargin = currentMargin;
+          banner.nextElementSibling.style.marginTop = (currentMargin + bannerHeight) + "px";
+        }
+      }
       document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
       
@@ -331,11 +340,19 @@
       lbContainer.classList.remove("open");
       lbContainer.setAttribute("aria-hidden", "true");
       
-      // FIX: Delay scroll restoration until fade-out is complete (200ms)
       setTimeout(() => {
         document.documentElement.style.overflow = "";
         document.body.style.overflow = "";
         window.scrollTo(0, savedScrollY);
+        const banner = document.querySelector(".hero-banner");
+        if (banner) {
+          banner.classList.remove("lb-frozen");
+          if (banner.nextElementSibling && banner.dataset.origMargin !== undefined) {
+            const orig = parseFloat(banner.dataset.origMargin);
+            banner.nextElementSibling.style.marginTop = orig === 0 ? "" : orig + "px";
+            delete banner.dataset.origMargin;
+          }
+        }
       }, 200);
       
       currentIndex = -1;
