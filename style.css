@@ -41,7 +41,7 @@ html, body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  /* overflow-x: hidden removed: it creates a scroll container that breaks position:sticky on .hero-banner; overscroll-behavior-x: none on body keeps horizontal rubber-band controlled */
+  overflow-x: hidden; /* iOS: avoid rubber-band revealing horizontal space / extra side sensitivity in gallery */
   -webkit-text-size-adjust: 100%; /* Normalize iOS Safari text sizing across orientations */
 
   /* REMOVE MOBILE TAP HIGHLIGHT:
@@ -1503,29 +1503,6 @@ body {
   z-index: 10;
 }
 
-/* Sticky handoff: when lightbox opens, root overflow:hidden destroys sticky scrollport; freeze banner in place */
-.hero-banner.lb-frozen {
-  position: fixed !important;
-  top: 0;
-  width: 100%;
-  z-index: 10;
-}
-
-/* While lightbox is open or during close transition: hide banner and disable hit-testing so first tap on X closes (iOS landscape); lb-closing keeps banner hidden for 200ms after close so it doesn't pop on mobile */
-body:has(.lb-container.open) .hero-banner,
-body.lb-closing .hero-banner {
-  visibility: hidden;
-  pointer-events: none;
-}
-
-/* Mobile landscape phones only: disable sticky banner so it scrolls naturally */
-@media (orientation: landscape) and (max-height: 600px) {
-  .hero-banner {
-    position: static;
-    top: auto;
-  }
-}
-
 .hero-banner-inner{
   height: 72px;
   max-width: var(--container);
@@ -1546,6 +1523,12 @@ body.lb-closing .hero-banner {
 
 .hero-banner-divider{
   display: none;   /* gray line below LATENT ILLUMINATION banner removed */
+}
+
+/* While lightbox is open: hide banner and disable hit-testing so first tap on X closes (iOS landscape) */
+body:has(.lb-container.open) .hero-banner {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 /* === HERO SCROLL CUE (arrow) — smooth, continuous float === */
