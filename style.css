@@ -1514,7 +1514,7 @@ body {
 }
 
 .hero-banner-title{
-  font-size: 16px;
+  font-size: 17px;
   letter-spacing: .10em;
   text-transform: uppercase;
   color: #111;
@@ -1523,6 +1523,12 @@ body {
 
 .hero-banner-divider{
   display: none;   /* gray line below LATENT ILLUMINATION banner removed */
+}
+
+/* While lightbox is open: hide banner and disable hit-testing so first tap on X closes (iOS landscape) */
+body:has(.lb-container.open) .hero-banner {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 /* === HERO SCROLL CUE (arrow) — smooth, continuous float === */
