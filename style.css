@@ -119,6 +119,13 @@ body.banner-floating-active .wrap{
   margin-top: 72px;
 }
 
+/* Invisible sentinel marking banner's "home" transition point */
+.hero-banner-sentinel{
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+
 /* === MOBILE & TABLET GALLERY NORMALIZATION === */
 @media (max-width: 1024px) {
   .wrap {
