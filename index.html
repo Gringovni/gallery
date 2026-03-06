@@ -2,18 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Latent Illumination • Index</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Latent Illumination • Production-Level AI Imagery</title>
+  <link rel="canonical" href="https://www.latentillumination.com/" />
   <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon-512x512.png">
 
-  <meta name="description" content="A controlled visual practice focused on clarity, intent, and art-directed synthetic imaging.">
+  <meta name="description" content="Disciplined AI image generation grounded in visual logic and lighting control, delivering reliable, production-ready results.">
   <meta name="theme-color" content="#ffffff" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Latent Illumination" />
-  <meta property="og:description" content="A controlled visual practice focused on clarity, intent, and art-directed synthetic imaging.">
+  <meta property="og:site_name" content="Latent Illumination" />
+  <meta property="og:title" content="Latent Illumination • Production-Level AI Imagery" />
+  <meta property="og:description" content="Disciplined AI image generation grounded in visual logic and lighting control, delivering reliable, production-ready results.">
   <meta property="og:image" content="https://www.latentillumination.com/social-preview.jpg">
   <meta property="twitter:image" content="https://www.latentillumination.com/social-preview.jpg">
 
@@ -26,6 +28,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
+
+  <script>
+    // Isolate iOS Chrome to fix its specific safe-area lightbox rendering without breaking Safari
+    if (navigator.userAgent.match('CriOS')) {
+      document.documentElement.classList.add('chrome-ios');
+    }
+  </script>
 </head>
 
 <body>
@@ -54,6 +63,7 @@
   </header>
 
   <main class="wrap">
+    <h1 class="visually-hidden">Production-Level AI Imagery</h1>
     <section id="masonry" class="masonry" aria-label="Gallery" aria-busy="false" aria-live="polite">
       <p class="masonry-loading" id="masonryLoading">Loading gallery…</p>
       <p class="masonry-error hidden" id="masonryError" role="alert"></p>
@@ -64,23 +74,23 @@
       <article class="editorial-block">
         <h2 class="editorial-label">Intent</h2>
         <div class="editorial-prose">
-          <p>An approach to making AI-generated imagery predictable, intentional, and ready for professional visual contexts.</p>
+          <p>A disciplined approach to making AI-generated imagery predictable, intentional, and ready for professional visual contexts.</p>
         </div>
       </article>
       
       <article class="editorial-block">
         <h2 class="editorial-label">Context</h2>
         <div class="editorial-prose">
-          <p>AI image generation is powerful, but often unpredictable. As models improve, the limiting factor is no longer capability, but control. Visual outcomes are shaped by how intent is structured in language, and small inconsistencies in description can quickly compound into noise.</p>
-          <p>The work shown here treats prompts as designed constructs rather than improvised instructions. Intent is separated from execution, allowing framing, lighting behavior, mood, and physical logic to be considered deliberately before being expressed as natural language. This prioritizes coherence and hierarchy over rapid experimentation or stylistic accumulation.</p>
-          <p>Rather than chasing variation, the focus is on reliability: establishing a clear internal logic that can be maintained across iteration, adjustment, and reuse.</p>
+          <p>AI image generation is powerful, but often unpredictable. As models improve, the limiting factor is no longer capability but control. Visual outcomes are shaped by how intent is structured in language, and small inconsistencies in description can quickly compound into noise.</p>
+          <p>The work shown here treats prompts as designed constructs rather than improvised instructions. Intent is separated from execution, allowing the image’s formal, spatial, and lighting logic to be resolved prior to translation into language. This prioritizes coherence and hierarchy over rapid experimentation or stylistic accumulation.</p>
+          <p>The emphasis shifts from variation to reliability — establishing a clear visual logic that can be maintained across iteration and reuse, similar to how a shot is refined within a production pipeline.</p>
         </div>
       </article>
 
       <article class="editorial-block execution-layer">
         <h2 class="editorial-label">Execution Layer</h2>
         <div class="editorial-prose">
-          <p>This is not a tool or automated system, but a controlled practice. AI functions as the execution layer, while authorship and judgment remain human. The objective is to reduce ambiguity, stabilize results, and maintain visual clarity from concept to final delivery.</p>
+          <p>This is not an automated system, but a controlled practice. AI functions as the execution layer, while authorship and judgment remain human. The objective is to reduce ambiguity, stabilize results, and maintain visual clarity from concept to final delivery.</p>
         </div>
       </article>
 
@@ -172,6 +182,20 @@
   </div>
 
   <script>
+    // Disable automatic history scroll restoration so reloads don't land mid‑gallery.
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
+    }
+
+    // Belt-and-suspenders: on true reloads only, explicitly reset scroll to top.
+    const navEntry =
+      performance &&
+      performance.getEntriesByType &&
+      performance.getEntriesByType("navigation")[0];
+    if (navEntry && navEntry.type === "reload") {
+      window.scrollTo(0, 0);
+    }
+
     const masonry = document.getElementById("masonry");
 
     const lbContainer = document.getElementById("lbContainer");
@@ -185,6 +209,7 @@
     let items = [];
     let currentIndex = -1;
     let lastFocusBeforeLB = null;
+    let savedScrollY = 0;
 
     function formatPrompt(raw){
       const text = (raw || "").toString();
@@ -218,12 +243,14 @@
       const wrap = slot.querySelector(".lb-prompt-wrap");
       const moreBtn = slot.querySelector(".lb-prompt-more");
 
-      // === NEW: Reset Scroll State on Slide Change ===
+      // === Reset Scroll State on Slide Change ===
       const side = slot.querySelector(".lb-side");
       if (side) {
         side.scrollTop = 0; // Jump to top
         side.classList.remove("scrolled"); // Hide top fade
       }
+      // On mobile portrait the slot is the vertical scroll container; reset it so swipe doesn't feel poppy (harmless on tablet/desktop).
+      slot.scrollTop = 0;
       // ===============================================
 
       if (index < 0 || index >= items.length) {
@@ -247,6 +274,17 @@
       if (moreBtn) moreBtn.setAttribute("aria-expanded", "false");
     }
 
+    function preloadAdjacent(centerIndex) {
+      const len = items.length;
+      if (len === 0) return;
+      const idxA = (centerIndex + 2) % len;
+      const idxB = (centerIndex - 2 + len) % len;
+      const urlA = items[idxA]?.src;
+      const urlB = items[idxB]?.src;
+      if (urlA) { const img = new Image(); img.src = urlA; }
+      if (urlB && urlB !== urlA) { const img = new Image(); img.src = urlB; }
+    }
+
     function renderCarousel(centerIndex) {
       const track = lb.querySelector(".lb-track");
       const slots = lb.querySelectorAll(".lb-slide-slot");
@@ -266,6 +304,8 @@
       
       track.classList.remove("lb-animating");
       track.style.transform = "translate3d(-33.3333%, 0, 0)";
+
+      preloadAdjacent(centerIndex);
     }
 
     function openLB(index) {
@@ -274,10 +314,15 @@
       renderCarousel(currentIndex);
       lbContainer.classList.add("open");
       lbContainer.setAttribute("aria-hidden", "false");
-      
-      // FIX: Lock the background page scroll
-      document.body.style.overflow = "hidden";
-      
+
+      // Reflow then scroll save + overflow lock (stable open sequence for mobile landscape)
+      requestAnimationFrame(() => {
+        void lbContainer.offsetHeight;
+        savedScrollY = window.scrollY;
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
+      });
+
       updateNavState();
       lbClose.focus();
     }
@@ -285,15 +330,18 @@
     function closeLB() {
       lbContainer.classList.remove("open");
       lbContainer.setAttribute("aria-hidden", "true");
-      
-      // FIX: Delay scroll restoration until fade-out is complete (200ms)
-      // This prevents the X icon from jumping left when the scrollbar reappears.
-      setTimeout(() => {
-        document.body.style.overflow = "";
-      }, 200);
-      
+
       currentIndex = -1;
-      if (lastFocusBeforeLB && lastFocusBeforeLB.focus) lastFocusBeforeLB.focus();
+
+      // Delay scroll restoration until fade-out is complete; then one frame for layout before scroll + focus
+      setTimeout(() => {
+        document.documentElement.style.overflow = "";
+        document.body.style.overflow = "";
+        requestAnimationFrame(() => {
+          window.scrollTo(0, savedScrollY);
+          if (lastFocusBeforeLB && lastFocusBeforeLB.focus) lastFocusBeforeLB.focus();
+        });
+      }, 200);
     }
 
     function updateNavState(){
@@ -330,7 +378,73 @@
       renderCarousel(currentIndex);
     }
 
-    async function load(){
+    // --- GALLERY RENDERING HELPERS ---
+
+    function nextFrame() {
+      return new Promise(resolve => requestAnimationFrame(() => resolve()));
+    }
+
+    async function waitForImage(src) {
+      const img = new Image();
+      img.decoding = "async";
+      img.loading = "eager"; 
+      img.src = src;
+
+      if ("decode" in img) {
+        try {
+          await img.decode(); 
+        } catch {
+          if (!img.complete || img.naturalWidth === 0) throw new Error("Image failed");
+        }
+      } else {
+        await new Promise((resolve, reject) => {
+          if (img.complete && img.naturalWidth !== 0) return resolve();
+          img.onload = () => resolve();
+          img.onerror = () => reject(new Error("Image failed"));
+        });
+      }
+      return img;
+    }
+
+    function createCard(item, index, imgNode) {
+      const card = document.createElement("article");
+      card.className = "card";
+      card.tabIndex = 0;
+      card.setAttribute("role", "button");
+      card.setAttribute("aria-label", `View image ${index + 1}: ${item.title || "Untitled"}`);
+
+      const img = imgNode || document.createElement("img");
+      img.decoding = "async";
+      if (!imgNode) {
+        img.loading = "lazy";
+        img.src = item.thumb || item.src;
+      }
+      img.alt = item.title || "";
+      img.className = "card-img";
+
+      card.addEventListener("click", (e) => {
+        e.preventDefault();
+        card.classList.add("lb-hold");
+        openLB(index);
+        setTimeout(() => {
+          card.classList.remove("lb-hold");
+          card.blur();
+        }, 350);
+      });
+      card.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openLB(index);
+        }
+      });
+
+      card.appendChild(img);
+      return card;
+    }
+
+    // --- MAIN LOAD FUNCTION ---
+
+    async function load() {
       masonry.setAttribute("aria-busy", "true");
       masonryLoading.classList.remove("hidden");
       masonryError.classList.add("hidden");
@@ -348,48 +462,44 @@
         return;
       }
 
+      // Clear any existing cards
+      const existingCards = masonry.querySelectorAll(".card");
+      existingCards.forEach((el) => el.remove());
+
+      if (!items || !items.length) {
+        masonryLoading.classList.add("hidden");
+        masonry.setAttribute("aria-busy", "false");
+        return;
+      }
+
+      const firstItem = items[0];
+      const firstSrc = firstItem.thumb || firstItem.src;
+
+      // 1) Preload & decode first image off-DOM
+      let firstImg = null;
+      try {
+        firstImg = await waitForImage(firstSrc);
+      } catch (e) {
+        // Silent catch: if it fails, firstImg remains null, card will lazy load normally
+      }
+
+      // 2) Build first card
+      const firstCard = createCard(firstItem, 0, firstImg);
+
+      // 3) Wait for the next animation frame to sync UI change with rendering
+      await nextFrame();
+      
+      masonry.appendChild(firstCard);
       masonryLoading.classList.add("hidden");
       masonryError.classList.add("hidden");
       masonry.setAttribute("aria-busy", "false");
 
-      const existingCards = masonry.querySelectorAll(".card");
-      existingCards.forEach((el) => el.remove());
-
-      items.forEach((item, i) => {
-        const card = document.createElement("article");
-        card.className = "card";
-        card.tabIndex = 0;
-        card.setAttribute("role", "button");
-        card.setAttribute("aria-label", `View image ${i + 1}: ${item.title || "Untitled"}`);
-
-        const img = document.createElement("img");
-        img.loading = "lazy";
-        img.src = item.thumb || item.src;
-        img.alt = item.title || "";
-        img.className = "card-img";
-
-        // Add click event to each card
-        card.addEventListener("click", (e) => {
-          e.preventDefault();
-
-          // 1. FREEZE: Keep the lift active instantly
-          card.classList.add("lb-hold");
-
-          // 2. OPEN LIGHTBOX
-          openLB(i);
-
-          // 3. CLEANUP (Behind the scenes)
-          // Wait for the lightbox fade-in (approx 350ms)
-          setTimeout(() => {
-            card.classList.remove("lb-hold"); // Unfreeze the lift
-            card.blur(); // CRITICAL: Remove browser focus so the card is "fresh" when you return
-          }, 350);
-        });
-        card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLB(i); } });
-
-        card.appendChild(img);
-        masonry.appendChild(card);
-      });
+      // 4) Render remaining cards using a DocumentFragment for main-thread performance
+      const fragment = document.createDocumentFragment();
+      for (let i = 1; i < items.length; i++) {
+        fragment.appendChild(createCard(items[i], i));
+      }
+      masonry.appendChild(fragment);
     }
 
     lbContainer.addEventListener("click", (e) => { if (e.target.closest(".lb-close")) closeLB(); });
@@ -558,9 +668,13 @@
       let isDragging = false;
       let isScrolling = false;
       let isIntentDetermined = false;
+      let lockInVersion = 0;
+      let cachedLbWidth = 0;
       const thresholdPercent = 0.2;
       const intentThresholdPx = 12;  /* don't decide scroll vs swipe until we've moved this far */
       const scrollRatio = 1.5;       /* require vertical to be 1.5× horizontal to treat as scroll */
+      const scrollRatioNonPortrait = 1.25; /* tablet/landscape: less strict so horizontal swipes register more easily */
+      const DEBUG_SWIPE = false;
 
       function setTrackTransform(offsetPx) {
         track.style.transform = `translate3d(calc(-33.3333% + ${offsetPx}px), 0, 0)`;
@@ -569,6 +683,7 @@
       track.addEventListener("touchstart", (e) => {
         if (e.touches.length > 1) return;
         lbContainer.classList.remove("lb-swiping");
+        cachedLbWidth = lb.offsetWidth;
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
         currentDeltaX = 0;
@@ -590,24 +705,30 @@
         if (!isIntentDetermined) {
           const total = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
           if (total < intentThresholdPx) return; /* wait for meaningful movement */
-          if (absY > scrollRatio * absX) {
+          const ratio = portrait() ? scrollRatio : scrollRatioNonPortrait;
+          if (absY > ratio * absX) {
             isScrolling = true;
             isDragging = false;
+            if (DEBUG_SWIPE) console.log("[lb swipe] intent=scroll");
             return;
           }
           isIntentDetermined = true;
+          if (DEBUG_SWIPE) console.log("[lb swipe] intent=swipe");
           if (portrait()) lbContainer.classList.add("lb-swiping");
         }
         if (isScrolling) return;
         currentDeltaX = deltaX;
         setTrackTransform(deltaX);
-      }, { passive: true });
+        e.preventDefault(); /* avoid scroll vs transform conflict on iOS (vertical scroll and horizontal track move) */
+      }, { passive: false });
 
       track.addEventListener("touchend", (e) => {
         if (!isDragging || isScrolling) return;
         isDragging = false;
         track.classList.add("lb-animating");
-        const thresholdPx = lb.offsetWidth * thresholdPercent;
+        const baseThresholdPx = cachedLbWidth * thresholdPercent;
+        const maxThresholdPx = 80;
+        const thresholdPx = portrait() ? baseThresholdPx : Math.min(baseThresholdPx, maxThresholdPx);
         // Allow swipe wrapping
         const goPrev = currentDeltaX > thresholdPx && items.length > 1;
         const goNext = currentDeltaX < -thresholdPx && items.length > 1;
@@ -617,20 +738,62 @@
           track.addEventListener("transitionend", function onEnd() {
             track.removeEventListener("transitionend", onEnd);
             lbContainer.classList.remove("lb-swiping");
-            // Wrap Next
             currentIndex = (currentIndex + 1) % items.length;
-            renderCarousel(currentIndex);
-            updateNavState();
+            lockInVersion++;
+            const version = lockInVersion;
+            requestAnimationFrame(() => {
+              const slots = lb.querySelectorAll(".lb-slide-slot");
+              if (track && slots.length === 3 && items.length > 0) {
+                const len = items.length;
+                const idxPrev = (currentIndex - 1 + len) % len;
+                const idxCur = currentIndex;
+                const idxNext = (currentIndex + 1) % len;
+                populateSlot(slots[1], idxCur);
+                track.classList.remove("lb-animating");
+                track.style.transform = "translate3d(-33.3333%, 0, 0)";
+                updateNavState();
+                requestAnimationFrame(() => {
+                  if (version !== lockInVersion) return;
+                  populateSlot(slots[0], idxPrev);
+                  populateSlot(slots[2], idxNext);
+                  preloadAdjacent(currentIndex);
+                });
+              } else {
+                renderCarousel(currentIndex);
+                updateNavState();
+              }
+            });
           }, { once: true });
         } else if (goPrev) {
           track.style.transform = "translate3d(0%, 0, 0)";
           track.addEventListener("transitionend", function onEnd() {
             track.removeEventListener("transitionend", onEnd);
             lbContainer.classList.remove("lb-swiping");
-            // Wrap Prev
             currentIndex = (currentIndex - 1 + items.length) % items.length;
-            renderCarousel(currentIndex);
-            updateNavState();
+            lockInVersion++;
+            const version = lockInVersion;
+            requestAnimationFrame(() => {
+              const slots = lb.querySelectorAll(".lb-slide-slot");
+              if (track && slots.length === 3 && items.length > 0) {
+                const len = items.length;
+                const idxPrev = (currentIndex - 1 + len) % len;
+                const idxCur = currentIndex;
+                const idxNext = (currentIndex + 1) % len;
+                populateSlot(slots[1], idxCur);
+                track.classList.remove("lb-animating");
+                track.style.transform = "translate3d(-33.3333%, 0, 0)";
+                updateNavState();
+                requestAnimationFrame(() => {
+                  if (version !== lockInVersion) return;
+                  populateSlot(slots[0], idxPrev);
+                  populateSlot(slots[2], idxNext);
+                  preloadAdjacent(currentIndex);
+                });
+              } else {
+                renderCarousel(currentIndex);
+                updateNavState();
+              }
+            });
           }, { once: true });
         } else {
           track.style.transform = "translate3d(-33.3333%, 0, 0)";
