@@ -198,11 +198,6 @@
 
     const masonry = document.getElementById("masonry");
 
-    // Detect primary touch devices (phones/tablets) for scroll-lock behavior
-    const isTouchPrimary =
-      window.matchMedia &&
-      window.matchMedia("(pointer: coarse)").matches;
-
     const lbContainer = document.getElementById("lbContainer");
     const lb = document.getElementById("lb");
     const lbClose = document.getElementById("lbClose");
@@ -323,15 +318,10 @@
       // Force reflow so Safari applies correct frame on first open (mobile landscape)
       requestAnimationFrame(() => { void lbContainer.offsetHeight; });
 
-      // Overflow-only lock on touch devices so background doesn't scroll
+      // Option B: overflow-only lock (no position:fixed) so Safari may collapse address bar
       savedScrollY = window.scrollY;
-      if (isTouchPrimary) {
-        // Delay scroll lock so overlay is visible before reflow (reduces visible pop of banner)
-        requestAnimationFrame(() => {
-          document.documentElement.style.overflow = "hidden";
-          document.body.style.overflow = "hidden";
-        });
-      }
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
       
       updateNavState();
       lbClose.focus();
@@ -341,13 +331,12 @@
       lbContainer.classList.remove("open");
       lbContainer.setAttribute("aria-hidden", "true");
       
-      // Release scroll lock after fade-out on touch devices only
-      if (isTouchPrimary) {
-        setTimeout(() => {
-          document.documentElement.style.overflow = "";
-          document.body.style.overflow = "";
-        }, 200);
-      }
+      // FIX: Delay scroll restoration until fade-out is complete (200ms)
+      setTimeout(() => {
+        document.documentElement.style.overflow = "";
+        document.body.style.overflow = "";
+        window.scrollTo(0, savedScrollY);
+      }, 200);
       
       currentIndex = -1;
       if (lastFocusBeforeLB && lastFocusBeforeLB.focus) lastFocusBeforeLB.focus();
