@@ -1511,8 +1511,9 @@ body {
   z-index: 10;
 }
 
-/* While lightbox is open: hide banner and disable hit-testing so first tap on X closes (iOS landscape) */
-body:has(.lb-container.open) .hero-banner {
+/* While lightbox is open (or closing): hide banner and disable hit-testing so first tap on X closes (iOS landscape); lb-open stays until 200ms after close so banner doesn't pop on mobile */
+body:has(.lb-container.open) .hero-banner,
+body.lb-open .hero-banner {
   visibility: hidden;
   pointer-events: none;
 }
