@@ -326,8 +326,11 @@
       // Overflow-only lock on touch devices so background doesn't scroll
       savedScrollY = window.scrollY;
       if (isTouchPrimary) {
-        document.documentElement.style.overflow = "hidden";
-        document.body.style.overflow = "hidden";
+        // Delay scroll lock so overlay is visible before reflow (reduces visible pop of banner)
+        requestAnimationFrame(() => {
+          document.documentElement.style.overflow = "hidden";
+          document.body.style.overflow = "hidden";
+        });
       }
       
       updateNavState();
