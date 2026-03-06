@@ -320,7 +320,8 @@
 
       // Option B: overflow-only lock (no position:fixed) so Safari may collapse address bar
       savedScrollY = window.scrollY;
-      document.body.style.overflowY = "hidden";
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
       
       updateNavState();
       lbClose.focus();
@@ -332,7 +333,8 @@
       
       // FIX: Delay scroll restoration until fade-out is complete (200ms)
       setTimeout(() => {
-        document.body.style.overflowY = "";
+        document.documentElement.style.overflow = "";
+        document.body.style.overflow = "";
         window.scrollTo(0, savedScrollY);
       }, 200);
       
@@ -897,6 +899,99 @@
 
         requestAnimationFrame(step);
       });
+    })();
+
+    // BANNER: two-phase behavior (sticky → floating) with direction-aware hide/show; hidden while lightbox open
+    (function(){
+      const banner = document.querySelector(".hero-banner");
+      const lbContainer = document.getElementById("lbContainer");
+      if (!banner || !lbContainer) return;
+
+      const TOP_BUFFER = 0;
+      let lastScrollY = window.scrollY;
+      let ticking = false;
+      let activated = false;
+      let activationScrollY = 0;
+
+      function maybeActivateFloating() {
+        if (activated) return;
+
+        const rect = banner.getBoundingClientRect();
+        if (rect.top <= TOP_BUFFER) {
+          activated = true;
+          activationScrollY = window.scrollY;
+          lastScrollY = window.scrollY; // sync direction baseline at activation
+
+          document.body.classList.add("banner-floating-active");
+          banner.classList.add("hero-banner--floating");
+        }
+      }
+
+      function updateBannerVisibility() {
+        maybeActivateFloating();
+
+        // Lightbox open: always keep banner visually hidden
+        if (lbContainer.classList.contains("open")) {
+          banner.classList.add("is-hidden");
+          return;
+        }
+
+        const y = window.scrollY;
+
+        const TOP_RESET = 4;
+        // If we've returned to the true top region, fully exit floating mode
+        if (y <= TOP_RESET && activated) {
+          activated = false;
+          activationScrollY = 0;
+          document.body.classList.remove("banner-floating-active");
+          banner.classList.remove("hero-banner--floating");
+          banner.classList.remove("is-hidden");
+          lastScrollY = y;
+          return;
+        }
+
+        // Phase 1: before floating activation, behave like original sticky banner (always visible)
+        if (!activated) {
+          banner.classList.remove("is-hidden");
+          lastScrollY = y;
+          return;
+        }
+
+        // Phase 2: floating direction-aware behavior
+        if (y <= activationScrollY + TOP_BUFFER) {
+          // Near/above activation point: keep banner visible
+          banner.classList.remove("is-hidden");
+        } else if (y < lastScrollY) {
+          // Scrolling up
+          banner.classList.remove("is-hidden");
+        } else {
+          // Scrolling down
+          banner.classList.add("is-hidden");
+        }
+
+        lastScrollY = y;
+      }
+
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () {
+          updateBannerVisibility();
+          ticking = false;
+        });
+      }
+
+      const observer = new MutationObserver(function () {
+        if (lbContainer.classList.contains("open")) {
+          requestAnimationFrame(updateBannerVisibility);
+        } else {
+          setTimeout(updateBannerVisibility, 200);
+        }
+      });
+      observer.observe(lbContainer, { attributes: true, attributeFilter: ["class"] });
+
+      window.addEventListener("scroll", onScroll, { passive: true });
+      updateBannerVisibility();
     })();
 
     // TABLET TOP FADE LOGIC — Tracks scroll position to toggle header fade
