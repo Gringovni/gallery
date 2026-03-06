@@ -1496,11 +1496,7 @@ body {
 
 /* === WHITE BANNER BELOW HERO (NOW STICKY HEADER) === */
 .hero-banner{
-  position: sticky;
-  top: 0;
   background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(8px);
-  z-index: 10;
 }
 
 .hero-banner-inner{
