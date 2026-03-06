@@ -320,19 +320,6 @@
 
       // Option B: overflow-only lock (no position:fixed) so Safari may collapse address bar
       savedScrollY = window.scrollY;
-      const banner = document.querySelector(".hero-banner");
-      const isMobileLandscape = window.matchMedia("(orientation: landscape) and (max-height: 600px)").matches;
-      if (banner && banner.getBoundingClientRect().top <= 0 && !isMobileLandscape) {
-        const bannerHeight = banner.offsetHeight;
-        banner.classList.add("lb-frozen");
-
-        // Create the phantom footprint on the next sibling
-        if (banner.nextElementSibling) {
-          const currentMargin = parseFloat(getComputedStyle(banner.nextElementSibling).marginTop) || 0;
-          banner.dataset.origMargin = currentMargin;
-          banner.nextElementSibling.style.marginTop = `${currentMargin + bannerHeight}px`;
-        }
-      }
       document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
       
@@ -343,25 +330,12 @@
     function closeLB() {
       lbContainer.classList.remove("open");
       lbContainer.setAttribute("aria-hidden", "true");
-      document.body.classList.add("lb-closing");
-
+      
       // FIX: Delay scroll restoration until fade-out is complete (200ms)
       setTimeout(() => {
         document.documentElement.style.overflow = "";
         document.body.style.overflow = "";
         window.scrollTo(0, savedScrollY);
-        const banner = document.querySelector(".hero-banner");
-        if (banner) {
-          banner.classList.remove("lb-frozen");
-
-          // Remove the phantom footprint and restore original layout
-          if (banner.nextElementSibling && banner.dataset.origMargin !== undefined) {
-            const orig = parseFloat(banner.dataset.origMargin);
-            banner.nextElementSibling.style.marginTop = orig === 0 ? "" : `${orig}px`;
-            delete banner.dataset.origMargin;
-          }
-        }
-        document.body.classList.remove("lb-closing");
       }, 200);
       
       currentIndex = -1;
