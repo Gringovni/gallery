@@ -41,6 +41,7 @@ html, body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
+  /* overflow-x: hidden removed: it creates a scroll container that breaks position:sticky on .hero-banner; overscroll-behavior-x: none on body keeps horizontal rubber-band controlled */
   -webkit-text-size-adjust: 100%; /* Normalize iOS Safari text sizing across orientations */
 
   /* REMOVE MOBILE TAP HIGHLIGHT:
@@ -1502,12 +1503,26 @@ body {
   z-index: 10;
 }
 
-/* Sticky handoff: keep banner fixed at top while scrollport is locked (JS toggles .lb-frozen) */
+/* Sticky handoff: when lightbox opens, root overflow:hidden destroys sticky scrollport; freeze banner in place */
 .hero-banner.lb-frozen {
   position: fixed !important;
   top: 0;
   width: 100%;
   z-index: 10;
+}
+
+/* While lightbox is open: hide banner and disable hit-testing so first tap on X closes (iOS landscape) */
+body:has(.lb-container.open) .hero-banner {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Mobile landscape phones only: disable sticky banner so it scrolls naturally */
+@media (orientation: landscape) and (max-height: 600px) {
+  .hero-banner {
+    position: static;
+    top: auto;
+  }
 }
 
 .hero-banner-inner{
@@ -2189,13 +2204,6 @@ body {
 @media (orientation: landscape) and (max-height: 600px) {
   .lb-slide-slot {
     overflow-y: hidden !important;
-  }
-}
-
-/* Hide sticky banner on mobile landscape to preserve vertical real estate and prevent iOS Safari layout thrashing */
-@media (max-width: 950px) and (max-height: 500px) and (orientation: landscape) {
-  .hero-banner {
-    display: none !important;
   }
 }
 
