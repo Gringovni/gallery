@@ -55,8 +55,6 @@
   <button class="hero-scroll" type="button" aria-label="Scroll to gallery" id="heroScrollBtn"></button>
 </section>
 
-  <div class="hero-banner-sentinel" aria-hidden="true"></div>
-
   <header class="hero-banner" role="banner" aria-label="Site header">
     <div class="hero-banner-inner">
       <div class="hero-banner-title">LATENT ILLUMINATION</div>
@@ -200,6 +198,11 @@
 
     const masonry = document.getElementById("masonry");
 
+    // Detect primary touch devices (phones/tablets) for scroll-lock behavior
+    const isTouchPrimary =
+      window.matchMedia &&
+      window.matchMedia("(pointer: coarse)").matches;
+
     const lbContainer = document.getElementById("lbContainer");
     const lb = document.getElementById("lb");
     const lbClose = document.getElementById("lbClose");
@@ -320,10 +323,12 @@
       // Force reflow so Safari applies correct frame on first open (mobile landscape)
       requestAnimationFrame(() => { void lbContainer.offsetHeight; });
 
-      // Option B: overflow-only lock (no position:fixed) so Safari may collapse address bar
+      // Overflow-only lock on touch devices so background doesn't scroll
       savedScrollY = window.scrollY;
-      document.documentElement.style.overflow = "hidden";
-      document.body.style.overflow = "hidden";
+      if (isTouchPrimary) {
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
+      }
       
       updateNavState();
       lbClose.focus();
@@ -333,12 +338,13 @@
       lbContainer.classList.remove("open");
       lbContainer.setAttribute("aria-hidden", "true");
       
-      // FIX: Delay scroll restoration until fade-out is complete (200ms)
-      setTimeout(() => {
-        document.documentElement.style.overflow = "";
-        document.body.style.overflow = "";
-        window.scrollTo(0, savedScrollY);
-      }, 200);
+      // Release scroll lock after fade-out on touch devices only
+      if (isTouchPrimary) {
+        setTimeout(() => {
+          document.documentElement.style.overflow = "";
+          document.body.style.overflow = "";
+        }, 200);
+      }
       
       currentIndex = -1;
       if (lastFocusBeforeLB && lastFocusBeforeLB.focus) lastFocusBeforeLB.focus();
@@ -901,93 +907,6 @@
 
         requestAnimationFrame(step);
       });
-    })();
-
-    // BANNER: two-phase behavior (sticky → floating) using a sentinel; direction-aware hide/show; hidden while lightbox open
-    (function(){
-      const banner = document.querySelector(".hero-banner");
-      const sentinel = document.querySelector(".hero-banner-sentinel");
-      const lbContainer = document.getElementById("lbContainer");
-      if (!banner || !lbContainer || !sentinel) return;
-
-      const TOP_BUFFER = 0;   // enter floating when sentinel top <= 0
-      const TOP_RESET = 4;    // exit floating when sentinel top > 4
-      let lastScrollY = window.scrollY;
-      let ticking = false;
-      let activated = false;
-
-      function updateFloatingMode() {
-        const rect = sentinel.getBoundingClientRect();
-        const top = rect.top;
-
-        // Enter floating: sentinel has scrolled past the top edge
-        if (!activated && top <= TOP_BUFFER) {
-          activated = true;
-          lastScrollY = window.scrollY; // sync direction baseline at activation
-          document.body.classList.add("banner-floating-active");
-          banner.classList.add("hero-banner--floating");
-        }
-        // Exit floating: sentinel comes back into the top region
-        else if (activated && top > TOP_RESET) {
-          activated = false;
-          // clean reset order as requested
-          document.body.classList.remove("banner-floating-active");
-          banner.classList.remove("hero-banner--floating");
-          banner.classList.remove("is-hidden");
-          lastScrollY = window.scrollY;
-        }
-      }
-
-      function updateBannerVisibility() {
-        updateFloatingMode();
-
-        // Lightbox open: always keep banner visually hidden
-        if (lbContainer.classList.contains("open")) {
-          if (activated) banner.classList.add("is-hidden");
-          return;
-        }
-
-        const y = window.scrollY;
-
-        // Phase 1: before floating activation, behave like original sticky banner (always visible)
-        if (!activated) {
-          banner.classList.remove("is-hidden");
-          lastScrollY = y;
-          return;
-        }
-
-        // Phase 2: floating direction-aware behavior
-        if (y < lastScrollY) {
-          // Scrolling up
-          banner.classList.remove("is-hidden");
-        } else {
-          // Scrolling down
-          banner.classList.add("is-hidden");
-        }
-
-        lastScrollY = y;
-      }
-
-      function onScroll() {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(function () {
-          updateBannerVisibility();
-          ticking = false;
-        });
-      }
-
-      const observer = new MutationObserver(function () {
-        if (lbContainer.classList.contains("open")) {
-          requestAnimationFrame(updateBannerVisibility);
-        } else {
-          setTimeout(updateBannerVisibility, 200);
-        }
-      });
-      observer.observe(lbContainer, { attributes: true, attributeFilter: ["class"] });
-
-      window.addEventListener("scroll", onScroll, { passive: true });
-      updateBannerVisibility();
     })();
 
     // TABLET TOP FADE LOGIC — Tracks scroll position to toggle header fade
