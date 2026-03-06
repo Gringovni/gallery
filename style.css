@@ -2192,6 +2192,13 @@ body {
   }
 }
 
+/* Hide sticky banner on mobile landscape to preserve vertical real estate and prevent iOS Safari layout thrashing */
+@media (max-width: 950px) and (max-height: 500px) and (orientation: landscape) {
+  .hero-banner {
+    display: none !important;
+  }
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
