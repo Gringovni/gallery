@@ -308,6 +308,12 @@ body {
   pointer-events: auto;
 }
 
+/* When lightbox is open, hide the sticky banner so overflow reflow doesn't look like a pop on mobile/tablet */
+body:has(.lb-container.open) .hero-banner {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 /* ACCESSIBILITY: Instant snap for reduced motion users */
 @media (prefers-reduced-motion: reduce) {
   .lb-container {
