@@ -412,9 +412,9 @@
       card.setAttribute("aria-label", `View image ${index + 1}: ${item.title || "Untitled"}`);
 
       const img = imgNode || document.createElement("img");
-      img.decoding = "async";
       if (!imgNode) {
         img.loading = "lazy";
+        img.decoding = "async";
         img.src = item.thumb || item.src;
       }
       img.alt = item.title || "";
