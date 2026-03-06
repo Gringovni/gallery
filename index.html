@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Latent Illumination • Index</title>
   <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon-512x512.png">
@@ -185,7 +185,6 @@
     let items = [];
     let currentIndex = -1;
     let lastFocusBeforeLB = null;
-    let savedScrollY = 0;
 
     function formatPrompt(raw){
       const text = (raw || "").toString();
@@ -219,14 +218,12 @@
       const wrap = slot.querySelector(".lb-prompt-wrap");
       const moreBtn = slot.querySelector(".lb-prompt-more");
 
-      // === Reset Scroll State on Slide Change ===
+      // === NEW: Reset Scroll State on Slide Change ===
       const side = slot.querySelector(".lb-side");
       if (side) {
         side.scrollTop = 0; // Jump to top
         side.classList.remove("scrolled"); // Hide top fade
       }
-      // On mobile portrait the slot is the vertical scroll container; reset it so swipe doesn't feel poppy (harmless on tablet/desktop).
-      slot.scrollTop = 0;
       // ===============================================
 
       if (index < 0 || index >= items.length) {
@@ -250,17 +247,6 @@
       if (moreBtn) moreBtn.setAttribute("aria-expanded", "false");
     }
 
-    function preloadAdjacent(centerIndex) {
-      const len = items.length;
-      if (len === 0) return;
-      const idxA = (centerIndex + 2) % len;
-      const idxB = (centerIndex - 2 + len) % len;
-      const urlA = items[idxA]?.src;
-      const urlB = items[idxB]?.src;
-      if (urlA) { const img = new Image(); img.src = urlA; }
-      if (urlB && urlB !== urlA) { const img = new Image(); img.src = urlB; }
-    }
-
     function renderCarousel(centerIndex) {
       const track = lb.querySelector(".lb-track");
       const slots = lb.querySelectorAll(".lb-slide-slot");
@@ -280,8 +266,6 @@
       
       track.classList.remove("lb-animating");
       track.style.transform = "translate3d(-33.3333%, 0, 0)";
-
-      preloadAdjacent(centerIndex);
     }
 
     function openLB(index) {
@@ -290,13 +274,8 @@
       renderCarousel(currentIndex);
       lbContainer.classList.add("open");
       lbContainer.setAttribute("aria-hidden", "false");
-
-      // Force reflow so Safari applies correct frame on first open (mobile landscape)
-      requestAnimationFrame(() => { void lbContainer.offsetHeight; });
-
-      // Option B: overflow-only lock (no position:fixed) so Safari may collapse address bar
-      savedScrollY = window.scrollY;
-      document.documentElement.style.overflow = "hidden";
+      
+      // FIX: Lock the background page scroll
       document.body.style.overflow = "hidden";
       
       updateNavState();
@@ -308,10 +287,9 @@
       lbContainer.setAttribute("aria-hidden", "true");
       
       // FIX: Delay scroll restoration until fade-out is complete (200ms)
+      // This prevents the X icon from jumping left when the scrollbar reappears.
       setTimeout(() => {
-        document.documentElement.style.overflow = "";
         document.body.style.overflow = "";
-        window.scrollTo(0, savedScrollY);
       }, 200);
       
       currentIndex = -1;
@@ -580,8 +558,6 @@
       let isDragging = false;
       let isScrolling = false;
       let isIntentDetermined = false;
-      let lockInVersion = 0;
-      let cachedLbWidth = 0;
       const thresholdPercent = 0.2;
       const intentThresholdPx = 12;  /* don't decide scroll vs swipe until we've moved this far */
       const scrollRatio = 1.5;       /* require vertical to be 1.5× horizontal to treat as scroll */
@@ -593,7 +569,6 @@
       track.addEventListener("touchstart", (e) => {
         if (e.touches.length > 1) return;
         lbContainer.classList.remove("lb-swiping");
-        cachedLbWidth = lb.offsetWidth;
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
         currentDeltaX = 0;
@@ -626,14 +601,13 @@
         if (isScrolling) return;
         currentDeltaX = deltaX;
         setTrackTransform(deltaX);
-        e.preventDefault(); /* avoid scroll vs transform conflict on iOS (vertical scroll and horizontal track move) */
-      }, { passive: false });
+      }, { passive: true });
 
       track.addEventListener("touchend", (e) => {
         if (!isDragging || isScrolling) return;
         isDragging = false;
         track.classList.add("lb-animating");
-        const thresholdPx = cachedLbWidth * thresholdPercent;
+        const thresholdPx = lb.offsetWidth * thresholdPercent;
         // Allow swipe wrapping
         const goPrev = currentDeltaX > thresholdPx && items.length > 1;
         const goNext = currentDeltaX < -thresholdPx && items.length > 1;
@@ -643,62 +617,20 @@
           track.addEventListener("transitionend", function onEnd() {
             track.removeEventListener("transitionend", onEnd);
             lbContainer.classList.remove("lb-swiping");
+            // Wrap Next
             currentIndex = (currentIndex + 1) % items.length;
-            lockInVersion++;
-            const version = lockInVersion;
-            requestAnimationFrame(() => {
-              const slots = lb.querySelectorAll(".lb-slide-slot");
-              if (track && slots.length === 3 && items.length > 0) {
-                const len = items.length;
-                const idxPrev = (currentIndex - 1 + len) % len;
-                const idxCur = currentIndex;
-                const idxNext = (currentIndex + 1) % len;
-                populateSlot(slots[1], idxCur);
-                track.classList.remove("lb-animating");
-                track.style.transform = "translate3d(-33.3333%, 0, 0)";
-                updateNavState();
-                requestAnimationFrame(() => {
-                  if (version !== lockInVersion) return;
-                  populateSlot(slots[0], idxPrev);
-                  populateSlot(slots[2], idxNext);
-                  preloadAdjacent(currentIndex);
-                });
-              } else {
-                renderCarousel(currentIndex);
-                updateNavState();
-              }
-            });
+            renderCarousel(currentIndex);
+            updateNavState();
           }, { once: true });
         } else if (goPrev) {
           track.style.transform = "translate3d(0%, 0, 0)";
           track.addEventListener("transitionend", function onEnd() {
             track.removeEventListener("transitionend", onEnd);
             lbContainer.classList.remove("lb-swiping");
+            // Wrap Prev
             currentIndex = (currentIndex - 1 + items.length) % items.length;
-            lockInVersion++;
-            const version = lockInVersion;
-            requestAnimationFrame(() => {
-              const slots = lb.querySelectorAll(".lb-slide-slot");
-              if (track && slots.length === 3 && items.length > 0) {
-                const len = items.length;
-                const idxPrev = (currentIndex - 1 + len) % len;
-                const idxCur = currentIndex;
-                const idxNext = (currentIndex + 1) % len;
-                populateSlot(slots[1], idxCur);
-                track.classList.remove("lb-animating");
-                track.style.transform = "translate3d(-33.3333%, 0, 0)";
-                updateNavState();
-                requestAnimationFrame(() => {
-                  if (version !== lockInVersion) return;
-                  populateSlot(slots[0], idxPrev);
-                  populateSlot(slots[2], idxNext);
-                  preloadAdjacent(currentIndex);
-                });
-              } else {
-                renderCarousel(currentIndex);
-                updateNavState();
-              }
-            });
+            renderCarousel(currentIndex);
+            updateNavState();
           }, { once: true });
         } else {
           track.style.transform = "translate3d(-33.3333%, 0, 0)";
