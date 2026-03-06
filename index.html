@@ -55,6 +55,8 @@
   <button class="hero-scroll" type="button" aria-label="Scroll to gallery" id="heroScrollBtn"></button>
 </section>
 
+  <div class="hero-banner-sentinel" aria-hidden="true"></div>
+
   <header class="hero-banner" role="banner" aria-label="Site header">
     <div class="hero-banner-inner">
       <div class="hero-banner-title">LATENT ILLUMINATION</div>
@@ -901,54 +903,51 @@
       });
     })();
 
-    // BANNER: two-phase behavior (sticky → floating) with direction-aware hide/show; hidden while lightbox open
+    // BANNER: two-phase behavior (sticky → floating) using a sentinel; direction-aware hide/show; hidden while lightbox open
     (function(){
       const banner = document.querySelector(".hero-banner");
+      const sentinel = document.querySelector(".hero-banner-sentinel");
       const lbContainer = document.getElementById("lbContainer");
-      if (!banner || !lbContainer) return;
+      if (!banner || !lbContainer || !sentinel) return;
 
-      const TOP_BUFFER = 0;
+      const TOP_BUFFER = 0;   // enter floating when sentinel top <= 0
+      const TOP_RESET = 4;    // exit floating when sentinel top > 4
       let lastScrollY = window.scrollY;
       let ticking = false;
       let activated = false;
-      let activationScrollY = 0;
 
-      function maybeActivateFloating() {
-        if (activated) return;
+      function updateFloatingMode() {
+        const rect = sentinel.getBoundingClientRect();
+        const top = rect.top;
 
-        const rect = banner.getBoundingClientRect();
-        if (rect.top <= TOP_BUFFER) {
+        // Enter floating: sentinel has scrolled past the top edge
+        if (!activated && top <= TOP_BUFFER) {
           activated = true;
-          activationScrollY = window.scrollY;
           lastScrollY = window.scrollY; // sync direction baseline at activation
-
           document.body.classList.add("banner-floating-active");
           banner.classList.add("hero-banner--floating");
+        }
+        // Exit floating: sentinel comes back into the top region
+        else if (activated && top > TOP_RESET) {
+          activated = false;
+          // clean reset order as requested
+          document.body.classList.remove("banner-floating-active");
+          banner.classList.remove("hero-banner--floating");
+          banner.classList.remove("is-hidden");
+          lastScrollY = window.scrollY;
         }
       }
 
       function updateBannerVisibility() {
-        maybeActivateFloating();
+        updateFloatingMode();
 
         // Lightbox open: always keep banner visually hidden
         if (lbContainer.classList.contains("open")) {
-          banner.classList.add("is-hidden");
+          if (activated) banner.classList.add("is-hidden");
           return;
         }
 
         const y = window.scrollY;
-
-        const TOP_RESET = 4;
-        // If we've returned to the true top region, fully exit floating mode
-        if (y <= TOP_RESET && activated) {
-          activated = false;
-          activationScrollY = 0;
-          document.body.classList.remove("banner-floating-active");
-          banner.classList.remove("hero-banner--floating");
-          banner.classList.remove("is-hidden");
-          lastScrollY = y;
-          return;
-        }
 
         // Phase 1: before floating activation, behave like original sticky banner (always visible)
         if (!activated) {
@@ -958,10 +957,7 @@
         }
 
         // Phase 2: floating direction-aware behavior
-        if (y <= activationScrollY + TOP_BUFFER) {
-          // Near/above activation point: keep banner visible
-          banner.classList.remove("is-hidden");
-        } else if (y < lastScrollY) {
+        if (y < lastScrollY) {
           // Scrolling up
           banner.classList.remove("is-hidden");
         } else {
