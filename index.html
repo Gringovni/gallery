@@ -315,14 +315,8 @@
       lbContainer.classList.add("open");
       lbContainer.setAttribute("aria-hidden", "false");
 
-      // Force reflow so Safari applies correct frame on first open (mobile landscape)
-      requestAnimationFrame(() => { void lbContainer.offsetHeight; });
-
-      // Option B: overflow-only lock (no position:fixed) so Safari may collapse address bar
-      savedScrollY = window.scrollY;
-      document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
-      
+
       updateNavState();
       lbClose.focus();
     }
@@ -331,13 +325,12 @@
       lbContainer.classList.remove("open");
       lbContainer.setAttribute("aria-hidden", "true");
 
-      currentIndex = -1;
-
-      // Experiment: match zero-shift version — only unlock body overflow after 200ms; no scroll restore
+      // Delay overflow restore until fade-out is complete (matches zero-shift version)
       setTimeout(() => {
         document.body.style.overflow = "";
       }, 200);
 
+      currentIndex = -1;
       if (lastFocusBeforeLB && lastFocusBeforeLB.focus) lastFocusBeforeLB.focus();
     }
 
