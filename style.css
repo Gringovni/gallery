@@ -308,12 +308,6 @@ body {
   pointer-events: auto;
 }
 
-/* When lightbox is open, hide the sticky banner so overflow reflow doesn't look like a pop on mobile/tablet */
-body:has(.lb-container.open) .hero-banner {
-  visibility: hidden;
-  pointer-events: none;
-}
-
 /* ACCESSIBILITY: Instant snap for reduced motion users */
 @media (prefers-reduced-motion: reduce) {
   .lb-container {
@@ -1501,20 +1495,11 @@ body:has(.lb-container.open) .hero-banner {
 
 /* === WHITE BANNER BELOW HERO (NOW STICKY HEADER) === */
 .hero-banner{
-  position: -webkit-sticky;
   position: sticky;
   top: 0;
   background: rgba(255,255,255,0.92);
   backdrop-filter: blur(8px);
   z-index: 10;
-}
-
-/* Mobile landscape phones only: disable sticky so banner scrolls naturally */
-@media (orientation: landscape) and (max-height: 600px) {
-  .hero-banner {
-    position: static;
-    top: auto;
-  }
 }
 
 .hero-banner-inner{
@@ -1528,7 +1513,7 @@ body:has(.lb-container.open) .hero-banner {
 }
 
 .hero-banner-title{
-  font-size: 17px;
+  font-size: 16px;
   letter-spacing: .10em;
   text-transform: uppercase;
   color: #111;
