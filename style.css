@@ -1502,6 +1502,14 @@ body {
   z-index: 10;
 }
 
+/* Sticky handoff: keep banner fixed at top while scrollport is locked (JS toggles .lb-frozen) */
+.hero-banner.lb-frozen {
+  position: fixed !important;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+}
+
 .hero-banner-inner{
   height: 72px;
   max-width: var(--container);
