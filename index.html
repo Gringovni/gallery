@@ -330,16 +330,18 @@
     function closeLB() {
       lbContainer.classList.remove("open");
       lbContainer.setAttribute("aria-hidden", "true");
-      
-      // FIX: Delay scroll restoration until fade-out is complete (200ms)
+
+      currentIndex = -1;
+
+      // Delay scroll restoration until fade-out is complete; then one frame for layout before scroll + focus
       setTimeout(() => {
         document.documentElement.style.overflow = "";
         document.body.style.overflow = "";
-        window.scrollTo(0, savedScrollY);
+        requestAnimationFrame(() => {
+          window.scrollTo(0, savedScrollY);
+          if (lastFocusBeforeLB && lastFocusBeforeLB.focus) lastFocusBeforeLB.focus();
+        });
       }, 200);
-      
-      currentIndex = -1;
-      if (lastFocusBeforeLB && lastFocusBeforeLB.focus) lastFocusBeforeLB.focus();
     }
 
     function updateNavState(){
