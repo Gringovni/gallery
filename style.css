@@ -41,7 +41,6 @@ html, body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  overflow-x: hidden; /* iOS: avoid rubber-band revealing horizontal space / extra side sensitivity in gallery */
   -webkit-text-size-adjust: 100%; /* Normalize iOS Safari text sizing across orientations */
 
   /* REMOVE MOBILE TAP HIGHLIGHT:
@@ -112,18 +111,6 @@ body {
   max-width: var(--container);
   margin: 0 auto;
   padding: 0 var(--pad) 40px;
-}
-
-/* When banner is in floating phase, compensate its fixed height */
-body.banner-floating-active .wrap{
-  margin-top: 72px;
-}
-
-/* Invisible sentinel marking banner's "home" transition point */
-.hero-banner-sentinel{
-  height: 0;
-  margin: 0;
-  padding: 0;
 }
 
 /* === MOBILE & TABLET GALLERY NORMALIZATION === */
@@ -1506,8 +1493,9 @@ body.banner-floating-active .wrap{
   will-change: transform;
 }
 
-/* === WHITE BANNER BELOW HERO (PHASE 1: sticky in-flow) === */
+/* === WHITE BANNER BELOW HERO (NOW STICKY HEADER) === */
 .hero-banner{
+  position: -webkit-sticky;
   position: sticky;
   top: 0;
   background: rgba(255,255,255,0.92);
@@ -1515,27 +1503,11 @@ body.banner-floating-active .wrap{
   z-index: 10;
 }
 
-/* === PHASE 2: activated floating header (direction-aware) === */
-.hero-banner.hero-banner--floating{
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 10;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(8px);
-  transform: translateY(0);
-  transition: transform 180ms ease;
-  will-change: transform;
-}
-
-.hero-banner.hero-banner--floating.is-hidden{
-  transform: translateY(-100%);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-banner.hero-banner--floating {
-    transition: none;
+/* Mobile landscape phones only: disable sticky so banner scrolls naturally */
+@media (orientation: landscape) and (max-height: 600px) {
+  .hero-banner {
+    position: static;
+    top: auto;
   }
 }
 
