@@ -335,8 +335,7 @@
       }
       document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
-      document.body.classList.add("lb-open");
-
+      
       updateNavState();
       lbClose.focus();
     }
@@ -344,7 +343,8 @@
     function closeLB() {
       lbContainer.classList.remove("open");
       lbContainer.setAttribute("aria-hidden", "true");
-      
+      document.body.classList.add("lb-closing");
+
       // FIX: Delay scroll restoration until fade-out is complete (200ms)
       setTimeout(() => {
         document.documentElement.style.overflow = "";
@@ -361,7 +361,7 @@
             delete banner.dataset.origMargin;
           }
         }
-        document.body.classList.remove("lb-open");
+        document.body.classList.remove("lb-closing");
       }, 200);
       
       currentIndex = -1;
