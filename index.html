@@ -664,10 +664,13 @@
       let isIntentDetermined = false;
       let lockInVersion = 0;
       let cachedLbWidth = 0;
+      let lastTouchTime = 0, lastTouchX = 0, prevTouchTime = 0, prevTouchX = 0;
       const thresholdPercent = 0.18;
       const intentThresholdPx = 10;  /* don't decide scroll vs swipe until we've moved this far */
       const scrollRatio = 1.5;       /* require vertical to be 1.5× horizontal to treat as scroll */
       const scrollRatioNonPortrait = 1.25; /* tablet/landscape: less strict so horizontal swipes register more easily */
+      const velocityThresholdPxMs = 0.28;  /* min horizontal speed (px/ms) to count as flick */
+      const minFlickDistancePx = 8;        /* min drag in flick direction so tap doesn't trigger */
       const DEBUG_SWIPE = false;
 
       function setTrackTransform(offsetPx) {
@@ -681,6 +684,9 @@
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
         currentDeltaX = 0;
+        const t = e.timeStamp;
+        lastTouchTime = prevTouchTime = t;
+        lastTouchX = prevTouchX = startX;
         isDragging = true;
         isScrolling = false;
         isIntentDetermined = false;
@@ -712,6 +718,10 @@
         }
         if (isScrolling) return;
         currentDeltaX = deltaX;
+        prevTouchTime = lastTouchTime;
+        prevTouchX = lastTouchX;
+        lastTouchTime = e.timeStamp;
+        lastTouchX = x;
         setTrackTransform(deltaX);
         e.preventDefault(); /* avoid scroll vs transform conflict on iOS (vertical scroll and horizontal track move) */
       }, { passive: false });
@@ -723,9 +733,12 @@
         const baseThresholdPx = cachedLbWidth * thresholdPercent;
         const maxThresholdPx = 80;
         const thresholdPx = portrait() ? baseThresholdPx : Math.min(baseThresholdPx, maxThresholdPx);
-        // Allow swipe wrapping
-        const goPrev = currentDeltaX > thresholdPx && items.length > 1;
-        const goNext = currentDeltaX < -thresholdPx && items.length > 1;
+        const dt = lastTouchTime - prevTouchTime;
+        const velocityX = dt > 0 ? (lastTouchX - prevTouchX) / dt : 0;
+        const flickPrev = velocityX > velocityThresholdPxMs && currentDeltaX > minFlickDistancePx && items.length > 1;
+        const flickNext = velocityX < -velocityThresholdPxMs && currentDeltaX < -minFlickDistancePx && items.length > 1;
+        const goPrev = (currentDeltaX > thresholdPx || flickPrev) && items.length > 1;
+        const goNext = (currentDeltaX < -thresholdPx || flickNext) && items.length > 1;
 
         if (goNext) {
           track.style.transform = "translate3d(-66.6666%, 0, 0)";
