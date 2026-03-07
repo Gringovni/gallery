@@ -34,10 +34,6 @@
     if (navigator.userAgent.match('CriOS')) {
       document.documentElement.classList.add('chrome-ios');
     }
-    // EXPERIMENT: iOS-only class for softer lightbox swipe settle (easy to revert)
-    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-      document.documentElement.classList.add('ios');
-    }
   </script>
 </head>
 
@@ -669,6 +665,7 @@
       const scrollRatio = 1.5;       /* require vertical to be 1.5× horizontal to treat as scroll */
       const scrollRatioNonPortrait = 1.25; /* tablet/landscape: less strict so horizontal swipes register more easily */
       const DEBUG_SWIPE = false;
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
       function setTrackTransform(offsetPx) {
         track.style.transform = `translate3d(calc(-33.3333% + ${offsetPx}px), 0, 0)`;
@@ -727,6 +724,16 @@
         const goPrev = currentDeltaX > thresholdPx && items.length > 1;
         const goNext = currentDeltaX < -thresholdPx && items.length > 1;
 
+        // EXPERIMENT: iPhone portrait only — distance-aware settle duration for successful swipes
+        if ((goNext || goPrev) && isIOS && portrait()) {
+          const third = cachedLbWidth / 3;
+          const remainingPx = goNext
+            ? Math.max(0, third - Math.abs(currentDeltaX))
+            : Math.max(0, third - currentDeltaX);
+          const durationMs = Math.max(350, Math.min(430, 430 - Math.min(remainingPx, 80)));
+          track.style.transition = `transform ${durationMs}ms cubic-bezier(0.25, 0.75, 0.4, 1)`;
+        }
+
         if (goNext) {
           track.style.transform = "translate3d(-66.6666%, 0, 0)";
           track.addEventListener("transitionend", function onEnd() {
@@ -745,6 +752,7 @@
                 populateSlot(slots[1], idxCur);
                 track.classList.remove("lb-animating");
                 track.style.transform = "translate3d(-33.3333%, 0, 0)";
+                track.style.transition = "";
                 updateNavState();
                 requestAnimationFrame(() => {
                   if (version !== lockInVersion) return;
@@ -776,6 +784,7 @@
                 populateSlot(slots[1], idxCur);
                 track.classList.remove("lb-animating");
                 track.style.transform = "translate3d(-33.3333%, 0, 0)";
+                track.style.transition = "";
                 updateNavState();
                 requestAnimationFrame(() => {
                   if (version !== lockInVersion) return;
