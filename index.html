@@ -664,8 +664,8 @@
       let isIntentDetermined = false;
       let lockInVersion = 0;
       let cachedLbWidth = 0;
-      const thresholdPercent = 0.2;
-      const intentThresholdPx = 12;  /* don't decide scroll vs swipe until we've moved this far */
+      const thresholdPercent = 0.18;
+      const intentThresholdPx = 10;  /* don't decide scroll vs swipe until we've moved this far */
       const scrollRatio = 1.5;       /* require vertical to be 1.5× horizontal to treat as scroll */
       const scrollRatioNonPortrait = 1.25; /* tablet/landscape: less strict so horizontal swipes register more easily */
       const DEBUG_SWIPE = false;
