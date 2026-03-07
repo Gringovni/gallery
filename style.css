@@ -851,7 +851,7 @@ body {
   .lb-track.lb-animating {
     transition: transform 0.38s cubic-bezier(0.25, 0.75, 0.4, 1);
   }
-  /* EXPERIMENT: iOS-only softer tail curve (easy to revert if not desired) */
+  /* iOS portrait: softer tail so final settle feels less snappy */
   html.ios .lb-track.lb-animating {
     transition: transform 0.38s cubic-bezier(0.33, 0, 0.2, 1);
   }
