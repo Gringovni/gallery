@@ -34,7 +34,7 @@
     if (navigator.userAgent.match('CriOS')) {
       document.documentElement.classList.add('chrome-ios');
     }
-    // EXPERIMENT: iOS-only class for softer lightbox swipe settle (easy to revert)
+    // iOS: softer lightbox swipe settle in portrait
     if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
       document.documentElement.classList.add('ios');
     }
@@ -776,7 +776,6 @@
                 populateSlot(slots[1], idxCur);
                 track.classList.remove("lb-animating");
                 track.style.transform = "translate3d(-33.3333%, 0, 0)";
-                track.style.transition = "";
                 updateNavState();
                 requestAnimationFrame(() => {
                   if (version !== lockInVersion) return;
