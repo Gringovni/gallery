@@ -998,6 +998,15 @@ body {
 
   /* Do NOT touch .lb-close global behavior, just positioning below */
 
+  /* Lightbox swipe settle (match mobile portrait timing; iOS gets softer curve) */
+  .lb-track.lb-animating {
+    transition: transform 0.38s cubic-bezier(0.25, 0.75, 0.4, 1);
+  }
+  /* iOS tablet portrait: softer tail so final settle feels less snappy */
+  html.ios .lb-track.lb-animating {
+    transition: transform 0.38s cubic-bezier(0.33, 0, 0.2, 1);
+  }
+
   /* Main lightbox content container */
   .lb-content,
   .lb-figure,
@@ -1106,6 +1115,13 @@ body {
   /* Hide nav arrows in stacked portrait mode */
   .lb-nav{
     display: none;
+  }
+}
+
+/* iOS landscape: softer lightbox swipe settle (same curve as portrait) */
+@media (orientation: landscape) {
+  html.ios .lb-track.lb-animating {
+    transition: transform 0.38s cubic-bezier(0.33, 0, 0.2, 1);
   }
 }
 
