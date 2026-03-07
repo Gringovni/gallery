@@ -34,6 +34,10 @@
     if (navigator.userAgent.match('CriOS')) {
       document.documentElement.classList.add('chrome-ios');
     }
+    // EXPERIMENT: iOS-only class for softer lightbox swipe settle (easy to revert)
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+      document.documentElement.classList.add('ios');
+    }
   </script>
 </head>
 
