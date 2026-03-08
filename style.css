@@ -1544,25 +1544,12 @@ body {
   display: none;   /* gray line below LATENT ILLUMINATION banner removed */
 }
 
-/* While lightbox is open: lock document overscroll in all orientations */
+/* While lightbox is open: lock document overscroll to prevent bleed (iOS/Android pull-down) */
 body:has(.lb-container.open) {
   overscroll-behavior: none;
 }
 html:has(.lb-container.open) {
   overscroll-behavior: none;
-}
-
-/* Portrait only: white doc background + opaque overlay so Safari/Chrome UI strip reveals lightbox, not gallery */
-@media (orientation: portrait) {
-  body:has(.lb-container.open) {
-    background: var(--bg) !important;
-  }
-  html:has(.lb-container.open) {
-    background: var(--bg) !important;
-  }
-  .lb-container.open {
-    background: var(--bg);
-  }
 }
 
 /* While lightbox is open: hide banner and disable hit-testing so first tap on X closes (iOS landscape) */
