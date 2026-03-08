@@ -1544,6 +1544,14 @@ body {
   display: none;   /* gray line below LATENT ILLUMINATION banner removed */
 }
 
+/* While lightbox is open: lock document overscroll to prevent bleed (iOS/Android pull-down) */
+body:has(.lb-container.open) {
+  overscroll-behavior: none;
+}
+html:has(.lb-container.open) {
+  overscroll-behavior: none;
+}
+
 /* While lightbox is open: hide banner and disable hit-testing so first tap on X closes (iOS landscape) */
 body:has(.lb-container.open) .hero-banner {
   visibility: hidden;
