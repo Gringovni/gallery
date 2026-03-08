@@ -1118,10 +1118,10 @@ body {
   }
 }
 
-/* Landscape: non-iOS (e.g. Android/Chrome) 0.6s; iOS override below */
+/* Landscape: non-iOS (e.g. Android/Chrome) 0.7s; iOS override below */
 @media (orientation: landscape) {
   .lb-track.lb-animating {
-    transition: transform 0.6s cubic-bezier(0.25, 0.75, 0.4, 1);
+    transition: transform 0.7s cubic-bezier(0.25, 0.75, 0.4, 1);
   }
   html.ios .lb-track.lb-animating {
     transition: transform 0.45s cubic-bezier(0.33, 0, 0.2, 1);
