@@ -679,6 +679,8 @@
 
       track.addEventListener("touchstart", (e) => {
         if (e.touches.length > 1) return;
+        if (track.classList.contains("lb-animating")) return; /* ignore until settle completes */
+        lockInVersion++; /* invalidate any in-flight settle */
         lbContainer.classList.remove("lb-swiping");
         cachedLbWidth = lb.offsetWidth;
         startX = e.touches[0].clientX;
@@ -744,11 +746,12 @@
           track.style.transform = "translate3d(-66.6666%, 0, 0)";
           track.addEventListener("transitionend", function onEnd() {
             track.removeEventListener("transitionend", onEnd);
-            lbContainer.classList.remove("lb-swiping");
-            currentIndex = (currentIndex + 1) % items.length;
             lockInVersion++;
             const version = lockInVersion;
             requestAnimationFrame(() => {
+              if (version !== lockInVersion) return;
+              lbContainer.classList.remove("lb-swiping");
+              currentIndex = (currentIndex + 1) % items.length;
               const slots = lb.querySelectorAll(".lb-slide-slot");
               if (track && slots.length === 3 && items.length > 0) {
                 const len = items.length;
@@ -775,11 +778,12 @@
           track.style.transform = "translate3d(0%, 0, 0)";
           track.addEventListener("transitionend", function onEnd() {
             track.removeEventListener("transitionend", onEnd);
-            lbContainer.classList.remove("lb-swiping");
-            currentIndex = (currentIndex - 1 + items.length) % items.length;
             lockInVersion++;
             const version = lockInVersion;
             requestAnimationFrame(() => {
+              if (version !== lockInVersion) return;
+              lbContainer.classList.remove("lb-swiping");
+              currentIndex = (currentIndex - 1 + items.length) % items.length;
               const slots = lb.querySelectorAll(".lb-slide-slot");
               if (track && slots.length === 3 && items.length > 0) {
                 const len = items.length;
@@ -806,7 +810,12 @@
           track.style.transform = "translate3d(-33.3333%, 0, 0)";
           track.addEventListener("transitionend", function onSnapEnd() {
             track.removeEventListener("transitionend", onSnapEnd);
-            lbContainer.classList.remove("lb-swiping");
+            lockInVersion++;
+            const version = lockInVersion;
+            requestAnimationFrame(() => {
+              if (version !== lockInVersion) return;
+              lbContainer.classList.remove("lb-swiping");
+            });
           }, { once: true });
         }
       });
