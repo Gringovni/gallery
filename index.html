@@ -663,6 +663,7 @@
       let isScrolling = false;
       let isIntentDetermined = false;
       let lockInVersion = 0;
+      let isSettling = false;
       let cachedLbWidth = 0;
       let lastTouchTime = 0, lastTouchX = 0, prevTouchTime = 0, prevTouchX = 0;
       const thresholdPercent = 0.18;
@@ -679,7 +680,7 @@
 
       track.addEventListener("touchstart", (e) => {
         if (e.touches.length > 1) return;
-        if (track.classList.contains("lb-animating")) return; /* ignore until settle completes */
+        if (isSettling) return; /* ignore until settle completes */
         lockInVersion++; /* invalidate any in-flight settle */
         lbContainer.classList.remove("lb-swiping");
         cachedLbWidth = lb.offsetWidth;
@@ -728,10 +729,11 @@
         e.preventDefault(); /* avoid scroll vs transform conflict on iOS (vertical scroll and horizontal track move) */
       }, { passive: false });
 
+      const tapThresholdPx = 2; /* no settle for taps; avoid isSettling stuck when transitionend never fires */
+
       track.addEventListener("touchend", (e) => {
         if (!isDragging || isScrolling) return;
         isDragging = false;
-        track.classList.add("lb-animating");
         const baseThresholdPx = cachedLbWidth * thresholdPercent;
         const maxThresholdPx = 80;
         const thresholdPx = portrait() ? baseThresholdPx : Math.min(baseThresholdPx, maxThresholdPx);
@@ -743,12 +745,15 @@
         const goNext = (currentDeltaX < -thresholdPx || flickNext) && items.length > 1;
 
         if (goNext) {
+          track.classList.add("lb-animating");
+          isSettling = true;
           track.style.transform = "translate3d(-66.6666%, 0, 0)";
           track.addEventListener("transitionend", function onEnd() {
             track.removeEventListener("transitionend", onEnd);
             lockInVersion++;
             const version = lockInVersion;
             requestAnimationFrame(() => {
+              isSettling = false;
               if (version !== lockInVersion) return;
               lbContainer.classList.remove("lb-swiping");
               currentIndex = (currentIndex + 1) % items.length;
@@ -775,12 +780,15 @@
             });
           }, { once: true });
         } else if (goPrev) {
+          track.classList.add("lb-animating");
+          isSettling = true;
           track.style.transform = "translate3d(0%, 0, 0)";
           track.addEventListener("transitionend", function onEnd() {
             track.removeEventListener("transitionend", onEnd);
             lockInVersion++;
             const version = lockInVersion;
             requestAnimationFrame(() => {
+              isSettling = false;
               if (version !== lockInVersion) return;
               lbContainer.classList.remove("lb-swiping");
               currentIndex = (currentIndex - 1 + items.length) % items.length;
@@ -807,13 +815,18 @@
             });
           }, { once: true });
         } else {
+          if (Math.abs(currentDeltaX) < tapThresholdPx) return; /* tap: no settle, no transitionend */
+          track.classList.add("lb-animating");
+          isSettling = true;
           track.style.transform = "translate3d(-33.3333%, 0, 0)";
           track.addEventListener("transitionend", function onSnapEnd() {
             track.removeEventListener("transitionend", onSnapEnd);
             lockInVersion++;
             const version = lockInVersion;
             requestAnimationFrame(() => {
+              isSettling = false;
               if (version !== lockInVersion) return;
+              track.classList.remove("lb-animating");
               lbContainer.classList.remove("lb-swiping");
             });
           }, { once: true });
