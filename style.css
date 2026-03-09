@@ -1886,6 +1886,16 @@ body:has(.lb-container.open) .hero-banner {
   }
 }
 
+/* Desktop only: nudge content group right AND refine text-side padding without changing image size or layout */
+@media (min-width: 1025px) and (hover: hover) and (pointer: fine) {
+  .lb-content {
+    transform: translateX(15px);
+  }
+  .lb-side {
+    padding-right: 42px !important; /* was 64px in the broader desktop block */
+  }
+}
+
 /* === TABLET LANDSCAPE OVERRIDE === */
 /* Enforce tablet rules for 820px-1024px landscape (excludes phones in landscape).
    Overrides "Mobile Landscape" when height is < 600px (e.g. iPad Mini).
