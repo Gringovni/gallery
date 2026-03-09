@@ -319,7 +319,13 @@
       lbContainer.classList.add("open");
       lbContainer.setAttribute("aria-hidden", "false");
 
-      document.body.style.overflow = "hidden";
+      const isDesktop = window.matchMedia("(min-width: 1025px) and (hover: hover) and (pointer: fine)").matches;
+      if (isDesktop) {
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "hidden";
+      }
 
       updateNavState();
       lbClose.focus();
@@ -331,6 +337,10 @@
 
       // Delay overflow restore until fade-out is complete (matches zero-shift version)
       setTimeout(() => {
+        const isDesktop = window.matchMedia("(min-width: 1025px) and (hover: hover) and (pointer: fine)").matches;
+        if (isDesktop) {
+          document.documentElement.style.overflow = "";
+        }
         document.body.style.overflow = "";
       }, 200);
 
