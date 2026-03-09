@@ -319,6 +319,12 @@
       lbContainer.classList.add("open");
       lbContainer.setAttribute("aria-hidden", "false");
 
+      /* First-frame readiness: allow one rAF for open-state CSS/layout before scroll containment */
+      lbContainer.dataset.lightboxScrollReady = "0";
+      requestAnimationFrame(() => {
+        lbContainer.dataset.lightboxScrollReady = "1";
+      });
+
       document.body.style.overflow = "hidden";
 
       updateNavState();
@@ -717,13 +723,10 @@
           if (portrait()) lbContainer.classList.add("lb-swiping");
         }
         if (isScrolling) {
-          /* Portrait: block downward overscroll at top of slot to prevent chain-to-document bleed */
-          if (portrait()) {
-            const slots = track.querySelectorAll(".lb-slide-slot");
-            const centerSlot = slots[1];
-            if (centerSlot && centerSlot.scrollTop === 0 && deltaY > 0) {
-              e.preventDefault();
-            }
+          /* Portrait: block first-frame downward pull until open-state CSS/layout is settled */
+          if (portrait() && lbContainer.dataset.lightboxScrollReady !== "1" && deltaY > 0) {
+            e.preventDefault();
+            return;
           }
           return;
         }
