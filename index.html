@@ -716,7 +716,17 @@
           if (DEBUG_SWIPE) console.log("[lb swipe] intent=swipe");
           if (portrait()) lbContainer.classList.add("lb-swiping");
         }
-        if (isScrolling) return;
+        if (isScrolling) {
+          /* Portrait: block downward overscroll at top of slot to prevent chain-to-document bleed */
+          if (portrait()) {
+            const slots = track.querySelectorAll(".lb-slide-slot");
+            const centerSlot = slots[1];
+            if (centerSlot && centerSlot.scrollTop === 0 && deltaY > 0) {
+              e.preventDefault();
+            }
+          }
+          return;
+        }
         currentDeltaX = deltaX;
         prevTouchTime = lastTouchTime;
         prevTouchX = lastTouchX;
