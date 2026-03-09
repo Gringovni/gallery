@@ -319,12 +319,6 @@
       lbContainer.classList.add("open");
       lbContainer.setAttribute("aria-hidden", "false");
 
-      /* First-frame readiness: allow one rAF for open-state CSS/layout before scroll containment */
-      lbContainer.dataset.lightboxScrollReady = "0";
-      requestAnimationFrame(() => {
-        lbContainer.dataset.lightboxScrollReady = "1";
-      });
-
       document.body.style.overflow = "hidden";
 
       updateNavState();
@@ -722,14 +716,7 @@
           if (DEBUG_SWIPE) console.log("[lb swipe] intent=swipe");
           if (portrait()) lbContainer.classList.add("lb-swiping");
         }
-        if (isScrolling) {
-          /* Portrait: block first-frame downward pull until open-state CSS/layout is settled */
-          if (portrait() && lbContainer.dataset.lightboxScrollReady !== "1" && deltaY > 0) {
-            e.preventDefault();
-            return;
-          }
-          return;
-        }
+        if (isScrolling) return;
         currentDeltaX = deltaX;
         prevTouchTime = lastTouchTime;
         prevTouchX = lastTouchX;
