@@ -307,6 +307,7 @@ body {
   visibility: visible;
   opacity: 1;
   pointer-events: auto;
+  overscroll-behavior: none; /* mobile: block rubber-band chaining to page behind overlay */
 }
 
 /* ACCESSIBILITY: Instant snap for reduced motion users */
