@@ -245,9 +245,7 @@
     }
 
     function unlockPageScroll() {
-      if (isDesktopLightbox()) {
-        document.documentElement.style.overflow = "";
-      } else {
+      if (!isDesktopLightbox()) {
         document.body.style.position = "";
         document.body.style.top = "";
         document.body.style.left = "";
@@ -255,6 +253,7 @@
         document.body.style.width = "";
         window.scrollTo(0, savedScrollY);
       }
+      document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
     }
 
