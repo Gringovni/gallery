@@ -223,18 +223,70 @@
     let currentIndex = -1;
     let lastFocusBeforeLB = null;
     let savedScrollY = 0;
+    let vvListenersAttached = false;
+    let docTouchGuardAttached = false;
 
     function isDesktopLightbox() {
       return window.matchMedia("(min-width: 1025px) and (hover: hover) and (pointer: fine)").matches;
     }
 
-    function focusWithoutScroll(el) {
-      if (!el || typeof el.focus !== "function") return;
-      try {
-        el.focus({ preventScroll: true });
-      } catch {
-        el.focus();
-      }
+    function isIOSLightbox() {
+      return document.documentElement.classList.contains("ios");
+    }
+
+    function syncLbViewport() {
+      if (!lbContainer.classList.contains("open") || !isIOSLightbox()) return;
+      const vv = window.visualViewport;
+      if (!vv) return;
+      lbContainer.style.top = `${vv.offsetTop}px`;
+      lbContainer.style.left = `${vv.offsetLeft}px`;
+      lbContainer.style.width = `${vv.width}px`;
+      lbContainer.style.height = `${vv.height}px`;
+    }
+
+    function clearLbViewport() {
+      lbContainer.style.top = "";
+      lbContainer.style.left = "";
+      lbContainer.style.width = "";
+      lbContainer.style.height = "";
+    }
+
+    function onVisualViewportChange() {
+      syncLbViewport();
+    }
+
+    function attachVisualViewportListeners() {
+      const vv = window.visualViewport;
+      if (!vv || vvListenersAttached) return;
+      vv.addEventListener("resize", onVisualViewportChange);
+      vv.addEventListener("scroll", onVisualViewportChange);
+      vvListenersAttached = true;
+    }
+
+    function detachVisualViewportListeners() {
+      const vv = window.visualViewport;
+      if (!vv || !vvListenersAttached) return;
+      vv.removeEventListener("resize", onVisualViewportChange);
+      vv.removeEventListener("scroll", onVisualViewportChange);
+      vvListenersAttached = false;
+    }
+
+    function onDocTouchMove(e) {
+      if (!lbContainer.classList.contains("open")) return;
+      if (e.target.closest(".lb-slide-slot, .lb-side")) return;
+      e.preventDefault();
+    }
+
+    function attachDocTouchGuard() {
+      if (docTouchGuardAttached) return;
+      document.addEventListener("touchmove", onDocTouchMove, { passive: false });
+      docTouchGuardAttached = true;
+    }
+
+    function detachDocTouchGuard() {
+      if (!docTouchGuardAttached) return;
+      document.removeEventListener("touchmove", onDocTouchMove, { passive: false });
+      docTouchGuardAttached = false;
     }
 
     function lockPageScroll() {
@@ -246,6 +298,12 @@
       savedScrollY = window.scrollY;
       document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
+      if (isIOSLightbox()) {
+        syncLbViewport();
+        attachVisualViewportListeners();
+        attachDocTouchGuard();
+        return;
+      }
       document.body.style.position = "fixed";
       document.body.style.top = `-${savedScrollY}px`;
       document.body.style.left = "0";
@@ -255,12 +313,18 @@
 
     function unlockPageScroll() {
       if (!isDesktopLightbox()) {
-        document.body.style.position = "";
-        document.body.style.top = "";
-        document.body.style.left = "";
-        document.body.style.right = "";
-        document.body.style.width = "";
-        window.scrollTo(0, savedScrollY);
+        if (isIOSLightbox()) {
+          detachVisualViewportListeners();
+          detachDocTouchGuard();
+          clearLbViewport();
+        } else {
+          document.body.style.position = "";
+          document.body.style.top = "";
+          document.body.style.left = "";
+          document.body.style.right = "";
+          document.body.style.width = "";
+          window.scrollTo(0, savedScrollY);
+        }
       }
       document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
@@ -371,13 +435,12 @@
       lbContainer.setAttribute("aria-hidden", "false");
 
       lockPageScroll();
+      if (isIOSLightbox()) {
+        requestAnimationFrame(() => requestAnimationFrame(syncLbViewport));
+      }
 
       updateNavState();
-      if (document.documentElement.classList.contains("ios")) {
-        focusWithoutScroll(lbClose);
-      } else {
-        lbClose.focus();
-      }
+      lbClose.focus();
     }
 
     function closeLB() {
@@ -388,13 +451,7 @@
       setTimeout(unlockPageScroll, 200);
 
       currentIndex = -1;
-      if (lastFocusBeforeLB) {
-        if (document.documentElement.classList.contains("ios")) {
-          focusWithoutScroll(lastFocusBeforeLB);
-        } else if (lastFocusBeforeLB.focus) {
-          lastFocusBeforeLB.focus();
-        }
-      }
+      if (lastFocusBeforeLB && lastFocusBeforeLB.focus) lastFocusBeforeLB.focus();
     }
 
     function updateNavState(){
