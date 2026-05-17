@@ -228,6 +228,15 @@
       return window.matchMedia("(min-width: 1025px) and (hover: hover) and (pointer: fine)").matches;
     }
 
+    function focusWithoutScroll(el) {
+      if (!el || typeof el.focus !== "function") return;
+      try {
+        el.focus({ preventScroll: true });
+      } catch {
+        el.focus();
+      }
+    }
+
     function lockPageScroll() {
       if (isDesktopLightbox()) {
         document.documentElement.style.overflow = "hidden";
@@ -364,7 +373,11 @@
       lockPageScroll();
 
       updateNavState();
-      lbClose.focus();
+      if (document.documentElement.classList.contains("ios")) {
+        focusWithoutScroll(lbClose);
+      } else {
+        lbClose.focus();
+      }
     }
 
     function closeLB() {
@@ -375,7 +388,13 @@
       setTimeout(unlockPageScroll, 200);
 
       currentIndex = -1;
-      if (lastFocusBeforeLB && lastFocusBeforeLB.focus) lastFocusBeforeLB.focus();
+      if (lastFocusBeforeLB) {
+        if (document.documentElement.classList.contains("ios")) {
+          focusWithoutScroll(lastFocusBeforeLB);
+        } else if (lastFocusBeforeLB.focus) {
+          lastFocusBeforeLB.focus();
+        }
+      }
     }
 
     function updateNavState(){
