@@ -224,6 +224,40 @@
     let lastFocusBeforeLB = null;
     let savedScrollY = 0;
 
+    function isDesktopLightbox() {
+      return window.matchMedia("(min-width: 1025px) and (hover: hover) and (pointer: fine)").matches;
+    }
+
+    function lockPageScroll() {
+      if (isDesktopLightbox()) {
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
+        return;
+      }
+      savedScrollY = window.scrollY;
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${savedScrollY}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
+    }
+
+    function unlockPageScroll() {
+      if (isDesktopLightbox()) {
+        document.documentElement.style.overflow = "";
+      } else {
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.left = "";
+        document.body.style.right = "";
+        document.body.style.width = "";
+        window.scrollTo(0, savedScrollY);
+      }
+      document.body.style.overflow = "";
+    }
+
     function formatPrompt(raw){
       const text = (raw || "").toString();
 
@@ -328,13 +362,7 @@
       lbContainer.classList.add("open");
       lbContainer.setAttribute("aria-hidden", "false");
 
-      const isDesktop = window.matchMedia("(min-width: 1025px) and (hover: hover) and (pointer: fine)").matches;
-      if (isDesktop) {
-        document.documentElement.style.overflow = "hidden";
-        document.body.style.overflow = "hidden";
-      } else {
-        document.body.style.overflow = "hidden";
-      }
+      lockPageScroll();
 
       updateNavState();
       lbClose.focus();
@@ -344,14 +372,8 @@
       lbContainer.classList.remove("open");
       lbContainer.setAttribute("aria-hidden", "true");
 
-      // Delay overflow restore until fade-out is complete (matches zero-shift version)
-      setTimeout(() => {
-        const isDesktop = window.matchMedia("(min-width: 1025px) and (hover: hover) and (pointer: fine)").matches;
-        if (isDesktop) {
-          document.documentElement.style.overflow = "";
-        }
-        document.body.style.overflow = "";
-      }, 200);
+      // Delay scroll unlock until fade-out is complete (matches zero-shift version)
+      setTimeout(unlockPageScroll, 200);
 
       currentIndex = -1;
       if (lastFocusBeforeLB && lastFocusBeforeLB.focus) lastFocusBeforeLB.focus();
